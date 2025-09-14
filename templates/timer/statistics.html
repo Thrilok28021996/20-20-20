@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load timezone_tags %}
+
+{% block title %}Statistics - EyeHealth 20-20-20{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    
+    .progress-custom {
+        height: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-chart-line me-2"></i>Your Statistics
+                    </h1>
+                    <p class="text-muted mb-0">{{ date_range }}</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="?days=7" class="btn btn-outline-primary {% if days == 7 %}active{% endif %}">7 Days</a>
+                    <a href="?days=30" class="btn btn-outline-primary {% if days == 30 %}active{% endif %}">30 Days</a>
+                    <a href="?days=90" class="btn btn-outline-primary {% if days == 90 %}active{% endif %}">90 Days</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="text-primary mb-2">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">{{ total_stats.total_work_minutes|default:0 }}</h3>
+                    <p class="text-muted mb-2">Total Work Minutes</p>
+                    <div class="progress progress-custom">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="text-success mb-2">
+                        <i class="fas fa-tasks fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">{{ total_stats.total_intervals|default:0 }}</h3>
+                    <p class="text-muted mb-2">Total Intervals</p>
+                    <div class="progress progress-custom">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="text-warning mb-2">
+                        <i class="fas fa-coffee fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">{{ total_stats.total_breaks|default:0 }}</h3>
+                    <p class="text-muted mb-2">Total Breaks</p>
+                    <div class="progress progress-custom">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 70%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card h-100">
+                <div class="card-body text-center">
+                    <div class="text-info mb-2">
+                        <i class="fas fa-percentage fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">{{ total_stats.avg_compliance|floatformat:0|default:0 }}%</h3>
+                    <p class="text-muted mb-2">Avg Compliance</p>
+                    <div class="progress progress-custom">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ total_stats.avg_compliance|default:0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-area me-2"></i>Work Minutes Over Time
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="workMinutesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Break Compliance
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Breakdown -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>Daily Breakdown
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if daily_stats %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Sessions</th>
+                                        <th>Work Minutes</th>
+                                        <th>Intervals</th>
+                                        <th>Breaks</th>
+                                        <th>Compliance Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stat in daily_stats %}
+                                    <tr>
+                                        <td>{{ stat.date|date:"M j, Y" }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ stat.total_sessions }}</span>
+                                        </td>
+                                        <td>{{ stat.total_work_minutes }} min</td>
+                                        <td>{{ stat.total_intervals_completed }}</td>
+                                        <td>{{ stat.total_breaks_taken }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                                    <div class="progress-bar 
+                                                        {% if stat.compliance_rate >= 80 %}bg-success
+                                                        {% elif stat.compliance_rate >= 60 %}bg-warning
+                                                        {% else %}bg-danger{% endif %}" 
+                                                        role="progressbar" 
+                                                        style="width: {{ stat.compliance_rate }}%">
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">{{ stat.compliance_rate|floatformat:0 }}%</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                            <h5>No Statistics Yet</h5>
+                            <p class="text-muted">Start using the timer to begin tracking your progress.</p>
+                            <a href="{% url 'timer:dashboard' %}" class="btn btn-primary">
+                                <i class="fas fa-play me-2"></i>Start Timer
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Sessions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Sessions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_sessions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Start Time</th>
+                                        <th>Duration</th>
+                                        <th>Intervals</th>
+                                        <th>Breaks</th>
+                                        <th>Status</th>
+                                        <th>Compliance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for session in recent_sessions %}
+                                    <tr>
+                                        <td>{{ session.start_time|date:"M j" }}</td>
+                                        <td>{{ session.start_time|time:"g:i A" }}</td>
+                                        <td>{{ session.duration_minutes }} min</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ session.total_intervals_completed }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">{{ session.total_breaks_taken }}</span>
+                                        </td>
+                                        <td>
+                                            {% if session.is_active %}
+                                                <span class="badge bg-warning">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Completed</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if session.total_intervals_completed > 0 %}
+                                                <small class="text-success">
+                                                    {{ session.total_breaks_taken|div:session.total_intervals_completed|mul:100|floatformat:0 }}%
+                                                </small>
+                                            {% else %}
+                                                <small class="text-muted">N/A</small>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                            <h5>No Sessions Yet</h5>
+                            <p class="text-muted">Start your first timer session to see your history here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"
+        integrity="sha384-O2RRn9vtZ9EuWDYJIhbPmBBYSJp30kS4F0b5dWG7mP0jSJhzK9T7qj/oS9fq9+Ct"
+        crossorigin="anonymous"></script>
+<script>
+    // Work Minutes Chart
+    const workCtx = document.getElementById('workMinutesChart').getContext('2d');
+    new Chart(workCtx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_data.dates|safe }},
+            datasets: [{
+                label: 'Work Minutes',
+                data: {{ chart_data.work_minutes|safe }},
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.1,
+                fill: true
+            }, {
+                label: 'Breaks Taken',
+                data: {{ chart_data.breaks_taken|safe }},
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        }
+    });
+
+    // Compliance Chart
+    const complianceCtx = document.getElementById('complianceChart').getContext('2d');
+    const avgCompliance = {{ total_stats.avg_compliance|default:0 }};
+    new Chart(complianceCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Compliant', 'Non-Compliant'],
+            datasets: [{
+                data: [avgCompliance, 100 - avgCompliance],
+                backgroundColor: ['#28a745', '#dc3545'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

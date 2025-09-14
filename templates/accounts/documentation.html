@@ -1,0 +1,620 @@
+{% extends 'base.html' %}
+
+{% block title %}Documentation - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">Documentation</h1>
+                <p class="lead">
+                    Complete guides and documentation to help you get the most out of EyeHealth 20-20-20.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Navigation -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3">Quick Navigation</h2>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center stats-card">
+                    <div class="card-body p-4">
+                        <i class="fas fa-rocket text-primary" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3 mb-3">Quick Start</h4>
+                        <p class="text-muted">Get up and running in minutes</p>
+                        <a href="#quick-start" class="btn btn-outline-primary">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center stats-card">
+                    <div class="card-body p-4">
+                        <i class="fas fa-cog text-success" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3 mb-3">Settings Guide</h4>
+                        <p class="text-muted">Customize your experience</p>
+                        <a href="#settings-guide" class="btn btn-outline-success">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center stats-card">
+                    <div class="card-body p-4">
+                        <i class="fas fa-chart-line text-warning" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3 mb-3">Analytics</h4>
+                        <p class="text-muted">Understanding your data</p>
+                        <a href="#analytics-guide" class="btn btn-outline-warning">View Guide</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 text-center stats-card">
+                    <div class="card-body p-4">
+                        <i class="fas fa-crown text-info" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3 mb-3">Premium Features</h4>
+                        <p class="text-muted">Advanced functionality</p>
+                        <a href="#premium-guide" class="btn btn-outline-info">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Documentation Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <!-- Sidebar Navigation -->
+                <div class="card sticky-top" style="top: 2rem;">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-book me-2"></i>Contents</h5>
+                    </div>
+                    <div class="card-body">
+                        <nav class="nav flex-column">
+                            <a class="nav-link" href="#quick-start">Quick Start Guide</a>
+                            <a class="nav-link" href="#account-setup">Account Setup</a>
+                            <a class="nav-link" href="#dashboard">Dashboard Overview</a>
+                            <a class="nav-link" href="#timer-usage">Using the Timer</a>
+                            <a class="nav-link" href="#settings-guide">Settings & Preferences</a>
+                            <a class="nav-link" href="#analytics-guide">Analytics & Reports</a>
+                            <a class="nav-link" href="#premium-guide">Premium Features</a>
+                            <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+                            <a class="nav-link" href="#api-docs">API Documentation</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-9">
+                <!-- Quick Start Guide -->
+                <section id="quick-start" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-rocket me-2"></i>Quick Start Guide</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="lead">Get started with EyeHealth 20-20-20 in just 3 simple steps.</p>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                             style="width: 60px; height: 60px;">
+                                            <span class="fs-4 fw-bold">1</span>
+                                        </div>
+                                        <h5>Create Account</h5>
+                                        <p class="text-muted">Sign up with your email address - no credit card required for free features.</p>
+                                        <a href="{% url 'accounts:signup' %}" class="btn btn-sm btn-primary">Sign Up Now</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                             style="width: 60px; height: 60px;">
+                                            <span class="fs-4 fw-bold">2</span>
+                                        </div>
+                                        <h5>Set Preferences</h5>
+                                        <p class="text-muted">Configure your work hours, notification preferences, and break reminders.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                             style="width: 60px; height: 60px;">
+                                            <span class="fs-4 fw-bold">3</span>
+                                        </div>
+                                        <h5>Start Your Session</h5>
+                                        <p class="text-muted">Click "Start Session" on your dashboard and begin protecting your eyes!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info mt-4" role="alert">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                <strong>Pro Tip:</strong> Enable browser notifications for the best experience. 
+                                You'll get gentle reminders even when the tab isn't active.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account Setup -->
+                <section id="account-setup" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-user-plus me-2"></i>Account Setup</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <h4>Creating Your Account</h4>
+                            <p>Your EyeHealth 20-20-20 account requires only an email address and password. We use your email for:</p>
+                            <ul>
+                                <li>Account authentication and security</li>
+                                <li>Password reset requests</li>
+                                <li>Optional notification emails (weekly reports, etc.)</li>
+                                <li>Important account updates</li>
+                            </ul>
+
+                            <h4 class="mt-4">Profile Information</h4>
+                            <p>After creating your account, you can optionally add:</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li><strong>Display Name:</strong> How you'd like to be addressed</li>
+                                        <li><strong>Time Zone:</strong> For accurate scheduling</li>
+                                        <li><strong>Work Schedule:</strong> When you typically work</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li><strong>Industry:</strong> Helps us provide relevant tips</li>
+                                        <li><strong>Job Role:</strong> For usage analytics</li>
+                                        <li><strong>Experience Level:</strong> Personalizes guidance</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dashboard Overview -->
+                <section id="dashboard" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <p>Your dashboard is the central hub for all timer activities and statistics.</p>
+                            
+                            <h4>Dashboard Components</h4>
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-primary">Timer Display</h6>
+                                            <p class="card-text small">Large, easy-to-read countdown showing time until your next break.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-success">Control Buttons</h6>
+                                            <p class="card-text small">Start, pause, stop, and skip break controls.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card border-info">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-info">Today's Stats</h6>
+                                            <p class="card-text small">Sessions completed, breaks taken, total focus time.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card border-warning">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-warning">Streak Counter</h6>
+                                            <p class="card-text small">Current streak of consecutive days using the timer.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Timer Usage -->
+                <section id="timer-usage" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-clock me-2"></i>Using the Timer</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <h4>The 20-20-20 Rule</h4>
+                            <div class="alert alert-primary" role="alert">
+                                Every <strong>20 minutes</strong>, look at something <strong>20 feet away</strong> for at least <strong>20 seconds</strong>.
+                            </div>
+
+                            <h4>Starting a Session</h4>
+                            <ol>
+                                <li>Click the "Start Session" button on your dashboard</li>
+                                <li>The timer begins counting down from 20:00</li>
+                                <li>Continue working normally</li>
+                                <li>When the timer reaches 0:00, you'll receive a break notification</li>
+                                <li>Take your 20-second break looking at distant objects</li>
+                                <li>Click "Break Complete" to start the next 20-minute cycle</li>
+                            </ol>
+
+                            <h4>Timer Controls</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Button</th>
+                                            <th>Function</th>
+                                            <th>When to Use</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge bg-success">Start</span></td>
+                                            <td>Begin 20-minute timer</td>
+                                            <td>When you're ready to start working</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-warning">Pause</span></td>
+                                            <td>Temporarily stop the timer</td>
+                                            <td>Short interruptions (phone calls, etc.)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-danger">Stop</span></td>
+                                            <td>End current session</td>
+                                            <td>When you're done working for the day</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-info">Skip Break</span></td>
+                                            <td>Start next cycle without break</td>
+                                            <td>Occasionally, when absolutely necessary</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Guide -->
+                <section id="settings-guide" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-cog me-2"></i>Settings & Preferences</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <h4>Notification Settings</h4>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <h6>Break Reminders</h6>
+                                    <p class="text-muted small">Desktop notifications when it's time for a break</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Sound Alerts</h6>
+                                    <p class="text-muted small">Audio chime for break notifications</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Email Reports</h6>
+                                    <p class="text-muted small">Weekly summary of your eye health progress</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Daily Reminders</h6>
+                                    <p class="text-muted small">Email reminder to start your daily sessions</p>
+                                </div>
+                            </div>
+
+                            <h4>Work Schedule</h4>
+                            <p>Set your typical work hours to:</p>
+                            <ul>
+                                <li>Receive notifications only during work time</li>
+                                <li>Get accurate daily and weekly statistics</li>
+                                <li>Plan break timing around meetings</li>
+                            </ul>
+
+                            <h4>Premium Settings</h4>
+                            <p>Premium subscribers can access additional customization:</p>
+                            <ul>
+                                <li><strong>Timer Presets:</strong> Create custom work/break intervals</li>
+                                <li><strong>Focus Modes:</strong> Different settings for different work types</li>
+                                <li><strong>Theme Selection:</strong> Choose from 8 custom visual themes</li>
+                                <li><strong>Integration Settings:</strong> Connect with calendar and productivity apps</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics Guide -->
+                <section id="analytics-guide" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-chart-line me-2"></i>Analytics & Reports</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <h4>Understanding Your Statistics</h4>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="card border-primary">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-primary">Sessions Completed</h6>
+                                            <p class="small text-muted">Number of 20-minute work periods completed</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-success">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-success">Breaks Taken</h6>
+                                            <p class="small text-muted">How many 20-second eye breaks you've completed</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-warning">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-warning">Current Streak</h6>
+                                            <p class="small text-muted">Consecutive days of using the timer</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-info">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-info">Focus Time</h6>
+                                            <p class="small text-muted">Total productive hours with regular breaks</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4>Premium Analytics</h4>
+                            <p>Premium users get access to advanced analytics:</p>
+                            <ul>
+                                <li>Weekly and monthly trend charts</li>
+                                <li>Productivity correlation analysis</li>
+                                <li>Eye strain reduction estimates</li>
+                                <li>Comparative benchmarking</li>
+                                <li>Exportable reports (CSV/PDF)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Premium Features -->
+                <section id="premium-guide" class="mb-5">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-crown me-2"></i>Premium Features</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-infinity text-primary me-2"></i>Unlimited Sessions</h5>
+                                    <p>No daily limits on timer sessions. Use as much as you need.</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-dumbbell text-success me-2"></i>Guided Eye Exercises</h5>
+                                    <p>6 different eye exercise routines designed by vision specialists.</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-palette text-info me-2"></i>Custom Themes</h5>
+                                    <p>8 beautiful themes to match your workspace and preferences.</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-chart-bar text-warning me-2"></i>Advanced Analytics</h5>
+                                    <p>Detailed reports, trends, and insights into your eye health.</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-download text-secondary me-2"></i>Data Export</h5>
+                                    <p>Export your data in CSV or PDF format for personal records.</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5><i class="fas fa-headset text-danger me-2"></i>Priority Support</h5>
+                                    <p>Fast-track support with 4-hour response time guarantee.</p>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <a href="{% url 'accounts:pricing' %}" class="btn btn-warning btn-lg">
+                                    <i class="fas fa-crown me-2"></i>Upgrade to Premium
+                                </a>
+                                <p class="mt-2 text-muted small">Just $0.99/month • Cancel anytime • 7-day free trial</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Troubleshooting -->
+                <section id="troubleshooting" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-tools me-2"></i>Troubleshooting</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <h4>Common Issues</h4>
+                            
+                            <div class="accordion" id="troubleshootingAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                            Timer not starting or displaying incorrectly
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Solutions to try:</strong>
+                                            <ol>
+                                                <li>Refresh your browser (Ctrl+F5 or Cmd+R)</li>
+                                                <li>Clear browser cache and cookies</li>
+                                                <li>Disable browser extensions temporarily</li>
+                                                <li>Try using a different browser</li>
+                                                <li>Check if JavaScript is enabled</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                            Not receiving notifications
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                                        <div class="accordion-body">
+                                            <strong>Check these settings:</strong>
+                                            <ol>
+                                                <li>Browser notification permissions (click the lock icon in address bar)</li>
+                                                <li>Your notification settings in Account Settings</li>
+                                                <li>Operating system notification settings</li>
+                                                <li>Do Not Disturb mode is disabled</li>
+                                                <li>Check your spam folder for email notifications</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- API Documentation -->
+                <section id="api-docs" class="mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold mb-0"><i class="fas fa-code me-2"></i>API Documentation</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle me-2"></i>
+                                API access is available for Premium subscribers who want to integrate with other productivity tools.
+                            </div>
+
+                            <h4>Available Endpoints</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Endpoint</th>
+                                            <th>Method</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>/api/sessions/</code></td>
+                                            <td><span class="badge bg-success">GET</span></td>
+                                            <td>Retrieve session history</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>/api/statistics/</code></td>
+                                            <td><span class="badge bg-success">GET</span></td>
+                                            <td>Get user statistics</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>/api/sessions/start/</code></td>
+                                            <td><span class="badge bg-warning">POST</span></td>
+                                            <td>Start a new session</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h4>Authentication</h4>
+                            <p>API requests require a valid API token. You can generate tokens in your Premium account settings.</p>
+
+                            <pre class="bg-light p-3"><code>curl -H "Authorization: Token your-api-token-here" \
+     https://eyehealth2020.com/api/sessions/</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Need More Help -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold mb-4">Need More Help?</h2>
+                <p class="text-muted mb-4">
+                    Can't find what you're looking for in our documentation? 
+                    We're here to help!
+                </p>
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                    <a href="{% url 'accounts:contact' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Contact Support
+                    </a>
+                    <a href="{% url 'accounts:faq' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-question-circle me-2"></i>View FAQ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Highlight current section in sidebar
+    window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= (sectionTop - 200)) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+{% endblock %}

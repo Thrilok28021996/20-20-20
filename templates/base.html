@@ -1,0 +1,526 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EyeHealth 20-20-20 - Protect Your Vision{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Reduce digital eye strain with the scientifically-backed 20-20-20 rule. Free timer app with smart reminders, progress tracking, and eye health analytics.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}eye health, 20-20-20 rule, digital eye strain, computer vision syndrome, eye strain relief, productivity timer, eye exercises{% endblock %}">
+    <meta name="author" content="EyeHealth 20-20-20">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{% block og_url %}https://eyehealth2020.com{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ block.super }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ block.super }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}https://eyehealth2020.com/static/images/og-image.png{% endblock %}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{% block twitter_url %}{{ block.super }}{% endblock %}">
+    <meta property="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}{{ block.super }}{% endblock %}">
+    <meta property="twitter:image" content="{% block twitter_image %}{{ block.super }}{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Additional Inline CSS -->
+    <style>
+        /* Color variables moved to custom.css for consistency */
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-weight: 400;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar-brand i {
+            color: var(--secondary-color);
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #1e3d6f;
+            border-color: #1e3d6f;
+        }
+
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+        }
+
+        .timer-circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 2rem auto;
+            position: relative;
+            overflow: hidden;
+            min-width: 150px;
+            min-height: 150px;
+            max-width: 300px;
+            max-height: 300px;
+        }
+
+        .timer-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 0deg, var(--accent-color) 0deg);
+            opacity: 0.3;
+        }
+
+        .stats-card {
+            transition: transform 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 300px;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .timer-circle {
+                width: 150px;
+                height: 150px;
+                font-size: 1.8rem;
+                margin: 1rem auto;
+            }
+
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+
+        .dark-mode {
+            background-color: var(--dark-bg);
+            color: white;
+        }
+
+        .dark-mode .card {
+            background-color: #2d3338;
+            color: white;
+        }
+
+        .dark-mode .navbar {
+            background-color: #2d3338 !important;
+        }
+    </style>
+
+    <!-- Custom CSS - Load after inline styles -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}?v=1.2">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light" id="main-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'accounts:home' %}">
+                <div class="me-2" style="width: 32px; height: 32px; background: var(--gradient-secondary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-eye text-white"></i>
+                </div>
+                <span class="navbar-brand-text">EyeHealth 20-20-20</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'timer:dashboard' %}">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'timer:statistics' %}">
+                                <i class="fas fa-chart-line me-1"></i>Statistics
+                            </a>
+                        </li>
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'timer:real_time_dashboard' %}">
+                                <i class="fas fa-broadcast-tower me-1"></i>Admin Metrics
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'timer:settings' %}">
+                                <i class="fas fa-cog me-1"></i>Timer Settings
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link fw-500" href="{% url 'accounts:pricing' %}">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-500" href="{% url 'accounts:about' %}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-500" href="{% url 'accounts:contact' %}">Contact</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>{{ user.first_name|default:user.username }}
+                                {% if user.is_premium_user %}
+                                    <span class="badge bg-warning text-dark ms-1">{{ user.subscription_type|upper }}</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:settings' %}">
+                                    <i class="fas fa-cog me-2"></i>Settings
+                                </a></li>
+                                {% if not user.is_premium_user %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-warning" href="{% url 'accounts:pricing' %}">
+                                        <i class="fas fa-crown me-2"></i>Upgrade to Premium
+                                    </a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link fw-500" href="{% url 'accounts:login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn cta-primary ms-2" href="{% url 'accounts:signup' %}">
+                                <i class="fas fa-shield-alt me-1"></i>Protect Vision Free
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <!-- Dark Theme Toggle -->
+                <div class="d-flex align-items-center ms-3">
+                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center"
+                            data-toggle-dark-theme
+                            title="Toggle Dark/Light Theme"
+                            style="border: none; background: transparent;">
+                        <i class="fas fa-moon me-1"></i>
+                        <span class="d-none d-md-inline">Theme</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="container-fluid">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5><i class="fas fa-eye me-2"></i>EyeHealth 20-20-20</h5>
+                    <p>Protect your vision with the scientifically-backed 20-20-20 rule. Every 20 minutes, look at something 20 feet away for 20 seconds.</p>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                    <h6>Product</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'accounts:home' %}" class="text-light">Features</a></li>
+                        <li><a href="{% url 'accounts:pricing' %}" class="text-light">Pricing</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'timer:dashboard' %}" class="text-light">Dashboard</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                    <h6>Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'accounts:help_center' %}" class="text-light">Help Center</a></li>
+                        <li><a href="{% url 'accounts:contact' %}" class="text-light">Contact Us</a></li>
+                        <li><a href="{% url 'accounts:status' %}" class="text-light">Status</a></li>
+                        <li><a href="{% url 'accounts:faq' %}" class="text-light">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                    <h6>Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'accounts:about' %}" class="text-light">About</a></li>
+                        <li><a href="{% url 'accounts:privacy' %}" class="text-light">Privacy</a></li>
+                        <li><a href="{% url 'accounts:terms' %}" class="text-light">Terms</a></li>
+                        <li><a href="{% url 'accounts:documentation' %}" class="text-light">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
+                    <h6>Connect</h6>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#" class="text-light footer-social-link"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-light footer-social-link"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-light footer-social-link"><i class="fab fa-github fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3" style="border-color: #6c757d;">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <p class="mb-0">&copy; 2024 EyeHealth 20-20-20. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">Made with <i class="fas fa-heart text-danger"></i> for healthier vision</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Timer functionality
+        class Timer {
+            constructor() {
+                this.interval = null;
+                this.timeRemaining = 0;
+                this.isRunning = false;
+                this.sessionId = null;
+                this.intervalId = null;
+            }
+
+            start(duration) {
+                this.timeRemaining = duration;
+                this.isRunning = true;
+                this.updateDisplay();
+                
+                this.interval = setInterval(() => {
+                    this.timeRemaining--;
+                    this.updateDisplay();
+                    
+                    if (this.timeRemaining <= 0) {
+                        this.onComplete();
+                    }
+                }, 1000);
+            }
+
+            stop() {
+                if (this.interval) {
+                    clearInterval(this.interval);
+                    this.interval = null;
+                }
+                this.isRunning = false;
+            }
+
+            updateDisplay() {
+                const minutes = Math.floor(this.timeRemaining / 60);
+                const seconds = this.timeRemaining % 60;
+                const displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                const timerElement = document.querySelector('.timer-display');
+                if (timerElement) {
+                    timerElement.textContent = displayTime;
+                }
+
+                // Update progress bar
+                const progressElement = document.querySelector('.timer-progress');
+                if (progressElement) {
+                    const totalDuration = 20 * 60; // 20 minutes in seconds
+                    const progress = ((totalDuration - this.timeRemaining) / totalDuration) * 360;
+                    progressElement.style.background = `conic-gradient(from 0deg, var(--accent-color) 0deg, var(--accent-color) ${progress}deg, transparent ${progress}deg)`;
+                }
+            }
+
+            onComplete() {
+                this.stop();
+                this.showBreakReminder();
+            }
+
+            showBreakReminder() {
+                // Show break reminder notification
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Time for a break!', {
+                        body: 'Look at something 20 feet away for 20 seconds.',
+                        icon: '/static/images/eye-icon.png'
+                    });
+                }
+
+                // Show modal or alert
+                const breakModal = new bootstrap.Modal(document.getElementById('breakModal'));
+                if (breakModal) {
+                    breakModal.show();
+                }
+            }
+        }
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        // Initialize timer
+        window.timerInstance = new Timer();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Dark Theme Management
+        function initializeDarkTheme() {
+            // Check if user has dark mode enabled in their settings
+            {% if user.is_authenticated and user.timersettings.dark_mode %}
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('darkTheme', 'true');
+            {% else %}
+                // Check localStorage for guest users or if setting is disabled
+                const isDarkMode = localStorage.getItem('darkTheme') === 'true';
+                if (isDarkMode) {
+                    document.body.classList.add('dark-theme');
+                }
+            {% endif %}
+        }
+
+        function toggleDarkTheme() {
+            const body = document.body;
+            const isDarkMode = body.classList.toggle('dark-theme');
+
+            // Save preference to localStorage
+            localStorage.setItem('darkTheme', isDarkMode.toString());
+
+            // Update checkbox if on settings page
+            const darkModeToggle = document.getElementById('dark_mode');
+            if (darkModeToggle) {
+                darkModeToggle.checked = isDarkMode;
+            }
+
+            // For authenticated users, save to server
+            {% if user.is_authenticated %}
+            fetch('{% url "timer:update_dark_mode" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: 'dark_mode=' + (isDarkMode ? 'on' : 'off')
+            });
+            {% endif %}
+        }
+
+        // Initialize dark theme on page load
+        initializeDarkTheme();
+
+        // Add dark theme toggle to any element with data-toggle-dark-theme
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('[data-toggle-dark-theme]') || e.target.closest('[data-toggle-dark-theme]')) {
+                e.preventDefault();
+                toggleDarkTheme();
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

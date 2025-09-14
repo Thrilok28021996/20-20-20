@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQ - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">Frequently Asked Questions</h1>
+                <p class="lead">
+                    Here are the questions I get asked most often, with my personal answers. 
+                    If you don't find what you need, just email me directly!
+                </p>
+                
+                <!-- Search Box -->
+                <div class="row justify-content-center mt-4">
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-lg" 
+                                   placeholder="Search FAQ..." id="faqSearch">
+                            <button class="btn btn-success" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Categories -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3">Browse by Category</h2>
+            </div>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="#general" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                    <i class="fas fa-info-circle fa-2x mb-2"></i>
+                    <span>General</span>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="#health-science" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                    <i class="fas fa-heartbeat fa-2x mb-2"></i>
+                    <span>Health & Science</span>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="#features" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                    <i class="fas fa-cogs fa-2x mb-2"></i>
+                    <span>Features</span>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="#premium" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                    <i class="fas fa-crown fa-2x mb-2"></i>
+                    <span>Premium</span>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="#billing" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                    <i class="fas fa-credit-card fa-2x mb-2"></i>
+                    <span>Billing</span>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="#technical" class="btn btn-outline-danger w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                    <i class="fas fa-tools fa-2x mb-2"></i>
+                    <span>Technical</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Content -->
+<section class="py-5">
+    <div class="container">
+        {% for category in faqs %}
+        <div class="mb-5" id="{{ category.category|lower|cut:' '|add:'-'|add:'science' }}">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="fw-bold">{{ category.category }}</h2>
+                    <hr class="w-25 mx-auto">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="accordion{{ forloop.counter }}">
+                        {% for qa in category.questions %}
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="heading{{ forloop.parentloop.counter }}{{ forloop.counter }}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse{{ forloop.parentloop.counter }}{{ forloop.counter }}">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    {{ qa.question }}
+                                </button>
+                            </h2>
+                            <div id="collapse{{ forloop.parentloop.counter }}{{ forloop.counter }}" 
+                                 class="accordion-collapse collapse" 
+                                 data-bs-parent="#accordion{{ forloop.parentloop.counter }}">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <i class="fas fa-lightbulb text-warning"></i>
+                                        </div>
+                                        <div>
+                                            {{ qa.answer }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Additional FAQ Categories -->
+        <div class="mb-5" id="features">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="fw-bold">Features & Usage</h2>
+                    <hr class="w-25 mx-auto">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="accordionFeatures">
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingF1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseF1">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    How do I customize my timer settings?
+                                </button>
+                            </h2>
+                            <div id="collapseF1" class="accordion-collapse collapse" data-bs-parent="#accordionFeatures">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            I've made customization really simple! Go to Settings in your dashboard to adjust work hours, break duration, notification preferences, and sound alerts. If you upgrade to Premium, you'll get access to multiple timer presets that I've fine-tuned based on user feedback.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingF2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseF2">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    Can I use this with multiple devices?
+                                </button>
+                            </h2>
+                            <div id="collapseF2" class="accordion-collapse collapse" data-bs-parent="#accordionFeatures">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            Absolutely! I built this to work seamlessly across all your devices. Start a session on your computer and check progress on your phone. Everything syncs to the cloud so you never lose your data.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingF3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseF3">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    What are guided eye exercises?
+                                </button>
+                            </h2>
+                            <div id="collapseF3" class="accordion-collapse collapse" data-bs-parent="#accordionFeatures">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            This is one of my favorite features! Premium users get 6 eye exercise routines that I researched and tested myself. They include focus shifting, eye circles, palming, and blinking exercises. I personally use these daily and they've made a huge difference for my eye comfort.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-5" id="premium">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="fw-bold">Premium Subscription</h2>
+                    <hr class="w-25 mx-auto">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="accordionPremium">
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingP1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseP1">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    What's the difference between Free and Premium?
+                                </button>
+                            </h2>
+                            <div id="collapseP1" class="accordion-collapse collapse" data-bs-parent="#accordionPremium">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            <strong>Free:</strong> Basic 20-20-20 timer, simple reminders, basic stats, 5 sessions/day<br>
+                                            <strong>Premium ($0.99/month):</strong> Unlimited sessions, advanced analytics, guided eye exercises I've researched, custom themes, direct access to me for support, data export, and calendar integration.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingP2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseP2">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    Can I cancel my Premium subscription anytime?
+                                </button>
+                            </h2>
+                            <div id="collapseP2" class="accordion-collapse collapse" data-bs-parent="#accordionPremium">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            Of course! I believe in earned loyalty, not forced commitments. Cancel anytime with one click - no fees, no tricks. Your Premium features stay active until your current billing period ends, then you automatically go back to the free plan.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-5" id="billing">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="fw-bold">Billing & Payments</h2>
+                    <hr class="w-25 mx-auto">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="accordionBilling">
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingB1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseB1">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    What payment methods do you accept?
+                                </button>
+                            </h2>
+                            <div id="collapseB1" class="accordion-collapse collapse" data-bs-parent="#accordionBilling">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            I accept all major credit cards (Visa, MasterCard, American Express) through Stripe, and PayPal. I chose these providers because they use the highest security standards to protect your payment information.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingB2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseB2">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    Do you offer refunds?
+                                </button>
+                            </h2>
+                            <div id="collapseB2" class="accordion-collapse collapse" data-bs-parent="#accordionBilling">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            Absolutely! I offer a 30-day money-back guarantee. If Premium doesn't work out for you for any reason, just email me within 30 days and I'll process a full refund immediately.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-5" id="technical">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="fw-bold">Technical Support</h2>
+                    <hr class="w-25 mx-auto">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="accordionTechnical">
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingT1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseT1">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    The timer isn't working properly. What should I do?
+                                </button>
+                            </h2>
+                            <div id="collapseT1" class="accordion-collapse collapse" data-bs-parent="#accordionTechnical">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            I've seen this a few times! Try these steps: 1) Refresh your browser, 2) Clear your browser cache, 3) Disable browser extensions, 4) Try a different browser. If it's still not working, email me directly with your browser and OS details - I'll personally help you get it sorted.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item faq-item">
+                            <h2 class="accordion-header" id="headingT2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapseT2">
+                                    <i class="fas fa-question-circle text-primary me-3"></i>
+                                    I'm not receiving email notifications. How do I fix this?
+                                </button>
+                            </h2>
+                            <div id="collapseT2" class="accordion-collapse collapse" data-bs-parent="#accordionTechnical">
+                                <div class="accordion-body">
+                                    <div class="d-flex">
+                                        <div class="me-3"><i class="fas fa-lightbulb text-warning"></i></div>
+                                        <div>
+                                            This happens sometimes! First, check your spam folder. Add founder@eyehealth2020.com to your contacts. Make sure email notifications are enabled in your Settings. Still having trouble? Email me directly and I'll verify your email address personally.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Still Have Questions -->
+<section class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold mb-4">Still Have Questions?</h2>
+                <p class="lead mb-4">
+                    Can't find what you're looking for? I'm here to help personally! 
+                    Every email gets read by me, not a support team.
+                </p>
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                    <a href="{% url 'accounts:contact' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Contact Support
+                    </a>
+                    <a href="{% url 'accounts:help_center' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-question-circle me-2"></i>Help Center
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <small>
+                        <i class="fas fa-clock me-1"></i>I usually respond within 4-8 hours
+                        <span class="mx-2">|</span>
+                        <i class="fas fa-heart me-1"></i>Personal attention to every question
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.getElementById('faqSearch').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.accordion-button').textContent.toLowerCase();
+            const answer = item.querySelector('.accordion-body').textContent.toLowerCase();
+            
+            if (question.includes(searchTerm) || answer.includes(searchTerm) || searchTerm === '') {
+                item.style.display = '';
+                // Expand matching items
+                if (searchTerm !== '' && (question.includes(searchTerm) || answer.includes(searchTerm))) {
+                    const collapseElement = item.querySelector('.accordion-collapse');
+                    if (!collapseElement.classList.contains('show')) {
+                        const button = item.querySelector('.accordion-button');
+                        button.click();
+                    }
+                }
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+
+    // Smooth scrolling for category links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

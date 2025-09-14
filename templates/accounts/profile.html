@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% load timezone_tags %}
+
+{% block title %}Profile - EyeHealth 20-20-20{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+    }
+    
+    .profile-card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .profile-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .stat-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: bold;
+        display: inline-block;
+        margin: 0.25rem;
+    }
+    
+    .eye-health-indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+    
+    .health-good { background-color: #28a745; }
+    .health-moderate { background-color: #ffc107; }
+    .health-needs-attention { background-color: #dc3545; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-user me-2"></i>My Profile
+                    </h1>
+                    <p class="text-muted mb-0">Manage your personal information and eye health data</p>
+                </div>
+                <div>
+                    <a href="{% url 'accounts:settings' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-cog me-2"></i>Account Settings
+                    </a>
+                    <a href="{% url 'timer:dashboard' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Profile Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card profile-card">
+                <div class="card-body text-center">
+                    <div class="profile-avatar">
+                        {{ user.first_name|first|default:user.username|first }}{{ user.last_name|first|default:"" }}
+                    </div>
+                    <h4 class="card-title">{{ user.first_name }} {{ user.last_name|default:"" }}</h4>
+                    <p class="text-muted mb-3">{{ user.email }}</p>
+                    
+                    {% if user.is_premium_user %}
+                        <span class="badge bg-warning mb-3">
+                            <i class="fas fa-crown me-1"></i>Premium User
+                        </span>
+                    {% else %}
+                        <span class="badge bg-secondary mb-3">Free User</span>
+                    {% endif %}
+                    
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h5 class="mb-1">{{ profile.current_streak_days }}</h5>
+                            <small class="text-muted">Current Streak</small>
+                        </div>
+                        <div class="col-4">
+                            <h5 class="mb-1">{{ profile.total_breaks_taken }}</h5>
+                            <small class="text-muted">Total Breaks</small>
+                        </div>
+                        <div class="col-4">
+                            <h5 class="mb-1">{{ profile.longest_streak_days }}</h5>
+                            <small class="text-muted">Best Streak</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eye Health Quick View -->
+            <div class="card profile-card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-eye me-2"></i>Eye Health Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        {% if profile.daily_screen_time_hours <= 6 %}
+                            <span class="eye-health-indicator health-good"></span>
+                        {% elif profile.daily_screen_time_hours <= 10 %}
+                            <span class="eye-health-indicator health-moderate"></span>
+                        {% else %}
+                            <span class="eye-health-indicator health-needs-attention"></span>
+                        {% endif %}
+                        Screen Time: {{ profile.daily_screen_time_hours }}h/day
+                    </div>
+                    <div class="mb-2">
+                        {% if profile.has_eye_strain %}
+                            <span class="eye-health-indicator health-needs-attention"></span>
+                            Experiences eye strain
+                        {% else %}
+                            <span class="eye-health-indicator health-good"></span>
+                            No eye strain reported
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.wears_glasses %}
+                            <i class="fas fa-glasses me-2"></i>Wears glasses/contacts
+                        {% else %}
+                            <i class="fas fa-eye me-2"></i>No corrective lenses
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="col-lg-8">
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Edit Profile Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Personal Information -->
+                        <div class="row mb-4">
+                            <div class="col-12 mb-3">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-user me-2"></i>Personal Information
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.age.id_for_label }}" class="form-label">Age</label>
+                                {{ form.age }}
+                                {% if form.age.help_text %}
+                                    <div class="form-text">{{ form.age.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.occupation.id_for_label }}" class="form-label">Occupation</label>
+                                {{ form.occupation }}
+                                {% if form.occupation.help_text %}
+                                    <div class="form-text">{{ form.occupation.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.daily_screen_time_hours.id_for_label }}" class="form-label">Daily Screen Time (hours)</label>
+                                {{ form.daily_screen_time_hours }}
+                                <div class="form-text">Average hours per day looking at screens</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_eye_checkup.id_for_label }}" class="form-label">Last Eye Checkup</label>
+                                {{ form.last_eye_checkup }}
+                                <div class="form-text">When did you last visit an eye doctor?</div>
+                            </div>
+                        </div>
+
+                        <!-- Eye Health -->
+                        <div class="row mb-4">
+                            <div class="col-12 mb-3">
+                                <h6 class="text-success mb-3">
+                                    <i class="fas fa-eye me-2"></i>Eye Health Information
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form.wears_glasses }}
+                                    <label class="form-check-label" for="{{ form.wears_glasses.id_for_label }}">
+                                        <i class="fas fa-glasses me-2"></i>I wear glasses or contact lenses
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form.has_eye_strain }}
+                                    <label class="form-check-label" for="{{ form.has_eye_strain.id_for_label }}">
+                                        <i class="fas fa-tired me-2"></i>I experience digital eye strain
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferences -->
+                        <div class="row mb-4">
+                            <div class="col-12 mb-3">
+                                <h6 class="text-info mb-3">
+                                    <i class="fas fa-cog me-2"></i>Preferences
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.timezone.id_for_label }}" class="form-label">Timezone</label>
+                                {{ form.timezone }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.preferred_language.id_for_label }}" class="form-label">Preferred Language</label>
+                                {{ form.preferred_language }}
+                            </div>
+                        </div>
+
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="card profile-card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Account Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>Member Since:</strong><br>
+                            <span class="text-muted">{{ user.date_joined|date:"F j, Y" }}</span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Subscription:</strong><br>
+                            {% if user.is_premium_user %}
+                                <span class="badge bg-warning">Premium</span>
+                                {% if user.subscription_end_date %}
+                                    <small class="text-muted d-block">Expires: {{ user.subscription_end_date|date:"F j, Y" }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary">Free</span>
+                                <a href="{% url 'accounts:pricing' %}" class="btn btn-sm btn-outline-warning ms-2">
+                                    <i class="fas fa-arrow-up me-1"></i>Upgrade
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Email Verified:</strong><br>
+                            {% if user.is_verified %}
+                                <span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>
+                            {% else %}
+                                <span class="text-warning"><i class="fas fa-exclamation-circle me-1"></i>Not Verified</span>
+                                <button class="btn btn-sm btn-outline-primary ms-2">Send Verification</button>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Total Screen Time:</strong><br>
+                            <span class="text-muted">{{ profile.total_screen_time_minutes|div:60|floatformat:1 }} hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Show success message if form was submitted
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    // Add helpful tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+{% endblock %}

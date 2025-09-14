@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Settings - EyeHealth 20-20-20{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .settings-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .danger-zone {
+        border: 2px solid #dc3545;
+        border-radius: 0.5rem;
+        background: rgba(220, 53, 69, 0.05);
+    }
+    
+    .section-divider {
+        border-top: 2px solid #e9ecef;
+        margin: 2rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-cog me-2"></i>Account Settings
+                    </h1>
+                    <p class="text-muted mb-0">Manage your notification preferences and account settings</p>
+                </div>
+                <div>
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-user me-2"></i>Edit Profile
+                    </a>
+                    <a href="{% url 'timer:dashboard' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Notification Settings -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card settings-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bell me-2"></i>Notification Preferences
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="email_notifications" 
+                                           name="email_notifications" {% if user.email_notifications %}checked{% endif %}>
+                                    <label class="form-check-label" for="email_notifications">
+                                        <i class="fas fa-envelope me-2"></i>Email Notifications
+                                    </label>
+                                </div>
+                                <div class="form-text">Receive general notifications via email</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="break_reminders" 
+                                           name="break_reminders" {% if user.break_reminders %}checked{% endif %}>
+                                    <label class="form-check-label" for="break_reminders">
+                                        <i class="fas fa-coffee me-2"></i>Break Reminders
+                                    </label>
+                                </div>
+                                <div class="form-text">Get reminded to take your 20-20-20 breaks</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="daily_summary" 
+                                           name="daily_summary" {% if user.daily_summary %}checked{% endif %}>
+                                    <label class="form-check-label" for="daily_summary">
+                                        <i class="fas fa-chart-line me-2"></i>Daily Summary
+                                    </label>
+                                </div>
+                                <div class="form-text">Daily email with your break compliance stats</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="weekly_report" 
+                                           name="weekly_report" {% if user.weekly_report %}checked{% endif %}>
+                                    <label class="form-check-label" for="weekly_report">
+                                        <i class="fas fa-calendar-week me-2"></i>Weekly Report
+                                    </label>
+                                </div>
+                                <div class="form-text">Weekly eye health progress report</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="reminder_sound" 
+                                           name="reminder_sound" {% if user.reminder_sound %}checked{% endif %}>
+                                    <label class="form-check-label" for="reminder_sound">
+                                        <i class="fas fa-volume-up me-2"></i>Sound Reminders
+                                    </label>
+                                </div>
+                                <div class="form-text">Play sound when break time arrives</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Work Schedule Settings -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card settings-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Work Schedule
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="work_start_time" class="form-label">Work Start Time</label>
+                                <input type="time" class="form-control" id="work_start_time" name="work_start_time" 
+                                       value="{% if user.work_start_time %}{{ user.work_start_time|time:'H:i' }}{% endif %}">
+                                <div class="form-text">When do you typically start working?</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="work_end_time" class="form-label">Work End Time</label>
+                                <input type="time" class="form-control" id="work_end_time" name="work_end_time" 
+                                       value="{% if user.work_end_time %}{{ user.work_end_time|time:'H:i' }}{% endif %}">
+                                <div class="form-text">When do you typically stop working?</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="break_duration" class="form-label">Default Break Duration</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="break_duration" name="break_duration" 
+                                           value="{{ user.break_duration }}" min="10" max="60">
+                                    <span class="input-group-text">seconds</span>
+                                </div>
+                                <div class="form-text">Standard 20-20-20 break is 20 seconds</div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Setting your work hours helps us send reminders only during your working time.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card settings-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-circle me-2"></i>Account Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                                <div class="form-text">Contact support to change your email address</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                                <div class="form-text">Username cannot be changed</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Account Type</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" value="{% if user.is_premium_user %}Premium{% else %}Free{% endif %}" disabled>
+                                    {% if not user.is_premium_user %}
+                                        <a href="{% url 'accounts:pricing' %}" class="btn btn-outline-warning">
+                                            <i class="fas fa-arrow-up me-1"></i>Upgrade
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Member Since</label>
+                                <input type="text" class="form-control" value="{{ user.date_joined|date:'F j, Y' }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy & Security -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card settings-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>Privacy & Security
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'accounts:contact' %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-key me-2"></i>Change Password
+                                </a>
+                                <div class="form-text mt-2">Contact support to update your password</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'accounts:contact' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-download me-2"></i>Download My Data
+                                </a>
+                                <div class="form-text mt-2">Contact support to export your data</div>
+                            </div>
+                        </div>
+                        <div class="section-divider"></div>
+                        <h6 class="mb-3">Data Sharing Preferences</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="analytics_sharing" checked disabled>
+                            <label class="form-check-label" for="analytics_sharing">
+                                <i class="fas fa-chart-bar me-2"></i>Anonymous usage analytics
+                            </label>
+                        </div>
+                        <div class="form-text">Help us improve the service by sharing anonymous usage data</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <!-- Additional Links -->
+                        <a href="{% url 'accounts:help_center' %}" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-question-circle me-2"></i>Help Center
+                        </a>
+                        <a href="{% url 'accounts:contact' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-envelope me-2"></i>Contact Support
+                        </a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card danger-zone">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Danger Zone
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6>Delete Account</h6>
+                                <p class="text-muted mb-0">
+                                    Permanently delete your account and all associated data. This action cannot be undone.
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                    <i class="fas fa-trash-alt me-2"></i>Delete Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <strong>Warning:</strong> This action cannot be undone!
+                </div>
+                <p>Are you sure you want to delete your account? This will permanently remove:</p>
+                <ul>
+                    <li>All your timer sessions and statistics</li>
+                    <li>Your profile and settings</li>
+                    <li>Any premium subscription</li>
+                    <li>All associated data</li>
+                </ul>
+                <div class="form-group mt-3">
+                    <label for="confirmEmail">Type your email address to confirm:</label>
+                    <input type="email" class="form-control" id="confirmEmail" placeholder="{{ user.email }}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                    <i class="fas fa-trash-alt me-2"></i>Delete My Account
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Show success message if form was submitted
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    // Confirm email for account deletion
+    const confirmEmailInput = document.getElementById('confirmEmail');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    
+    confirmEmailInput.addEventListener('input', function() {
+        if (this.value === '{{ user.email }}') {
+            confirmDeleteBtn.disabled = false;
+            confirmDeleteBtn.classList.remove('btn-secondary');
+            confirmDeleteBtn.classList.add('btn-danger');
+        } else {
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.classList.remove('btn-danger');
+            confirmDeleteBtn.classList.add('btn-secondary');
+        }
+    });
+
+    // Handle account deletion
+    confirmDeleteBtn.addEventListener('click', function() {
+        if (confirmEmailInput.value === '{{ user.email }}') {
+            // In a real implementation, this would submit to a delete endpoint
+            alert('Account deletion is not implemented in this demo. Please contact support.');
+        }
+    });
+
+    // Work schedule validation
+    const startTimeInput = document.getElementById('work_start_time');
+    const endTimeInput = document.getElementById('work_end_time');
+    
+    function validateWorkSchedule() {
+        if (startTimeInput.value && endTimeInput.value) {
+            const start = new Date('1970-01-01 ' + startTimeInput.value);
+            const end = new Date('1970-01-01 ' + endTimeInput.value);
+            
+            if (start >= end) {
+                endTimeInput.setCustomValidity('End time must be after start time');
+            } else {
+                endTimeInput.setCustomValidity('');
+            }
+        }
+    }
+    
+    startTimeInput.addEventListener('change', validateWorkSchedule);
+    endTimeInput.addEventListener('change', validateWorkSchedule);
+</script>
+{% endblock %}

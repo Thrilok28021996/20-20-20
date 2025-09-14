@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+
+{% block title %}Service Status - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">System Status</h1>
+                <p class="lead">
+                    Real-time status of EyeHealth 20-20-20 services and infrastructure.
+                </p>
+                
+                <!-- Overall Status -->
+                <div class="mt-4">
+                    <div class="alert alert-success d-inline-flex align-items-center" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>All Systems Operational</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Service Status Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold text-center mb-4">Service Components</h2>
+                <p class="text-center text-muted">
+                    Current operational status of all EyeHealth 20-20-20 services.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card shadow">
+                    <div class="card-body p-0">
+                        {% for service in services %}
+                        <div class="d-flex align-items-center justify-content-between p-4 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    {% if service.status == 'operational' %}
+                                        <i class="fas fa-check-circle text-success fa-lg"></i>
+                                    {% elif service.status == 'degraded' %}
+                                        <i class="fas fa-exclamation-triangle text-warning fa-lg"></i>
+                                    {% elif service.status == 'down' %}
+                                        <i class="fas fa-times-circle text-danger fa-lg"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">{{ service.name }}</h5>
+                                    <small class="text-muted">
+                                        {% if service.status == 'operational' %}
+                                            Fully operational
+                                        {% elif service.status == 'degraded' %}
+                                            Experiencing issues
+                                        {% elif service.status == 'down' %}
+                                            Service unavailable
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge 
+                                    {% if service.status == 'operational' %}bg-success
+                                    {% elif service.status == 'degraded' %}bg-warning
+                                    {% elif service.status == 'down' %}bg-danger
+                                    {% endif %} mb-1">
+                                    {{ service.status|title }}
+                                </span>
+                                <div class="small text-muted">
+                                    Uptime: {{ service.uptime }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Uptime Statistics -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold mb-3">Uptime Statistics</h2>
+                <p class="text-muted">
+                    Our commitment to reliability over the past 90 days.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body p-4">
+                        <h2 class="text-success mb-0">99.9%</h2>
+                        <p class="text-muted mb-0">Overall Uptime</p>
+                        <small class="text-muted">Last 90 days</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body p-4">
+                        <h2 class="text-primary mb-0">2.3s</h2>
+                        <p class="text-muted mb-0">Avg Response Time</p>
+                        <small class="text-muted">Global average</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body p-4">
+                        <h2 class="text-warning mb-0">3</h2>
+                        <p class="text-muted mb-0">Incidents</p>
+                        <small class="text-muted">Last 90 days</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center h-100">
+                    <div class="card-body p-4">
+                        <h2 class="text-info mb-0">12min</h2>
+                        <p class="text-muted mb-0">Avg Resolution</p>
+                        <small class="text-muted">Issue response time</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Incidents -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold text-center mb-4">Recent Incidents</h2>
+                <p class="text-center text-muted">
+                    A chronological list of recent incidents and maintenance activities.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                {% if incidents %}
+                    {% for incident in incidents %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start">
+                                <div class="me-3">
+                                    {% if incident.status == 'resolved' %}
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    {% elif incident.status == 'investigating' %}
+                                        <i class="fas fa-search text-warning"></i>
+                                    {% elif incident.status == 'monitoring' %}
+                                        <i class="fas fa-eye text-info"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h5 class="mb-1">{{ incident.title }}</h5>
+                                            <p class="mb-2 text-muted">{{ incident.description }}</p>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge 
+                                                {% if incident.status == 'resolved' %}bg-success
+                                                {% elif incident.status == 'investigating' %}bg-warning
+                                                {% elif incident.status == 'monitoring' %}bg-info
+                                                {% endif %}">
+                                                {{ incident.status|title }}
+                                            </span>
+                                            <div class="small text-muted mt-1">
+                                                {{ incident.date }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center">
+                        <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">No Recent Incidents</h4>
+                        <p class="text-muted">All systems have been running smoothly!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Status Updates Subscription -->
+<section class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold mb-4">Stay Updated</h2>
+                <p class="lead mb-4">
+                    Subscribe to receive notifications about service status changes and planned maintenance.
+                </p>
+                
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="input-group">
+                            <input type="email" class="form-control form-control-lg" 
+                                   placeholder="Enter your email address">
+                            <button class="btn btn-success btn-lg" type="button">
+                                <i class="fas fa-bell me-1"></i>Subscribe
+                            </button>
+                        </div>
+                        <small class="text-light d-block mt-2">
+                            We'll only email you about service updates. No spam.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Support -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="fw-bold mb-3">Experiencing Issues?</h3>
+                <p class="text-muted mb-4">
+                    If you're experiencing problems not reflected on this status page, 
+                    please don't hesitate to reach out to our support team.
+                </p>
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                    <a href="{% url 'accounts:contact' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Contact Support
+                    </a>
+                    <a href="{% url 'accounts:help_center' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-question-circle me-2"></i>Help Center
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh the page every 5 minutes to show latest status
+    setTimeout(function() {
+        location.reload();
+    }, 300000); // 5 minutes
+
+    // Add timestamp to show when page was last updated
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date().toLocaleString();
+        const statusElement = document.querySelector('.alert-success');
+        if (statusElement) {
+            const timestamp = document.createElement('div');
+            timestamp.className = 'small mt-2';
+            timestamp.textContent = `Last updated: ${now}`;
+            statusElement.appendChild(timestamp);
+        }
+    });
+</script>
+{% endblock %}

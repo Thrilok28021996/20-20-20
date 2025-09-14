@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up Free - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Create Your Free Account
+                    </h3>
+                    <p class="mb-0 mt-2">
+                        <small>Start protecting your vision in 30 seconds</small>
+                    </p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-1"></i>First Name
+                                </label>
+                                <input type="text"
+                                       class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                                       name="first_name"
+                                       id="{{ form.first_name.id_for_label }}"
+                                       placeholder="Enter your first name"
+                                       value="{{ form.first_name.value|default:'' }}">
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.first_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Last Name
+                                </label>
+                                <input type="text"
+                                       class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                                       name="last_name"
+                                       id="{{ form.last_name.id_for_label }}"
+                                       placeholder="Enter your last name"
+                                       value="{{ form.last_name.value|default:'' }}">
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.last_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>Email Address
+                            </label>
+                            <input type="email"
+                                   class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                                   name="email"
+                                   id="{{ form.email.id_for_label }}"
+                                   placeholder="Enter your email address"
+                                   value="{{ form.email.value|default:'' }}"
+                                   required>
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.email.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="fas fa-at me-1"></i>Username
+                            </label>
+                            <input type="text"
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                                   name="username"
+                                   id="{{ form.username.id_for_label }}"
+                                   placeholder="Choose a unique username"
+                                   value="{{ form.username.value|default:'' }}"
+                                   required>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <small>Choose a unique username (letters, numbers, and @/./+/-/_ only)</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Password
+                            </label>
+                            <input type="password"
+                                   class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                                   name="password1"
+                                   id="{{ form.password1.id_for_label }}"
+                                   placeholder="Create a secure password"
+                                   required>
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <small>Your password must contain at least 8 characters and can't be entirely numeric.</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Confirm Password
+                            </label>
+                            <input type="password"
+                                   class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                                   name="password2"
+                                   id="{{ form.password2.id_for_label }}"
+                                   placeholder="Confirm your password"
+                                   required>
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="agree_terms" name="agree_terms" required>
+                            <label class="form-check-label" for="agree_terms">
+                                I agree to the <a href="{% url 'accounts:terms' %}" class="text-decoration-none">Terms of Service</a>
+                                and <a href="{% url 'accounts:privacy' %}" class="text-decoration-none">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100 mb-3">
+                            <i class="fas fa-rocket me-2"></i>Create Account & Start Free
+                        </button>
+                        
+                        <div class="text-center">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Your data is secure and will never be shared
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <p class="mb-0">
+                        Already have an account? 
+                        <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-bold">
+                            Sign in here
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Features Preview -->
+            <div class="card mt-3 border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-3">What you'll get with your free account:</h6>
+                    <div class="row text-start">
+                        <div class="col-md-6">
+                            <small class="text-success">
+                                <i class="fas fa-check me-2"></i>5 daily timer sessions
+                            </small><br>
+                            <small class="text-success">
+                                <i class="fas fa-check me-2"></i>Basic progress tracking
+                            </small><br>
+                            <small class="text-success">
+                                <i class="fas fa-check me-2"></i>Break reminders
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-success">
+                                <i class="fas fa-check me-2"></i>Email notifications
+                            </small><br>
+                            <small class="text-success">
+                                <i class="fas fa-check me-2"></i>Desktop alerts
+                            </small><br>
+                            <small class="text-success">
+                                <i class="fas fa-check me-2"></i>Mobile-friendly interface
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

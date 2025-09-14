@@ -1,0 +1,590 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Real-Time Dashboard - EyeHealth 20-20-20{% endblock %}
+
+{% block extra_css %}
+<style>
+    .real-time-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        color: white;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .real-time-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .activity-feed {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .activity-item {
+        padding: 0.75rem;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .activity-item.new {
+        background-color: #e7f3ff;
+        animation: highlightNew 3s ease-out;
+    }
+    
+    @keyframes highlightNew {
+        0% { background-color: #d4edda; }
+        100% { background-color: transparent; }
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+    
+    .satisfaction-meter {
+        position: relative;
+        height: 20px;
+        background: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .satisfaction-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+        border-radius: 10px;
+        transition: width 0.5s ease;
+    }
+    
+    .live-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        background: #28a745;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: blink 1.5s infinite;
+    }
+    
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 200px;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-1">
+                <span class="live-indicator"></span>
+                Admin Real-Time Dashboard
+            </h1>
+            <p class="text-muted mb-0">System-wide live metrics updating every 30 seconds</p>
+        </div>
+    </div>
+
+    <!-- Real-Time Metrics Row -->
+    <div class="row mb-4">
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="real-time-card text-center">
+                <div class="metric-value pulse" id="active-users-count">-</div>
+                <div class="metric-label">Active Users</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="real-time-card text-center">
+                <div class="metric-value" id="breaks-today-count">-</div>
+                <div class="metric-label">Breaks Today</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="real-time-card text-center">
+                <div class="metric-value" id="work-minutes-count">-</div>
+                <div class="metric-label">Work Minutes</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="real-time-card text-center">
+                <div class="metric-value" id="users-working-count">-</div>
+                <div class="metric-label">Users Working</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="real-time-card text-center">
+                <div class="metric-value" id="users-break-count">-</div>
+                <div class="metric-label">Users on Break</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="real-time-card text-center">
+                <div class="metric-value" id="satisfaction-score">-</div>
+                <div class="metric-label">Satisfaction</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- User Satisfaction Section -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-heart text-danger me-2"></i>User Satisfaction
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Average Rating</small>
+                            <div class="h4" id="avg-rating">
+                                <span id="rating-value">-</span>/5
+                                <span id="rating-stars" class="text-warning ms-2"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">NPS Score</small>
+                            <div class="h4" id="nps-score">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="satisfaction-meter mb-3">
+                        <div class="satisfaction-fill" id="satisfaction-bar" style="width: 0%"></div>
+                    </div>
+                    
+                    <!-- Quick Rating Form -->
+                    <div class="mt-4">
+                        <h6>Rate Your Experience:</h6>
+                        <div class="rating-buttons mb-3">
+                            {% for i in "12345" %}
+                            <button class="btn btn-outline-warning rating-btn" 
+                                    onclick="submitQuickRating({{ i }})" data-rating="{{ i }}">
+                                {% for j in "12345" %}
+                                    {% if forloop.counter <= i|add:0 %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Activity Feed -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-stream me-2"></i>Live Activity
+                    </h5>
+                    <small class="text-muted">Updates in real-time</small>
+                </div>
+                <div class="card-body p-0">
+                    <div class="activity-feed" id="activity-feed">
+                        <div class="text-center p-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Loading activities...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Metrics -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Your Metrics Today
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="text-center">
+                                <div class="h3 text-primary" id="user-work-minutes">-</div>
+                                <small class="text-muted">Work Minutes</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="text-center">
+                                <div class="h3 text-success" id="user-breaks">-</div>
+                                <small class="text-muted">Breaks Taken</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="text-center">
+                                <div class="h3 text-warning" id="user-intervals">-</div>
+                                <small class="text-muted">Intervals</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="text-center">
+                                <div class="h3 text-info" id="user-compliance">-%</div>
+                                <small class="text-muted">Compliance Rate</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast for Ratings -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="rating-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-star text-warning me-2"></i>
+            <strong class="me-auto">Rating Submitted</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            Thank you for your feedback! Your rating helps us improve.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let updateInterval;
+    let lastActivityTimestamp = null;
+    
+    class RealTimeDashboard {
+        constructor() {
+            this.isActive = true;
+            this.updateInterval = 30000; // 30 seconds
+            this.init();
+        }
+        
+        init() {
+            this.fetchInitialData();
+            this.startUpdateLoop();
+            this.setupVisibilityHandler();
+        }
+        
+        fetchInitialData() {
+            // Fetch both global and user metrics
+            Promise.all([
+                this.fetchRealTimeMetrics(),
+                this.fetchActivityFeed(),
+                this.fetchUserMetrics()
+            ]).then(() => {
+                console.log('Initial data loaded');
+            });
+        }
+        
+        startUpdateLoop() {
+            updateInterval = setInterval(() => {
+                if (this.isActive) {
+                    this.fetchRealTimeMetrics();
+                    this.fetchActivityFeed();
+                    this.fetchUserMetrics();
+                }
+            }, this.updateInterval);
+        }
+        
+        setupVisibilityHandler() {
+            document.addEventListener('visibilitychange', () => {
+                this.isActive = !document.hidden;
+                if (this.isActive) {
+                    // Refresh immediately when tab becomes active
+                    this.fetchRealTimeMetrics();
+                    this.fetchActivityFeed();
+                }
+            });
+        }
+        
+        async fetchRealTimeMetrics() {
+            try {
+                const response = await fetch('{% url "analytics:real_time_metrics_api" %}');
+                const data = await response.json();
+                
+                if (data.error) {
+                    console.error('Access denied:', data.error);
+                    window.location.href = '{% url "timer:dashboard" %}';
+                    return;
+                }
+                
+                if (data.global_metrics) {
+                    this.updateGlobalMetrics(data.global_metrics);
+                } else {
+                    // This shouldn't happen for admin users, but handle gracefully
+                    console.warn('No global metrics available');
+                }
+            } catch (error) {
+                console.error('Error fetching real-time metrics:', error);
+            }
+        }
+        
+        async fetchActivityFeed() {
+            try {
+                const response = await fetch('{% url "analytics:live_feed_api" %}');
+                const data = await response.json();
+                this.updateActivityFeed(data.activities);
+            } catch (error) {
+                console.error('Error fetching activity feed:', error);
+            }
+        }
+        
+        async fetchUserMetrics() {
+            try {
+                const response = await fetch('{% url "analytics:dashboard_metrics_api" %}');
+                const data = await response.json();
+                this.updateUserMetrics(data.today);
+            } catch (error) {
+                console.error('Error fetching user metrics:', error);
+            }
+        }
+        
+        updateGlobalMetrics(metrics) {
+            // Update metric values with smooth counting animation
+            this.animateValue('active-users-count', metrics.active_users);
+            this.animateValue('breaks-today-count', metrics.total_breaks_today);
+            this.animateValue('work-minutes-count', metrics.total_work_minutes_today);
+            this.animateValue('users-working-count', metrics.users_working);
+            this.animateValue('users-break-count', metrics.users_in_break);
+            
+            // Update satisfaction metrics
+            const satisfaction = metrics.average_satisfaction;
+            const satisfactionPercent = (satisfaction / 5) * 100;
+            
+            document.getElementById('satisfaction-score').textContent = satisfaction.toFixed(1);
+            document.getElementById('rating-value').textContent = satisfaction.toFixed(1);
+            document.getElementById('nps-score').textContent = metrics.nps_score;
+            document.getElementById('satisfaction-bar').style.width = satisfactionPercent + '%';
+            
+            // Update star rating display
+            this.updateStarRating(satisfaction);
+        }
+        
+        updateUserMetrics(metrics) {
+            document.getElementById('user-work-minutes').textContent = metrics.work_minutes;
+            document.getElementById('user-breaks').textContent = metrics.breaks_taken;
+            document.getElementById('user-intervals').textContent = metrics.intervals_completed;
+            document.getElementById('user-compliance').textContent = metrics.compliance_rate.toFixed(1) + '%';
+        }
+        
+        updateActivityFeed(activities) {
+            const feedContainer = document.getElementById('activity-feed');
+            
+            if (activities.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="text-center p-4">
+                        <i class="fas fa-coffee fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">No recent activities</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            activities.forEach((activity, index) => {
+                const isNew = lastActivityTimestamp && 
+                    new Date(activity.timestamp) > new Date(lastActivityTimestamp);
+                
+                html += `
+                    <div class="activity-item ${isNew ? 'new' : ''}" data-timestamp="${activity.timestamp}">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>${activity.user}</strong>
+                                <span class="text-muted">${activity.activity_type}</span>
+                            </div>
+                            <small class="text-muted">${activity.time_ago}</small>
+                        </div>
+                        ${this.renderActivityDetails(activity)}
+                    </div>
+                `;
+            });
+            
+            feedContainer.innerHTML = html;
+            
+            // Update last activity timestamp
+            if (activities.length > 0) {
+                lastActivityTimestamp = activities[0].timestamp;
+            }
+        }
+        
+        renderActivityDetails(activity) {
+            let details = '';
+            const data = activity.activity_data;
+            
+            switch (activity.activity_type) {
+                case 'break_taken':
+                    const compliance = data.compliant ? 'Compliant' : 'Non-compliant';
+                    details = `<small class="text-muted d-block">${compliance} break, ${data.duration_seconds}s duration</small>`;
+                    break;
+                case 'satisfaction_rating':
+                    const stars = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
+                    details = `<small class="text-warning d-block">${stars} ${data.rating}/5 rating</small>`;
+                    break;
+                case 'session_started':
+                    details = `<small class="text-muted d-block">Started interval ${data.interval_number}</small>`;
+                    break;
+            }
+            
+            return details;
+        }
+        
+        updateStarRating(rating) {
+            const starsContainer = document.getElementById('rating-stars');
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+            
+            let starsHtml = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    starsHtml += '<i class="fas fa-star"></i>';
+                } else if (i === fullStars && halfStar) {
+                    starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            starsContainer.innerHTML = starsHtml;
+        }
+        
+        animateValue(elementId, targetValue, duration = 500) {
+            const element = document.getElementById(elementId);
+            const currentValue = parseInt(element.textContent.replace(/\D/g, '')) || 0;
+            
+            if (currentValue === targetValue) return;
+            
+            const startValue = currentValue;
+            const difference = targetValue - startValue;
+            const startTime = performance.now();
+            
+            const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function for smooth animation
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const currentAnimatedValue = Math.round(startValue + (difference * easeOutCubic));
+                
+                element.textContent = currentAnimatedValue.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        }
+    }
+    
+    // Quick rating submission
+    function submitQuickRating(rating) {
+        fetch('{% url "analytics:submit_rating" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                rating: rating,
+                context: 'general'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success toast
+                const toast = new bootstrap.Toast(document.getElementById('rating-toast'));
+                toast.show();
+                
+                // Update button states
+                document.querySelectorAll('.rating-btn').forEach(btn => {
+                    btn.classList.remove('btn-warning');
+                    btn.classList.add('btn-outline-warning');
+                });
+                
+                const selectedBtn = document.querySelector(`[data-rating="${rating}"]`);
+                selectedBtn.classList.remove('btn-outline-warning');
+                selectedBtn.classList.add('btn-warning');
+                
+                // Refresh metrics after a short delay
+                setTimeout(() => {
+                    window.dashboard.fetchRealTimeMetrics();
+                }, 1000);
+            } else {
+                console.error('Rating submission failed:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting rating:', error);
+        });
+    }
+    
+    // Track page activity
+    function trackActivity(eventType, eventData = {}) {
+        fetch('{% url "analytics:track_activity" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                event_type: eventType,
+                event_data: eventData
+            })
+        }).catch(error => {
+            console.error('Error tracking activity:', error);
+        });
+    }
+    
+    // Initialize dashboard when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        window.dashboard = new RealTimeDashboard();
+        
+        // Track page view
+        trackActivity('feature_used', { feature: 'real_time_dashboard' });
+    });
+    
+    // Cleanup when page is about to be closed
+    window.addEventListener('beforeunload', function() {
+        if (updateInterval) {
+            clearInterval(updateInterval);
+        }
+    });
+</script>
+{% endblock %}

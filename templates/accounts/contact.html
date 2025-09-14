@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">Get in Touch</h1>
+                <p class="lead">
+                    Have a question or need help? I personally read and respond to every message. 
+                    As the founder, I'm here to help you succeed with better eye health.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form & Info Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-white">
+                        <h3 class="mb-0"><i class="fas fa-envelope me-2"></i>Send Me a Message</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" action="{% url 'accounts:contact' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject *</label>
+                                <select class="form-select" id="subject" name="subject" required>
+                                    <option value="">Select a subject...</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="support">Technical Support</option>
+                                    <option value="billing">Billing Question</option>
+                                    <option value="feature">Feature Request</option>
+                                    <option value="bug">Bug Report</option>
+                                    <option value="partnership">Partnership</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message *</label>
+                                <textarea class="form-control" id="message" name="message" rows="6" 
+                                          placeholder="Tell me how I can help you..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="col-lg-4">
+                <!-- Contact Details -->
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="mb-4"><i class="fas fa-info-circle me-2"></i>Contact Information</h4>
+                        
+                        <div class="d-flex mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-envelope text-primary fa-lg"></i>
+                            </div>
+                            <div>
+                                <strong>Direct Email</strong><br>
+                                <a href="mailto:founder@eyehealth2020.com">founder@eyehealth2020.com</a><br>
+                                <small class="text-muted">I personally respond to every email</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-clock text-primary fa-lg"></i>
+                            </div>
+                            <div>
+                                <strong>My Schedule</strong><br>
+                                Monday - Friday: 9:00 AM - 6:00 PM EST<br>
+                                Saturday: 10:00 AM - 4:00 PM EST<br>
+                                <small class="text-muted">I'm usually online during these hours</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex mb-3">
+                            <div class="me-3">
+                                <i class="fas fa-reply text-primary fa-lg"></i>
+                            </div>
+                            <div>
+                                <strong>Response Time</strong><br>
+                                I typically respond within 4-8 hours<br>
+                                (Often much faster during weekdays)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Help -->
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3"><i class="fas fa-question-circle me-2"></i>Need Quick Help?</h4>
+                        <p class="text-muted mb-3">Check these resources I've prepared for common questions:</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'accounts:help_center' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-life-ring me-2"></i>Help Center
+                            </a>
+                            <a href="{% url 'accounts:faq' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-question me-2"></i>FAQ
+                            </a>
+                            <a href="{% url 'accounts:documentation' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-book me-2"></i>Documentation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Links -->
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3"><i class="fas fa-share-alt me-2"></i>Connect With Me</h4>
+                        <div class="d-flex gap-3">
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Common Questions Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold mb-3">Questions I Get Often</h2>
+                <p class="text-muted">
+                    Here are the questions I'm asked most frequently. 
+                    Your answer might be here!
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-primary">How do I get started?</h5>
+                        <p class="card-text text-muted">
+                            I've made it super simple - create a free account, go to your dashboard, 
+                            and click "Start Session". That's it! You'll get your first break reminder in 20 minutes.
+                        </p>
+                        <a href="{% url 'accounts:help_center' %}" class="text-primary text-decoration-none">
+                            Learn more <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-primary">What's included with Premium?</h5>
+                        <p class="card-text text-muted">
+                            For just $0.99/month, you get unlimited sessions, detailed analytics, 
+                            guided eye exercises I've researched, custom themes, and direct access to me for support.
+                        </p>
+                        <a href="{% url 'accounts:pricing' %}" class="text-primary text-decoration-none">
+                            View pricing <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-primary">Is my data secure?</h5>
+                        <p class="card-text text-muted">
+                            Absolutely! I use industry-standard encryption and have a strict no-sharing policy. 
+                            Your data stays private - I don't sell or share anything with third parties.
+                        </p>
+                        <a href="{% url 'accounts:privacy' %}" class="text-primary text-decoration-none">
+                            Privacy policy <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title text-primary">Can I cancel anytime?</h5>
+                        <p class="card-text text-muted">
+                            Of course! I believe in earned loyalty, not forced commitments. 
+                            Cancel anytime with one click - no fees, no hassle.
+                        </p>
+                        <a href="{% url 'accounts:terms' %}" class="text-primary text-decoration-none">
+                            Terms of service <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

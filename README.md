@@ -22,7 +22,7 @@ Based on comprehensive market research:
 ### User Management
 - **Custom User Authentication**: Email-based registration with secure password handling
 - **User Profiles**: Personalized settings for work hours, preferences, and demographics
-- **Role-Based Access**: Free, Pro, and Enterprise subscription tiers
+- **Role-Based Access**: Free and Premium subscription tiers
 
 ### Analytics & Reporting
 - **Daily Statistics**: Work minutes, intervals completed, breaks taken, compliance rates
@@ -31,9 +31,9 @@ Based on comprehensive market research:
 - **Goal Setting**: Customizable targets for daily/weekly usage
 
 ### Subscription Management
-- **Freemium Model**: Free tier with 5 daily sessions, premium tiers for unlimited use
+- **Freemium Model**: Free tier with 12 intervals per day (4 hours), Premium tier for unlimited use
 - **Stripe Integration**: Secure payment processing with subscription management
-- **Feature Gating**: Advanced analytics, custom messages, API access for paid tiers
+- **Feature Gating**: Advanced analytics, custom messages for Premium tier
 - **Billing Management**: Automated invoicing, payment tracking, and renewal handling
 
 ### Notification System
@@ -149,24 +149,21 @@ REDIS_URL=redis://localhost:6379/0
 
 ### Subscription Tiers
 
-| Feature | Free | Pro ($4.99/mo) | Enterprise ($149/yr) |
-|---------|------|----------------|---------------------|
-| Daily Sessions | 5 | Unlimited | Unlimited |
-| Basic Analytics | ✅ | ✅ | ✅ |
-| Advanced Analytics | ❌ | ✅ | ✅ |
-| Custom Break Messages | ❌ | ✅ | ✅ |
-| Email Notifications | ✅ | ✅ | ✅ |
-| API Access | ❌ | ✅ | ✅ |
-| Priority Support | ❌ | ✅ | ✅ |
-| Team Management | ❌ | ❌ | ✅ |
-| White Labeling | ❌ | ❌ | ✅ |
+| Feature | Free | Premium ($0.99/mo) |
+|---------|------|-------------------|
+| Daily Intervals | 12 (4 hours) | Unlimited |
+| Basic Analytics | ✅ | ✅ |
+| Advanced Analytics | ❌ | ✅ |
+| Custom Break Messages | ❌ | ✅ |
+| Email Notifications | ✅ | ✅ |
+| Priority Support | ❌ | ✅ |
 
 ### Revenue Projections
 Based on market analysis of similar SaaS products:
 - **Free-to-Paid Conversion**: 3-5% (industry standard)
 - **Monthly Churn Rate**: <5% (sticky health-focused product)
-- **Customer Lifetime Value**: $180-240 (based on 3-4 year average retention)
-- **Target**: 1,000 paid subscribers within 12 months = $60K ARR
+- **Customer Lifetime Value**: $36-48 (based on 3-4 year average retention)
+- **Target**: 1,000 paid subscribers within 12 months = $12K ARR
 
 ## 🛡️ Security Features
 

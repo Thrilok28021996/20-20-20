@@ -174,8 +174,8 @@
                         {% else %}
                             <div class="alert alert-warning mt-3">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
-                                You've reached your daily limit of {{ daily_limit }} sessions. 
-                                <a href="{% url 'accounts:pricing' %}" class="alert-link">Upgrade to Pro</a> for unlimited sessions.
+                                You've reached your daily limit of {{ daily_interval_limit }} intervals ({{ intervals_today }}/{{ daily_interval_limit }}).
+                                <a href="{% url 'accounts:pricing' %}" class="alert-link">Upgrade to Premium</a> for unlimited intervals.
                             </div>
                         {% endif %}
                     {% endif %}
@@ -199,6 +199,9 @@
         <div class="col-12">
             <h4 class="mb-3">
                 <i class="fas fa-chart-line me-2"></i>Today's Progress
+                {% if not user.is_premium_user %}
+                    <small class="text-muted ms-2">({{ intervals_today }}/{{ daily_interval_limit }} intervals used)</small>
+                {% endif %}
             </h4>
         </div>
         <div class="col-lg-3 col-md-6 mb-3">

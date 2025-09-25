@@ -14,4 +14,10 @@ urlpatterns = [
     path('settings/', views.timer_settings_view, name='settings'),
     path('update-dark-mode/', views.update_dark_mode_view, name='update_dark_mode'),
     path('statistics/', views.statistics_view, name='statistics'),
+    path('api/break-settings/', views.get_break_settings_view, name='get_break_settings'),
+    path('api/update-break-settings/', views.update_smart_break_settings_view, name='update_break_settings'),
+    path('feedback/', views.feedback_dashboard_view, name='feedback_dashboard'),
+    path('feedback/submit/', views.submit_feedback_view, name='submit_feedback'),
+    path('insights/', views.break_insights_view, name='break_insights'),
+    path('insights/apply-suggestion/', views.apply_break_suggestion_view, name='apply_break_suggestion'),
 ]

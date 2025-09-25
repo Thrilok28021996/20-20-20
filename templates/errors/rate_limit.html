@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Rate Limit Exceeded - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="error-page text-center">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-hourglass-half fa-5x text-warning"></i>
+                </div>
+
+                <h1 class="display-4 mb-3">429</h1>
+                <h2 class="h4 mb-4">Too Many Requests</h2>
+
+                <div class="error-message mb-4">
+                    <p class="lead">
+                        {% if error_message %}
+                            {{ error_message }}
+                        {% else %}
+                            You've made too many requests in a short period. Please slow down!
+                        {% endif %}
+                    </p>
+                    <p class="text-muted">
+                        This helps us keep the service running smoothly for everyone.
+                    </p>
+                </div>
+
+                {% if retry_after %}
+                <div class="alert alert-info mb-4">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-clock me-2"></i>Please wait
+                    </h6>
+                    <p class="mb-0">
+                        You can try again in <strong id="countdown">{{ retry_after }}</strong> seconds.
+                    </p>
+                </div>
+                {% endif %}
+
+                <div class="error-actions">
+                    <button id="retry-btn" onclick="location.reload()" class="btn btn-primary me-3" disabled>
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+
+                    <a href="{% url 'accounts:home' %}" class="btn btn-outline-primary me-3">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'timer:dashboard' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="mt-5">
+                    <div class="alert alert-light">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle me-2"></i>Why this happened:
+                        </h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-shield-alt text-primary me-2"></i>Protection against spam and abuse</li>
+                            <li><i class="fas fa-server text-primary me-2"></i>Ensuring service reliability for all users</li>
+                            <li><i class="fas fa-users text-primary me-2"></i>Fair usage policy enforcement</li>
+                        </ul>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated and not user.is_premium_user %}
+                <div class="mt-4">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">
+                                <i class="fas fa-star text-warning me-2"></i>Upgrade to Premium
+                            </h6>
+                            <p class="card-text">
+                                Get higher rate limits and unlimited access to all features.
+                            </p>
+                            <a href="{% url 'accounts:pricing' %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-crown me-2"></i>View Plans
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if support_email %}
+                <div class="mt-4">
+                    <p class="text-muted">
+                        Experiencing issues? Contact us at
+                        <a href="mailto:{{ support_email }}">{{ support_email }}</a>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 40px 0;
+}
+
+.error-icon {
+    animation: rotation 2s infinite linear;
+}
+
+@keyframes rotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.error-actions .btn {
+    margin-bottom: 10px;
+}
+
+.alert ul li {
+    margin-bottom: 5px;
+}
+
+@media (max-width: 576px) {
+    .error-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .error-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.card {
+    max-width: 300px;
+    margin: 0 auto;
+}
+</style>
+
+<script>
+{% if retry_after %}
+// Countdown timer
+let countdown = {{ retry_after }};
+const countdownElement = document.getElementById('countdown');
+const retryButton = document.getElementById('retry-btn');
+
+const timer = setInterval(function() {
+    countdown--;
+    countdownElement.textContent = countdown;
+
+    if (countdown <= 0) {
+        clearInterval(timer);
+        retryButton.disabled = false;
+        retryButton.innerHTML = '<i class="fas fa-redo me-2"></i>Try Again';
+        countdownElement.parentElement.innerHTML = 'You can now try again!';
+
+        // Optional: Auto-reload after countdown
+        // location.reload();
+    }
+}, 1000);
+{% endif %}
+</script>
+{% endblock %}

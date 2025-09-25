@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Service Unavailable - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="error-page text-center">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-tools fa-5x text-info"></i>
+                </div>
+
+                <h1 class="display-4 mb-3">503</h1>
+                <h2 class="h4 mb-4">Service Temporarily Unavailable</h2>
+
+                <div class="error-message mb-4">
+                    <p class="lead">
+                        {% if error_message %}
+                            {{ error_message }}
+                        {% else %}
+                            We're currently performing maintenance to improve your experience.
+                        {% endif %}
+                    </p>
+                    <p class="text-muted">
+                        {% if service_name %}
+                            The {{ service_name }} is temporarily unavailable.
+                        {% else %}
+                            Our service is temporarily unavailable.
+                        {% endif %}
+                        We'll be back online shortly!
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                             role="progressbar" style="width: 65%"></div>
+                    </div>
+                    <small class="text-muted">Estimated completion: 65%</small>
+                </div>
+
+                <div class="error-actions">
+                    <button onclick="location.reload()" class="btn btn-primary me-3">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+
+                    <a href="{% url 'accounts:home' %}" class="btn btn-outline-primary me-3">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+
+                    <a href="{% url 'accounts:status' %}" class="btn btn-outline-info">
+                        <i class="fas fa-heartbeat me-2"></i>Service Status
+                    </a>
+                </div>
+
+                <div class="mt-5">
+                    <div class="alert alert-light">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-wrench me-2"></i>What's happening:
+                        </h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-cog text-info me-2"></i>Scheduled maintenance in progress</li>
+                            <li><i class="fas fa-arrow-up text-success me-2"></i>Improving system performance</li>
+                            <li><i class="fas fa-shield-alt text-primary me-2"></i>Enhancing security features</li>
+                            <li><i class="fas fa-clock text-warning me-2"></i>Expected downtime: minimal</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card border-light mb-3">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-bell fa-2x text-primary mb-2"></i>
+                                    <h6 class="card-title">Get Notified</h6>
+                                    <p class="card-text small">
+                                        Follow us for real-time updates
+                                    </p>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">
+                                        <i class="fab fa-twitter me-1"></i>Follow
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-light mb-3">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-question-circle fa-2x text-success mb-2"></i>
+                                    <h6 class="card-title">Need Help?</h6>
+                                    <p class="card-text small">
+                                        Check our help center
+                                    </p>
+                                    <a href="{% url 'accounts:help_center' %}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-life-ring me-1"></i>Help Center
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if support_email %}
+                <div class="mt-4">
+                    <p class="text-muted">
+                        Questions about the maintenance? Contact us at
+                        <a href="mailto:{{ support_email }}">{{ support_email }}</a>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 40px 0;
+}
+
+.error-icon {
+    animation: wiggle 1s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+    0%, 7% { transform: rotateZ(0); }
+    15% { transform: rotateZ(-15deg); }
+    20% { transform: rotateZ(10deg); }
+    25% { transform: rotateZ(-10deg); }
+    30% { transform: rotateZ(6deg); }
+    35% { transform: rotateZ(-4deg); }
+    40%, 100% { transform: rotateZ(0); }
+}
+
+.error-actions .btn {
+    margin-bottom: 10px;
+}
+
+.alert ul li {
+    margin-bottom: 5px;
+}
+
+.progress {
+    background-color: #e9ecef;
+}
+
+@media (max-width: 576px) {
+    .error-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .error-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+</style>
+
+<script>
+// Auto-refresh every 60 seconds to check if service is back
+let refreshInterval = setInterval(function() {
+    // Try to ping the service
+    fetch('/', { method: 'HEAD' })
+        .then(response => {
+            if (response.ok) {
+                clearInterval(refreshInterval);
+                location.reload();
+            }
+        })
+        .catch(() => {
+            // Service still unavailable, continue waiting
+        });
+}, 60000);
+
+// Update progress bar animation
+setInterval(function() {
+    const progressBar = document.querySelector('.progress-bar');
+    const currentWidth = parseInt(progressBar.style.width);
+    if (currentWidth < 95) {
+        progressBar.style.width = (currentWidth + Math.random() * 5) + '%';
+    }
+}, 5000);
+</script>
+{% endblock %}

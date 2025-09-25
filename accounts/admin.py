@@ -56,9 +56,9 @@ class CustomUserAdmin(UserAdmin):
     actions = ['make_pro_users', 'send_welcome_email']
     
     def make_pro_users(self, request, queryset):
-        updated = queryset.update(subscription_type='pro')
-        self.message_user(request, f'{updated} users upgraded to Pro.')
-    make_pro_users.short_description = "Upgrade selected users to Pro"
+        updated = queryset.update(subscription_type='premium')
+        self.message_user(request, f'{updated} users upgraded to Premium.')
+    make_pro_users.short_description = "Upgrade selected users to Premium"
 
 
 @admin.register(UserProfile)

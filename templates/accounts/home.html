@@ -13,11 +13,18 @@
     <div class="container position-relative">
         <div class="row align-items-center min-vh-75">
             <div class="col-lg-6 animate-fade-in-up">
-                <!-- Urgency Badge -->
+                <!-- Early Access Badge -->
+                {% if not is_new_app %}
                 <div class="urgency-badge mb-3">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>87% of users see results in 7 days</span>
+                    <i class="fas fa-rocket"></i>
+                    <span>Join our growing community of {{ metrics.active_users }}</span>
                 </div>
+                {% else %}
+                <div class="urgency-badge mb-3">
+                    <i class="fas fa-seedling"></i>
+                    <span>Be among the first to protect your vision</span>
+                </div>
+                {% endif %}
 
                 <div class="hero-badge mb-4">
                     <i class="fas fa-eye me-2"></i>
@@ -28,23 +35,23 @@
                     <span class="hero-highlight">Damages Your Vision</span>
                 </h1>
                 <p class="hero-value-prop mb-4">
-                    <strong>Your eyes weren't designed for 8+ hours of screen time.</strong> The 20-20-20 rule reduces digital eye strain by 87% - now with AI-powered reminders that actually work.
+                    <strong>Your eyes weren't designed for 8+ hours of screen time.</strong> The 20-20-20 rule is clinically proven to reduce digital eye strain - now with smart reminders that actually work.
                 </p>
 
-                <!-- Social Proof -->
+                <!-- Authentic Social Proof -->
                 <div class="social-proof-container mb-5">
                     <div class="row text-center">
                         <div class="col-4">
-                            <div class="user-count">24,387</div>
-                            <small>Users Protected</small>
+                            <div class="user-count">{{ metrics.active_users }}</div>
+                            <small>{% if is_new_app %}Ready to Start{% else %}Users Protected{% endif %}</small>
                         </div>
                         <div class="col-4">
-                            <div class="user-count">1.2M+</div>
-                            <small>Breaks Taken</small>
+                            <div class="user-count">{{ metrics.total_breaks }}</div>
+                            <small>{% if is_new_app %}Awaiting You{% else %}Breaks Taken{% endif %}</small>
                         </div>
                         <div class="col-4">
-                            <div class="user-count">87%</div>
-                            <small>Less Eye Strain</small>
+                            <div class="user-count">{{ metrics.eye_strain_reduction }}</div>
+                            <small>{% if is_new_app %}Potential{% else %}Improvement{% endif %}</small>
                         </div>
                     </div>
                 </div>
@@ -58,30 +65,15 @@
                     </a>
                 </div>
 
-                <!-- Limited Time Offer -->
-                <div class="limited-offer mb-4">
+                <!-- Value Proposition -->
+                <div class="value-offer mb-4">
                     <div class="d-flex align-items-center justify-content-center mb-2">
-                        <i class="fas fa-clock text-warning me-2"></i>
-                        <strong>Limited Launch Offer - 50% Off Premium</strong>
+                        <i class="fas fa-heart text-success me-2"></i>
+                        <strong>Premium Features for Just $0.99/month</strong>
                     </div>
-                    <div class="countdown-timer">
-                        <div class="countdown-unit">
-                            <span class="countdown-number" id="days">07</span>
-                            <span class="countdown-label">Days</span>
-                        </div>
-                        <div class="countdown-unit">
-                            <span class="countdown-number" id="hours">23</span>
-                            <span class="countdown-label">Hours</span>
-                        </div>
-                        <div class="countdown-unit">
-                            <span class="countdown-number" id="minutes">45</span>
-                            <span class="countdown-label">Min</span>
-                        </div>
-                        <div class="countdown-unit">
-                            <span class="countdown-number" id="seconds">30</span>
-                            <span class="countdown-label">Sec</span>
-                        </div>
-                    </div>
+                    <p class="text-center text-muted mb-0">
+                        <small>Cancel anytime • 30-day money-back guarantee</small>
+                    </p>
                 </div>
 
                 <!-- Security & Trust Badges -->
@@ -92,11 +84,11 @@
                     </div>
                     <div class="security-badge">
                         <i class="fas fa-shield-alt"></i>
-                        <span>HIPAA Compliant</span>
+                        <span>Secure & Private</span>
                     </div>
                     <div class="security-badge">
                         <i class="fas fa-lock"></i>
-                        <span>Bank-Level Security</span>
+                        <span>Data Protection</span>
                     </div>
                     <div class="security-badge">
                         <i class="fas fa-bolt"></i>
@@ -145,8 +137,8 @@
         <div class="row text-center mb-5">
             <div class="col-lg-8 mx-auto">
                 <div class="urgency-badge mb-3">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>Digital Eye Strain affects 90% of office workers</span>
+                    <i class="fas fa-info-circle"></i>
+                    <span>Digital Eye Strain affects up to 90% of office workers - but it's preventable</span>
                 </div>
                 <h2 class="display-5 fw-bold mb-3">The Problem is Real. The Solution is Simple.</h2>
                 <p class="lead text-muted">
@@ -158,19 +150,19 @@
                     <div class="col-md-4">
                         <div class="trust-badge">
                             <i class="fas fa-user-md"></i>
-                            <span>Ophthalmologist Approved</span>
+                            <span>Science-Based Approach</span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="trust-badge">
                             <i class="fas fa-certificate"></i>
-                            <span>ISO 27001 Certified</span>
+                            <span>Research-Backed</span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="trust-badge">
                             <i class="fas fa-award"></i>
-                            <span>Winner: Health Tech 2024</span>
+                            <span>Developer-Built Solution</span>
                         </div>
                     </div>
                 </div>
@@ -181,11 +173,11 @@
             <div class="col-lg-4 col-md-6">
                 <div class="feature-card text-center">
                     <div class="feature-icon-wrapper">
-                        <i class="fas fa-brain"></i>
+                        <i class="fas fa-clock"></i>
                     </div>
-                    <h4 class="mb-3">AI-Powered Timing</h4>
-                    <p class="text-muted mb-3">Smart algorithms learn your work patterns and optimize break timing for maximum effectiveness.</p>
-                    <div class="feature-benefit">87% more effective than manual timers</div>
+                    <h4 class="mb-3">Reliable 20-20-20 Timer</h4>
+                    <p class="text-muted mb-3">Precise 20-minute intervals with clear break reminders to help you follow the medically-recommended 20-20-20 rule.</p>
+                    <div class="feature-benefit">Simple and effective timing</div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
@@ -193,85 +185,85 @@
                     <div class="feature-icon-wrapper">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h4 class="mb-3">Eye Health Analytics</h4>
-                    <p class="text-muted mb-3">Track your progress with detailed reports showing eye strain reduction and productivity gains.</p>
-                    <div class="feature-benefit">See 43% improvement in first week</div>
+                    <h4 class="mb-3">Progress Tracking</h4>
+                    <p class="text-muted mb-3">Track your timer sessions, breaks taken, and build healthy habits with simple statistics.</p>
+                    <div class="feature-benefit">Monitor your consistency</div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="feature-card text-center">
                     <div class="feature-icon-wrapper">
-                        <i class="fas fa-mobile-alt"></i>
+                        <i class="fas fa-bell"></i>
                     </div>
-                    <h4 class="mb-3">Cross-Device Sync</h4>
-                    <p class="text-muted mb-3">Seamless protection across desktop, mobile, and tablet. Your eye health follows you everywhere.</p>
-                    <div class="feature-benefit">Works on all devices automatically</div>
+                    <h4 class="mb-3">Smart Notifications</h4>
+                    <p class="text-muted mb-3">Clear break reminders that help you maintain the 20-20-20 routine without being disruptive.</p>
+                    <div class="feature-benefit">Never miss a break</div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="feature-card text-center">
                     <div class="feature-icon-wrapper">
-                        <i class="fas fa-shield-virus"></i>
+                        <i class="fas fa-cog"></i>
                     </div>
-                    <h4 class="mb-3">Blue Light Protection</h4>
-                    <p class="text-muted mb-3">Built-in blue light awareness with personalized recommendations based on your screen time.</p>
-                    <div class="feature-benefit">Reduce headaches by 72%</div>
+                    <h4 class="mb-3">Customizable Settings</h4>
+                    <p class="text-muted mb-3">Adjust notification preferences, work hours, and break duration to fit your schedule and needs.</p>
+                    <div class="feature-benefit">Fits your workflow</div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="feature-card text-center">
                     <div class="feature-icon-wrapper">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-user-shield"></i>
                     </div>
-                    <h4 class="mb-3">Team Management</h4>
-                    <p class="text-muted mb-3">Protect your entire team's vision with centralized reporting and compliance tracking.</p>
-                    <div class="feature-benefit">30% boost in team productivity</div>
+                    <h4 class="mb-3">Privacy Focused</h4>
+                    <p class="text-muted mb-3">Your eye health data stays private. No tracking, no data selling - just a simple tool to help you.</p>
+                    <div class="feature-benefit">Your data, your control</div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="feature-card text-center">
                     <div class="feature-icon-wrapper">
-                        <i class="fas fa-graduation-cap"></i>
+                        <i class="fas fa-heart"></i>
                     </div>
-                    <h4 class="mb-3">Educational Exercises</h4>
-                    <p class="text-muted mb-3">Guided eye exercises developed by ophthalmologists to strengthen and relax your eyes.</p>
-                    <div class="feature-benefit">Clinically proven effectiveness</div>
+                    <h4 class="mb-3">Health First Approach</h4>
+                    <p class="text-muted mb-3">Built on scientifically-proven principles recommended by eye care professionals worldwide.</p>
+                    <div class="feature-benefit">Evidence-based solution</div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Statistics Section -->
+<!-- Authentic Statistics Section -->
 <section class="bg-light py-5">
     <div class="container">
         <div class="row text-center">
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stat-card h-100">
-                    <div class="stat-number">87%</div>
-                    <div class="stat-label">Strain Reduction</div>
-                    <div class="stat-description">Average reduction in digital eye strain within 7 days</div>
+                    <div class="stat-number">{{ metrics.eye_strain_reduction }}</div>
+                    <div class="stat-label">{% if is_new_app %}Journey Starts{% else %}Progress{% endif %}</div>
+                    <div class="stat-description">{% if is_new_app %}Your eye health improvement begins here{% else %}Real user progress{% endif %}</div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stat-card h-100">
-                    <div class="stat-number">24,387</div>
-                    <div class="stat-label">Active Users</div>
-                    <div class="stat-description">Professionals protecting their vision daily</div>
+                    <div class="stat-number">{{ metrics.active_users }}</div>
+                    <div class="stat-label">{% if is_new_app %}Community{% else %}Active Users{% endif %}</div>
+                    <div class="stat-description">{% if is_new_app %}Growing together from day one{% else %}Protecting their vision daily{% endif %}</div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stat-card h-100">
-                    <div class="stat-number">1.2M+</div>
-                    <div class="stat-label">Breaks Taken</div>
-                    <div class="stat-description">Eye-healthy breaks completed this month</div>
+                    <div class="stat-number">{{ metrics.total_breaks }}</div>
+                    <div class="stat-label">{% if is_new_app %}Potential{% else %}Breaks Taken{% endif %}</div>
+                    <div class="stat-description">{% if is_new_app %}Healthy breaks waiting for you{% else %}Eye-healthy breaks completed{% endif %}</div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stat-card h-100">
-                    <div class="stat-number">96%</div>
-                    <div class="stat-label">Satisfaction</div>
-                    <div class="stat-description">Users report improved eye comfort</div>
+                    <div class="stat-number">{{ metrics.satisfaction_rate }}</div>
+                    <div class="stat-label">{% if is_new_app %}Mission{% else %}Success Rate{% endif %}</div>
+                    <div class="stat-description">{% if is_new_app %}Building something amazing together{% else %}Users achieving their goals{% endif %}</div>
                 </div>
             </div>
         </div>
@@ -322,14 +314,14 @@
     </div>
 </section>
 
-<!-- Testimonials Section -->
+<!-- Science-Based Benefits Section -->
 <section class="bg-light py-5">
     <div class="container">
         <div class="row text-center mb-5">
             <div class="col-lg-8 mx-auto">
-                <h2 class="display-5 fw-bold mb-3">What Our Users Say</h2>
+                <h2 class="display-5 fw-bold mb-3">Clinically Proven Benefits</h2>
                 <p class="lead text-muted">
-                    Real stories from professionals who transformed their eye health
+                    The 20-20-20 rule is backed by eye care professionals and scientific research
                 </p>
             </div>
         </div>
@@ -338,13 +330,13 @@
             <div class="col-lg-4">
                 <div class="testimonial-card slide-up-fade">
                     <div class="testimonial-quote">
-                        My chronic headaches disappeared after just one week. This app literally saved my career as a programmer.
+                        <i class="fas fa-user-md text-primary fa-2x mb-3"></i><br>
+                        Recommended by the American Optometric Association for reducing digital eye strain symptoms.
                     </div>
                     <div class="testimonial-author">
-                        <div class="testimonial-avatar">SJ</div>
                         <div class="testimonial-info">
-                            <h6>Sarah Johnson</h6>
-                            <small>Senior Developer at Microsoft</small>
+                            <h6>Medical Endorsement</h6>
+                            <small>American Optometric Association</small>
                         </div>
                     </div>
                 </div>
@@ -352,13 +344,13 @@
             <div class="col-lg-4">
                 <div class="testimonial-card slide-up-fade">
                     <div class="testimonial-quote">
-                        87% reduction in eye strain isn't marketing hype - it's exactly what I experienced. Game changer for remote work.
+                        <i class="fas fa-microscope text-success fa-2x mb-3"></i><br>
+                        Clinical studies show regular breaks can significantly reduce eye strain, headaches, and dry eyes.
                     </div>
                     <div class="testimonial-author">
-                        <div class="testimonial-avatar">MR</div>
                         <div class="testimonial-info">
-                            <h6>Marcus Rodriguez</h6>
-                            <small>UX Designer at Google</small>
+                            <h6>Research Evidence</h6>
+                            <small>Peer-reviewed studies</small>
                         </div>
                     </div>
                 </div>
@@ -366,13 +358,13 @@
             <div class="col-lg-4">
                 <div class="testimonial-card slide-up-fade">
                     <div class="testimonial-quote">
-                        Finally, a health app that actually works. My productivity increased by 30% because I'm not constantly fighting eye fatigue.
+                        <i class="fas fa-shield-alt text-warning fa-2x mb-3"></i><br>
+                        Simple prevention is more effective than treating digital eye strain after it develops.
                     </div>
                     <div class="testimonial-author">
-                        <div class="testimonial-avatar">AL</div>
                         <div class="testimonial-info">
-                            <h6>Dr. Amanda Liu</h6>
-                            <small>Data Scientist at Tesla</small>
+                            <h6>Prevention Focus</h6>
+                            <small>Proactive eye health</small>
                         </div>
                     </div>
                 </div>
@@ -381,32 +373,34 @@
     </div>
 </section>
 
-<!-- Social Proof Section -->
+<!-- Professional Audience Section -->
 <section class="bg-primary text-white py-5">
     <div class="container">
         <div class="row text-center">
             <div class="col-lg-10 mx-auto">
-                <h2 class="mb-4">Trusted by Professionals at Leading Companies</h2>
+                <h2 class="mb-4">Built for Digital Professionals</h2>
+                <p class="lead mb-4">Whether you're a developer, designer, student, or office worker - if you spend hours looking at screens, this tool is for you.</p>
+
                 <div class="row">
                     <div class="col-md-3 col-6 mb-4">
-                        <i class="fab fa-google fa-3x mb-3 opacity-75"></i>
-                        <h6>Google</h6>
-                        <small>3,247 employees</small>
+                        <i class="fas fa-laptop-code fa-3x mb-3 opacity-75"></i>
+                        <h6>Developers</h6>
+                        <small>Code without strain</small>
                     </div>
                     <div class="col-md-3 col-6 mb-4">
-                        <i class="fab fa-microsoft fa-3x mb-3 opacity-75"></i>
-                        <h6>Microsoft</h6>
-                        <small>2,891 employees</small>
+                        <i class="fas fa-paint-brush fa-3x mb-3 opacity-75"></i>
+                        <h6>Designers</h6>
+                        <small>Create comfortably</small>
                     </div>
                     <div class="col-md-3 col-6 mb-4">
-                        <i class="fab fa-apple fa-3x mb-3 opacity-75"></i>
-                        <h6>Apple</h6>
-                        <small>1,734 employees</small>
+                        <i class="fas fa-graduation-cap fa-3x mb-3 opacity-75"></i>
+                        <h6>Students</h6>
+                        <small>Study smartly</small>
                     </div>
                     <div class="col-md-3 col-6 mb-4">
-                        <i class="fas fa-building fa-3x mb-3 opacity-75"></i>
-                        <h6>500+ Companies</h6>
-                        <small>Using our solution</small>
+                        <i class="fas fa-briefcase fa-3x mb-3 opacity-75"></i>
+                        <h6>Office Workers</h6>
+                        <small>Work healthily</small>
                     </div>
                 </div>
 
@@ -414,28 +408,28 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <div class="d-flex align-items-center justify-content-center">
-                                <i class="fas fa-laptop-code fa-2x me-3"></i>
+                                <i class="fas fa-clock fa-2x me-3"></i>
                                 <div>
-                                    <h5 class="mb-1">12,000+ Developers</h5>
-                                    <small>Coding without eye strain</small>
+                                    <h5 class="mb-1">Simple & Effective</h5>
+                                    <small>Just click start and focus on work</small>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="d-flex align-items-center justify-content-center">
-                                <i class="fas fa-graduation-cap fa-2x me-3"></i>
+                                <i class="fas fa-chart-line fa-2x me-3"></i>
                                 <div>
-                                    <h5 class="mb-1">8,500+ Students</h5>
-                                    <small>Learning with healthy eyes</small>
+                                    <h5 class="mb-1">Track Progress</h5>
+                                    <small>See your eye health improve</small>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="d-flex align-items-center justify-content-center">
-                                <i class="fas fa-briefcase fa-2x me-3"></i>
+                                <i class="fas fa-heart fa-2x me-3"></i>
                                 <div>
-                                    <h5 class="mb-1">25,000+ Workers</h5>
-                                    <small>Productive and protected</small>
+                                    <h5 class="mb-1">Prevention First</h5>
+                                    <small>Stop problems before they start</small>
                                 </div>
                             </div>
                         </div>
@@ -458,7 +452,7 @@
 
                 <h2 class="display-5 fw-bold mb-3">Your Eyes Can't Wait Another Day</h2>
                 <p class="lead text-muted mb-4">
-                    <strong>Digital eye strain leads to permanent vision problems.</strong> Join 24,387 professionals who chose prevention over regret. Start your transformation today.
+                    <strong>Digital eye strain leads to permanent vision problems.</strong> {% if is_new_app %}Be among the first to choose prevention over regret.{% else %}Join {{ metrics.active_users }} who chose prevention over regret.{% endif %} Start your transformation today.
                 </p>
                 <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
                     <a href="{% url 'accounts:signup' %}" class="cta-primary btn btn-lg">
@@ -472,11 +466,11 @@
                     <div class="d-flex flex-wrap justify-content-center gap-3">
                         <small class="trust-badge">
                             <i class="fas fa-shield-alt"></i>
-                            <span>HIPAA Compliant</span>
+                            <span>Secure & Private</span>
                         </small>
                         <small class="trust-badge">
                             <i class="fas fa-lock"></i>
-                            <span>Bank-Level Security</span>
+                            <span>Data Protection</span>
                         </small>
                         <small class="trust-badge">
                             <i class="fas fa-heart"></i>
@@ -484,7 +478,7 @@
                         </small>
                         <small class="trust-badge">
                             <i class="fas fa-award"></i>
-                            <span>ISO 27001 Certified</span>
+                            <span>Open Source Spirit</span>
                         </small>
                     </div>
                 </div>
@@ -516,71 +510,51 @@
             setTimeout(updateTimer, 2000); // Start after 2 seconds
         }
 
-        // Countdown Timer for Limited Offer
-        function updateCountdown() {
-            // Set end date (7 days from now for demo)
-            const endDate = new Date();
-            endDate.setDate(endDate.getDate() + 7);
-            endDate.setHours(23, 59, 59);
-
-            const now = new Date();
-            const timeDiff = endDate - now;
-
-            if (timeDiff > 0) {
-                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
-                // Update countdown displays
-                const daysEl = document.getElementById('days');
-                const hoursEl = document.getElementById('hours');
-                const minutesEl = document.getElementById('minutes');
-                const secondsEl = document.getElementById('seconds');
-
-                if (daysEl) daysEl.textContent = days.toString().padStart(2, '0');
-                if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
-                if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
-                if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
-            }
+        // Simple animation for value proposition
+        const valueOffer = document.querySelector('.value-offer');
+        if (valueOffer) {
+            setTimeout(() => {
+                valueOffer.style.opacity = '1';
+                valueOffer.style.transform = 'translateY(0)';
+            }, 500);
         }
 
-        // Update countdown every second
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-
-        // Animate user count on scroll
+        // Animate user count on scroll (only for numeric values)
         function animateCounters() {
             const counters = document.querySelectorAll('.user-count');
-            const targets = [24387, 1200000, 87]; // Target numbers
 
-            counters.forEach((counter, index) => {
-                const target = targets[index];
-                let current = 0;
-                const increment = target / 100;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(timer);
-                    }
+            counters.forEach((counter) => {
+                const text = counter.textContent.trim();
+                // Only animate if the content is purely numeric
+                const numericMatch = text.match(/^(\d+)(.*)$/);
 
-                    if (index === 1) { // For 1.2M+ format
-                        if (current >= 1000000) {
-                            counter.textContent = (current / 1000000).toFixed(1) + 'M+';
-                        } else {
-                            counter.textContent = Math.floor(current / 1000) + 'K+';
+                if (numericMatch) {
+                    const target = parseInt(numericMatch[1]);
+                    const suffix = numericMatch[2];
+                    let current = 0;
+                    const increment = Math.max(1, target / 50);
+
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
                         }
-                    } else {
-                        counter.textContent = Math.floor(current).toLocaleString();
-                        if (index === 2) counter.textContent += '%'; // Add % for percentages
-                    }
-                }, 50);
+                        counter.textContent = Math.floor(current) + suffix;
+                    }, 30);
+                }
+                // Non-numeric content (like "Building community") stays as-is
             });
         }
 
-        // Trigger counter animation on page load
-        setTimeout(animateCounters, 1000);
+        // Trigger counter animation on page load (only if we have numeric data)
+        const hasNumericCounters = Array.from(document.querySelectorAll('.user-count')).some(counter => {
+            return /^\d+/.test(counter.textContent.trim());
+        });
+
+        if (hasNumericCounters) {
+            setTimeout(animateCounters, 1000);
+        }
 
         // Enhanced scroll animations
         const observerOptions = {

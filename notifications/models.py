@@ -30,7 +30,7 @@ class NotificationTemplate(models.Model):
     message_template = models.TextField()
     
     # Targeting
-    target_subscription_types = models.JSONField(default=list)  # ['free', 'pro', 'enterprise']
+    target_subscription_types = models.JSONField(default=list)  # ['free', 'premium']
     is_active = models.BooleanField(default=True)
     
     created_at = models.DateTimeField(auto_now_add=True)

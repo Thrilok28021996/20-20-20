@@ -8,6 +8,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 # Admin site customization
 admin.site.site_header = "EyeHealth 20-20-20 Administration"
@@ -22,6 +23,8 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('subscriptions/', include('subscriptions.urls')),
     path('payments/', include('payments.urls')),
+    # Health and monitoring endpoints
+    path('health/', include('mysite.health_urls')),
 ]
 
 # Serve media and static files during development
@@ -31,3 +34,9 @@ if settings.DEBUG:
     # But let's add explicit static serving to be sure
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
     urlpatterns += staticfiles_urlpatterns()
+
+# Custom error handlers
+handler400 = 'mysite.error_views.bad_request'
+handler403 = 'mysite.error_views.permission_denied'
+handler404 = 'mysite.error_views.page_not_found'
+handler500 = 'mysite.error_views.server_error'

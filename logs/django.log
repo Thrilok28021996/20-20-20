@@ -1,0 +1,95 @@
+INFO 2025-09-20 04:21:07,019 autoreload 24851 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:03:13,642 autoreload 40230 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:03:20,412 basehttp 40230 6162870272 "GET / HTTP/1.1" 200 44537
+INFO 2025-09-20 06:03:41,753 basehttp 40230 6162870272 "GET / HTTP/1.1" 200 44537
+INFO 2025-09-20 06:03:41,812 basehttp 40230 6162870272 "GET /static/css/custom.css?v=1.2 HTTP/1.1" 200 47529
+WARNING 2025-09-20 06:03:42,023 basehttp 40230 6325039104 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
+WARNING 2025-09-20 06:03:42,023 basehttp 40230 6162870272 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
+INFO 2025-09-20 06:04:51,136 basehttp 40230 6162870272 "GET /docs/ HTTP/1.1" 200 51416
+WARNING 2025-09-20 06:05:32,102 log 40230 6162870272 Not Found: /favicon.ico
+WARNING 2025-09-20 06:05:32,102 basehttp 40230 6162870272 "GET /favicon.ico HTTP/1.1" 404 5450
+INFO 2025-09-20 06:12:01,292 autoreload 40230 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 06:12:01,596 autoreload 40960 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:12:10,126 autoreload 40960 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 06:12:10,370 autoreload 40970 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:12:17,843 autoreload 40970 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 06:12:18,073 autoreload 40979 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:12:26,609 autoreload 40979 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 06:12:26,859 autoreload 40988 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:23:33,651 basehttp 40988 6134149120 "GET / HTTP/1.1" 200 44537
+INFO 2025-09-20 06:25:14,287 basehttp 40988 6134149120 "GET /pricing/ HTTP/1.1" 200 31222
+INFO 2025-09-20 06:27:20,130 autoreload 40988 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 06:27:20,414 autoreload 41336 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:27:39,346 autoreload 41336 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 06:27:39,588 autoreload 41347 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 06:31:58,893 autoreload 41539 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:05:36,758 basehttp 41347 6135197696 "GET /pricing/ HTTP/1.1" 200 31223
+INFO 2025-09-20 07:05:42,980 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 44968
+INFO 2025-09-20 07:06:52,782 basehttp 41347 6135197696 "GET /pricing/ HTTP/1.1" 200 31223
+INFO 2025-09-20 07:06:57,617 basehttp 41347 6135197696 "GET /signup/ HTTP/1.1" 200 25383
+INFO 2025-09-20 07:14:21,209 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 42892
+INFO 2025-09-20 07:15:26,968 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 42892
+INFO 2025-09-20 07:15:27,619 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 42892
+INFO 2025-09-20 07:16:00,750 basehttp 41347 6135197696 "GET /pricing/ HTTP/1.1" 200 31223
+INFO 2025-09-20 07:20:27,781 autoreload 41347 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 07:20:27,785 autoreload 41539 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 07:20:28,120 autoreload 42282 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:21:42,515 autoreload 42282 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 07:21:42,761 autoreload 42364 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:21:46,058 autoreload 42364 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 07:21:46,290 autoreload 42378 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:22:21,171 basehttp 42378 6193983488 "GET /pricing/ HTTP/1.1" 200 31223
+INFO 2025-09-20 07:22:22,368 basehttp 42378 6193983488 "GET / HTTP/1.1" 200 42894
+INFO 2025-09-20 07:22:23,561 basehttp 42378 6193983488 "GET /pricing/ HTTP/1.1" 200 31223
+INFO 2025-09-20 07:22:24,516 basehttp 42378 6193983488 "GET /about/ HTTP/1.1" 200 26009
+INFO 2025-09-20 07:23:08,195 basehttp 42378 6193983488 "GET /contact/ HTTP/1.1" 200 28141
+INFO 2025-09-20 07:23:54,031 basehttp 42378 6193983488 "GET / HTTP/1.1" 200 42894
+INFO 2025-09-20 07:31:26,963 autoreload 42378 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/mysite/constants.py changed, reloading.
+INFO 2025-09-20 07:31:27,208 autoreload 42686 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:31:48,165 autoreload 42686 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 07:31:48,415 autoreload 42726 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:31:58,999 autoreload 42726 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 07:31:59,267 autoreload 42743 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:32:03,620 autoreload 42743 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 07:32:03,831 autoreload 42752 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:32:16,467 autoreload 42752 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 07:32:16,684 autoreload 42773 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:33:18,139 autoreload 42773 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 07:33:18,372 autoreload 42873 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:41:05,557 autoreload 42873 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/mysite/constants.py changed, reloading.
+INFO 2025-09-20 07:41:05,802 autoreload 43167 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 07:41:15,271 autoreload 43167 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-09-20 07:41:15,527 autoreload 43189 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 08:11:03,863 basehttp 43189 6135820288 "GET / HTTP/1.1" 200 42894
+INFO 2025-09-20 08:11:04,833 basehttp 43189 6135820288 "GET / HTTP/1.1" 200 42894
+INFO 2025-09-20 08:11:24,055 basehttp 43189 6135820288 "GET /signup/ HTTP/1.1" 200 25383
+INFO 2025-09-20 08:11:28,391 basehttp 43189 6135820288 "GET /signup/ HTTP/1.1" 200 25383
+INFO 2025-09-20 08:14:01,737 autoreload 43189 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/admin.py changed, reloading.
+INFO 2025-09-20 08:14:02,520 autoreload 43770 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 08:22:55,126 autoreload 43770 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/notifications/models.py changed, reloading.
+INFO 2025-09-20 08:22:55,354 autoreload 43987 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 08:23:09,069 autoreload 43987 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/admin.py changed, reloading.
+INFO 2025-09-20 08:23:09,328 autoreload 44014 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 11:31:27,645 autoreload 44014 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/models.py changed, reloading.
+INFO 2025-09-20 11:31:27,960 autoreload 44650 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 11:33:17,461 basehttp 44650 13170143232 "GET / HTTP/1.1" 200 42894
+INFO 2025-09-20 11:33:21,778 basehttp 44650 13170143232 "GET /pricing/ HTTP/1.1" 200 31237
+INFO 2025-09-20 11:43:04,340 basehttp 44650 13170143232 "GET /about/ HTTP/1.1" 200 26009
+INFO 2025-09-20 13:30:56,679 basehttp 44650 13170143232 "GET /about/ HTTP/1.1" 200 26009
+WARNING 2025-09-20 13:30:56,776 basehttp 44650 13170143232 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
+WARNING 2025-09-20 13:30:56,776 basehttp 44650 13186969600 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
+INFO 2025-09-20 17:29:08,659 basehttp 44650 13170143232 "GET /about/ HTTP/1.1" 200 26011
+INFO 2025-09-20 17:29:08,683 basehttp 44650 13170143232 "GET /static/css/custom.css?v=1.2 HTTP/1.1" 200 47529
+WARNING 2025-09-20 17:29:08,838 basehttp 44650 13186969600 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
+WARNING 2025-09-20 17:29:08,839 basehttp 44650 13170143232 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
+INFO 2025-09-20 17:29:09,727 basehttp 44650 13170143232 "GET / HTTP/1.1" 200 42896
+INFO 2025-09-20 17:36:09,014 autoreload 44650 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 17:36:09,700 autoreload 51225 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 17:37:49,567 autoreload 51225 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/analytics/models.py changed, reloading.
+INFO 2025-09-20 17:37:49,828 autoreload 51248 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 17:38:46,170 autoreload 51248 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/models.py changed, reloading.
+INFO 2025-09-20 17:38:46,436 autoreload 51270 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 17:41:40,931 autoreload 51270 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 17:41:41,183 autoreload 51340 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-20 17:41:46,560 autoreload 51340 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
+INFO 2025-09-20 17:41:46,814 autoreload 51350 8379025408 Watching for file changes with StatReloader

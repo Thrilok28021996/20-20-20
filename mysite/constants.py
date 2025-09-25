@@ -6,8 +6,12 @@ DEFAULT_BREAK_DURATION_SECONDS = 20
 DEFAULT_LONG_BREAK_MINUTES = 5
 
 # Subscription Limits
+FREE_DAILY_INTERVAL_LIMIT = 12  # 12 intervals = 4 hours of work time (optimized for conversion)
+PREMIUM_DAILY_INTERVAL_LIMIT = 0  # 0 means unlimited
+
+# Legacy session limits (deprecated)
 FREE_DAILY_SESSION_LIMIT = 5
-PREMIUM_DAILY_SESSION_LIMIT = 0  # 0 means unlimited
+PREMIUM_DAILY_SESSION_LIMIT = 0
 
 # Pricing
 PREMIUM_MONTHLY_PRICE_USD = 0.99

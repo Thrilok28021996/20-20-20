@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'notifications',
     'subscriptions',
     'payments',
+    'calendars',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,10 @@ MIDDLEWARE = [
     'axes.middleware.AxesMiddleware',  # Security middleware for failed login attempts
     'accounts.middleware.TimezoneMiddleware',  # Add timezone middleware after auth
     'csp.middleware.CSPMiddleware',  # Content Security Policy middleware
+    'mysite.middleware.RequestLoggingMiddleware',  # Request/response logging
+    'mysite.middleware.SecurityHeadersMiddleware',  # Additional security headers
+    'mysite.middleware.ErrorHandlingMiddleware',  # Comprehensive error handling
+    'mysite.middleware.APIErrorResponseMiddleware',  # API error standardization
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -206,6 +211,21 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
+# Calendar Integration Configuration
+GOOGLE_CALENDAR_CONFIG = {
+    'client_id': config('GOOGLE_CALENDAR_CLIENT_ID', default=''),
+    'client_secret': config('GOOGLE_CALENDAR_CLIENT_SECRET', default=''),
+    'project_id': config('GOOGLE_CALENDAR_PROJECT_ID', default=''),
+}
+GOOGLE_CALENDAR_REDIRECT_URI = config('GOOGLE_CALENDAR_REDIRECT_URI',
+                                     default='http://localhost:8000/calendars/auth/google/callback/')
+
+MICROSOFT_CALENDAR_CONFIG = {
+    'client_id': config('MICROSOFT_CALENDAR_CLIENT_ID', default=''),
+    'client_secret': config('MICROSOFT_CALENDAR_CLIENT_SECRET', default=''),
+    'tenant_id': config('MICROSOFT_CALENDAR_TENANT_ID', default='common'),
+}
+
 # Session Configuration - Enhanced Security
 SESSION_COOKIE_AGE = config('SESSION_COOKIE_AGE', default=86400, cast=int)  # 24 hours
 SESSION_SAVE_EVERY_REQUEST = True
@@ -250,33 +270,82 @@ LOGGING = {
             'format': '{levelname} {message}',
             'style': '{',
         },
+        'json': {
+            'format': '{"level": "{levelname}", "time": "{asctime}", "module": "{module}", "message": "{message}"}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
     },
     'handlers': {
         'file': {
             'level': config('LOG_LEVEL', default='INFO'),
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'django.log',
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
             'formatter': 'verbose',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'errors.log',
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+            'formatter': 'json',
+            'filters': ['require_debug_false'],
         },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
+            'filters': ['require_debug_true'],
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'] if DEBUG else ['file'],
+            'handlers': ['file', 'console', 'error_file'],
             'level': config('LOG_LEVEL', default='INFO'),
             'propagate': True,
         },
-        'payments': {
-            'handlers': ['file', 'console'] if DEBUG else ['file'],
+        'django.request': {
+            'handlers': ['error_file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'mysite': {
+            'handlers': ['file', 'console', 'error_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'timer': {
+            'handlers': ['file', 'console', 'error_file'],
             'level': 'INFO',
             'propagate': True,
         },
         'accounts': {
-            'handlers': ['file', 'console'] if DEBUG else ['file'],
+            'handlers': ['file', 'console', 'error_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'analytics': {
+            'handlers': ['file', 'console', 'error_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'payments': {
+            'handlers': ['file', 'console', 'error_file'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -300,3 +369,40 @@ AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']  # Replacement for combinat
 # Rate Limiting Configuration
 RATELIMIT_USE_CACHE = 'default'
 RATELIMIT_ENABLE = True
+
+# Error Handling Configuration
+SUPPORT_EMAIL = config('SUPPORT_EMAIL', default='support@eyehealth2020.com')
+ERROR_REPORTING_ENABLED = config('ERROR_REPORTING_ENABLED', default=True, cast=bool)
+
+# Cache Configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'KEY_PREFIX': 'eyehealth',
+        'TIMEOUT': 300,  # 5 minutes default
+    }
+} if not DEBUG else {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# API Configuration
+API_DEFAULT_RATE_LIMIT = config('API_DEFAULT_RATE_LIMIT', default='100/h')
+API_AUTHENTICATED_RATE_LIMIT = config('API_AUTHENTICATED_RATE_LIMIT', default='1000/h')
+API_PREMIUM_RATE_LIMIT = config('API_PREMIUM_RATE_LIMIT', default='5000/h')
+
+# Error Pages Configuration
+ERROR_PAGE_TEMPLATES = {
+    400: 'errors/error.html',
+    403: 'errors/403.html',
+    404: 'errors/404.html',
+    429: 'errors/rate_limit.html',
+    500: 'errors/500.html',
+    503: 'errors/service_unavailable.html',
+}

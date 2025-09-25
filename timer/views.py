@@ -1,27 +1,44 @@
+from typing import Dict, List, Optional, Union, Any
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.utils import timezone
-from django.db.models import Sum, Count, Avg
+from django.db.models import Sum, Count, Avg, QuerySet
 from django.core.exceptions import PermissionDenied
 from django_ratelimit.decorators import ratelimit
+from django.contrib.auth import get_user_model
 from datetime import date, timedelta
 import json
 import logging
 import bleach
 
+# Import new error handling framework
+from mysite.exceptions import (
+    TimerError, SessionCreationError, SessionNotFoundError, SessionAlreadyActiveError,
+    SessionNotActiveError, IntervalNotFoundError, IntervalStateError,
+    DailyLimitExceededError, BreakError, BreakCreationError, BreakNotFoundError,
+    BreakAlreadyCompletedError, BreakValidationError, InvalidRequestDataError,
+    InvalidJSONError, MissingRequiredFieldError, UserNotFoundError,
+    get_error_context, sanitize_error_message
+)
+from mysite.decorators import (
+    api_error_handler, require_authenticated_user, validate_json_request,
+    rate_limit_api, atomic_transaction, log_api_call, api_view
+)
+
+User = get_user_model()
 logger = logging.getLogger(__name__)
 
-from .models import TimerSession, TimerInterval, BreakRecord, UserTimerSettings
+from .models import TimerSession, TimerInterval, BreakRecord, UserTimerSettings, UserFeedback, BreakPreferenceAnalytics
 from analytics.models import DailyStats
 from accounts.models import Achievement, UserStreakData
 from accounts.premium_features import PREMIUM_TIMER_PRESETS, EYE_EXERCISES, can_access_feature
 from accounts.timezone_utils import user_today, user_now, user_localtime
 from mysite.constants import (
-    FREE_DAILY_SESSION_LIMIT, DEFAULT_WORK_INTERVAL_MINUTES,
+    FREE_DAILY_INTERVAL_LIMIT, FREE_DAILY_SESSION_LIMIT, DEFAULT_WORK_INTERVAL_MINUTES,
     DEFAULT_BREAK_DURATION_SECONDS, STREAK_ACHIEVEMENTS,
     SESSION_MASTER_THRESHOLD, EARLY_BIRD_START_HOUR, EARLY_BIRD_END_HOUR,
     NIGHT_OWL_START_HOUR, NIGHT_OWL_END_HOUR, EARLY_BIRD_SESSIONS_REQUIRED,
@@ -30,332 +47,195 @@ from mysite.constants import (
 
 
 @login_required
-def dashboard_view(request):
+def dashboard_view(request: HttpRequest) -> HttpResponse:
     """
     Main dashboard view with timer interface and statistics
+    Refactored to use service layer for better maintainability
     """
-    # Get or create user timer settings
-    settings, created = UserTimerSettings.objects.get_or_create(user=request.user)
-    
-    # Get current active session
-    active_session = TimerSession.objects.filter(
-        user=request.user, 
-        is_active=True
-    ).first()
-    
-    # Get current active interval if session exists
-    active_interval = None
-    if active_session:
-        active_interval = TimerInterval.objects.filter(
-            session=active_session,
-            status='active'
-        ).order_by('-interval_number').first()
-    
-    # Get today's statistics (using user's local date)
-    user_date_today = user_today(request.user)
-    today_stats, created = DailyStats.objects.get_or_create(
-        user=request.user,
-        date=user_date_today
+    from .services import StatisticsService
+    from accounts.services import UserService
+
+    # Get comprehensive dashboard context using service layer
+    context = UserService.get_user_dashboard_context(request.user)
+
+    # Get recent sessions using optimized service method
+    context['recent_sessions'] = StatisticsService.get_optimized_recent_sessions(
+        request.user, MAX_RECENT_SESSIONS
     )
-    
-    # Get recent sessions with optimized query
-    recent_sessions = TimerSession.objects.select_related('user').prefetch_related('intervals', 'breaks').filter(
-        user=request.user
-    ).order_by('-start_time')[:MAX_RECENT_SESSIONS]
-    
-    # Check subscription limits (using user's local date)
-    daily_limit = FREE_DAILY_SESSION_LIMIT if request.user.subscription_type == 'free' else 0  # 0 means unlimited
-    sessions_today = TimerSession.objects.filter(
-        user=request.user,
-        start_time__date=user_date_today
-    ).count()
-    
-    can_start_session = daily_limit == 0 or sessions_today < daily_limit
-    
-    # Get premium features for user
-    premium_features = []
-    if can_access_feature(request.user, 'smart_timer_presets'):
-        premium_features.extend(PREMIUM_TIMER_PRESETS)
-    
-    # Get user streak data
-    streak_data = None
-    if request.user.is_premium_user:
-        streak_data, created = UserStreakData.objects.get_or_create(user=request.user)
-    
-    # Get user achievements
-    user_achievements = []
-    if request.user.is_premium_user:
-        user_achievements = Achievement.objects.filter(user=request.user).order_by('-earned_at')[:5]
-    
-    context = {
-        'active_session': active_session,
-        'active_interval': active_interval,
-        'settings': settings,
-        'today_stats': today_stats,
-        'recent_sessions': recent_sessions,
-        'can_start_session': can_start_session,
-        'sessions_today': sessions_today,
-        'daily_limit': daily_limit,
-        'is_premium_user': request.user.is_premium_user,
-        'premium_timer_presets': premium_features,
-        'streak_data': streak_data,
-        'user_achievements': user_achievements,
+
+    # Add premium feature checks
+    context.update({
         'can_use_premium_themes': can_access_feature(request.user, 'custom_themes'),
         'can_use_guided_exercises': can_access_feature(request.user, 'guided_exercises'),
-    }
+    })
+
     return render(request, 'timer/dashboard.html', context)
 
 
-@login_required
-@ratelimit(key='user', rate='10/m', method='POST')
-@require_POST
-def start_session_view(request):
+@api_view(
+    authentication_required=True,
+    rate_limit='10/m',
+    use_transaction=True,
+    log_calls=True
+)
+def start_session_view(request: HttpRequest) -> JsonResponse:
     """
-    Start a new timer session
+    Start a new timer session using service layer with comprehensive error handling
     """
-    if request.method == 'POST':
+    from .services import TimerSessionService
+
+    # Validate input data if provided
+    if request.body:
         try:
-            from accounts.security_utils import validate_and_sanitize_json_data, log_security_event
-            
-            # Validate and sanitize input data
-            data = validate_and_sanitize_json_data(request)
-            
-            # Check if user has an active session
-            active_session = TimerSession.objects.filter(
-                user=request.user, 
-                is_active=True
-            ).first()
-            
-            if active_session:
-                log_security_event(request.user, 'duplicate_session_attempt')
-                return JsonResponse({
-                    'success': False, 
-                    'message': 'You already have an active session.'
-                })
-        except Exception as e:
-            logger.error(f"Error validating session start: {e}")
-            return JsonResponse({
-                'success': False, 
-                'message': 'Invalid request data'
-            }, status=400)
-        
-        # Check daily limits for free users (using user's local date)
-        if request.user.subscription_type == 'free':
-            user_date_today = user_today(request.user)
-            sessions_today = TimerSession.objects.filter(
-                user=request.user,
-                start_time__date=user_date_today
-            ).count()
-            
-            if sessions_today >= FREE_DAILY_SESSION_LIMIT:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Daily session limit reached. Upgrade to Premium for unlimited sessions.'
-                })
-        
-        # Create new session
-        session = TimerSession.objects.create(user=request.user)
-        
-        # Create first interval
-        interval = TimerInterval.objects.create(
-            session=session,
-            interval_number=1
-        )
-        
-        # Track activity
-        from analytics.models import UserSession, LiveActivityFeed
-        session_key = request.session.session_key
-        if session_key:
-            user_session, created = UserSession.objects.get_or_create(
-                session_key=session_key,
-                defaults={'user': request.user}
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            raise InvalidJSONError(
+                message="Invalid JSON in request body",
+                context={'method': request.method, 'path': request.path}
             )
-            user_session.timer_sessions_started += 1
-            user_session.last_activity = timezone.now()
-            user_session.save()
-        
-        # Create activity feed entry
-        LiveActivityFeed.objects.create(
-            user=request.user,
-            activity_type='session_started',
-            activity_data={
-                'session_id': session.id,
-                'interval_number': 1,
+
+    # Create new session using service layer
+    # All exceptions are handled by the service layer and api_error_handler decorator
+    session = TimerSessionService.create_session(request.user)
+    first_interval = TimerSessionService.get_active_interval(session)
+
+    return {
+        'session_id': session.id,
+        'interval_id': first_interval.id if first_interval else None,
+        'message': 'Timer session started successfully!',
+        'work_interval_minutes': session.work_interval_minutes,
+        'break_duration_seconds': session.break_duration_seconds
+    }
+
+
+@api_view(
+    authentication_required=True,
+    rate_limit='10/m',
+    use_transaction=True,
+    log_calls=True
+)
+def end_session_view(request: HttpRequest) -> JsonResponse:
+    """
+    End the current timer session using service layer with comprehensive error handling
+    """
+    from .services import TimerSessionService
+
+    # Get active session
+    active_session = TimerSessionService.get_active_session(request.user)
+    if not active_session:
+        raise SessionNotFoundError(
+            message="No active session found for user",
+            context={'user_id': request.user.id}
+        )
+
+    # End session and get summary using service layer
+    # All exceptions are handled by the service layer and api_error_handler decorator
+    session_summary = TimerSessionService.end_session(active_session)
+
+    return {
+        'message': 'Session ended successfully!',
+        **session_summary
+    }
+
+
+@api_view(
+    authentication_required=True,
+    required_fields=['session_id', 'interval_id'],
+    rate_limit='20/m',
+    use_transaction=True,
+    log_calls=True
+)
+def take_break_view(request: HttpRequest) -> JsonResponse:
+    """
+    Record a break taken by the user using service layer with comprehensive error handling
+    """
+    from .services import BreakService
+
+    data = request.validated_data
+    session_id = data['session_id']
+    interval_id = data['interval_id']
+    looked_at_distance = data.get('looked_at_distance', False)
+
+    # Get session and interval with proper error handling
+    try:
+        session = TimerSession.objects.get(id=session_id, user=request.user)
+    except TimerSession.DoesNotExist:
+        raise SessionNotFoundError(
+            message=f"Session {session_id} not found for user",
+            context={'session_id': session_id, 'user_id': request.user.id}
+        )
+
+    try:
+        interval = TimerInterval.objects.get(id=interval_id, session=session)
+    except TimerInterval.DoesNotExist:
+        raise IntervalNotFoundError(
+            message=f"Interval {interval_id} not found for session {session_id}",
+            context={
+                'interval_id': interval_id,
+                'session_id': session_id,
+                'user_id': request.user.id
             }
         )
-        
-        return JsonResponse({
-            'success': True,
-            'session_id': session.id,
-            'interval_id': interval.id,
-            'message': 'Timer session started successfully!'
-        })
-    
-    return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+    # Create break record using service layer
+    # All exceptions are handled by the service layer and api_error_handler decorator
+    break_record = BreakService.start_break(
+        request.user, session, interval, looked_at_distance
+    )
 
-@login_required
-@ratelimit(key='user', rate='10/m', method='POST')
-@require_POST
-def end_session_view(request):
-    """
-    End the current timer session
-    """
-    if request.method == 'POST':
-        active_session = TimerSession.objects.filter(
-            user=request.user, 
-            is_active=True
-        ).first()
-        
-        if not active_session:
-            return JsonResponse({
-                'success': False, 
-                'message': 'No active session found.'
-            })
-        
-        active_session.end_session()
-        
-        # Update daily statistics (using user's local date)
-        user_date_today = user_today(request.user)
-        today_stats, created = DailyStats.objects.get_or_create(
-            user=request.user,
-            date=user_date_today
+    # Get user settings for display
+    try:
+        user_settings = UserTimerSettings.objects.filter(user=request.user).first()
+        duration_text = (
+            user_settings.get_break_duration_display_text() if user_settings
+            else '20 seconds'
         )
-        today_stats.total_work_minutes += active_session.total_work_minutes
-        today_stats.total_intervals_completed += active_session.total_intervals_completed
-        today_stats.total_breaks_taken += active_session.total_breaks_taken
-        today_stats.total_sessions += 1
-        today_stats.save()
-        
-        # Update streak data and check achievements for premium users
-        if request.user.is_premium_user:
-            streak_data, created = UserStreakData.objects.get_or_create(user=request.user)
-            streak_data.total_sessions_completed += 1
-            streak_data.total_break_time_minutes += active_session.total_breaks_taken * (active_session.total_breaks_taken * 20)  # Assume 20s per break
-            
-            # Update daily streak (using user's local date)
-            user_date_today = user_today(request.user)
-            if streak_data.last_session_date == user_date_today:
-                # Already had a session today, no streak change
-                pass
-            elif streak_data.last_session_date == user_date_today - timedelta(days=1):
-                # Consecutive day
-                streak_data.current_daily_streak += 1
-                if streak_data.current_daily_streak > streak_data.best_daily_streak:
-                    streak_data.best_daily_streak = streak_data.current_daily_streak
-            elif streak_data.last_session_date is None or streak_data.last_session_date < user_date_today - timedelta(days=1):
-                # Streak broken or first time
-                streak_data.current_daily_streak = 1
-                streak_data.streak_start_date = user_date_today
-            
-            streak_data.last_session_date = user_date_today
-            streak_data.save()
-            
-            # Check for achievements
-            _check_and_award_achievements(request.user, streak_data)
-        
-        return JsonResponse({
-            'success': True,
-            'session_duration': active_session.duration_minutes,
-            'intervals_completed': active_session.total_intervals_completed,
-            'breaks_taken': active_session.total_breaks_taken,
-            'message': 'Session ended successfully!'
-        })
-    
-    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    except Exception as e:
+        logger.warning(f"Failed to get user settings for duration text: {e}")
+        duration_text = '20 seconds'
 
-
-@login_required
-@ratelimit(key='user', rate='20/m', method='POST')
-@require_POST
-def take_break_view(request):
-    """
-    Record a break taken by the user
-    """
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        session_id = data.get('session_id')
-        interval_id = data.get('interval_id')
-        looked_at_distance = data.get('looked_at_distance', False)
-        
-        session = get_object_or_404(TimerSession, id=session_id, user=request.user)
-        interval = get_object_or_404(TimerInterval, id=interval_id, session=session)
-        
-        # Create break record
-        break_record = BreakRecord.objects.create(
-            user=request.user,
-            session=session,
-            interval=interval,
-            break_type='scheduled',
-            looked_at_distance=looked_at_distance
-        )
-        
-        return JsonResponse({
-            'success': True,
-            'break_id': break_record.id,
-            'message': 'Break started successfully!'
-        })
-    
-    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    return {
+        'break_id': break_record.id,
+        'expected_duration_seconds': break_record.break_duration_seconds,
+        'duration_text': duration_text,
+        'message': 'Break started successfully!'
+    }
 
 
 @login_required
 @ratelimit(key='user', rate='30/m', method='POST')
 @require_POST
-def sync_session_view(request):
+def sync_session_view(request: HttpRequest) -> JsonResponse:
     """
-    Sync timer session state for webapp persistence
+    Sync timer session state for webapp persistence using service layer
     """
-    if request.method == 'POST':
+    from .services import TimerSessionService
+
+    try:
         data = json.loads(request.body)
         session_id = data.get('session_id')
-        
-        try:
-            session = TimerSession.objects.get(id=session_id, user=request.user)
-            
-            if not session.is_active:
-                return JsonResponse({
-                    'success': True,
-                    'session_active': False,
-                    'message': 'Session has ended'
-                })
-            
-            # Get current active interval
-            current_interval = TimerInterval.objects.filter(
-                session=session,
-                status='active'
-            ).order_by('-interval_number').first()
-            
-            if current_interval:
-                # Calculate elapsed time for current interval
-                elapsed_time = timezone.now() - current_interval.start_time
-                elapsed_seconds = int(elapsed_time.total_seconds())
-                
-                return JsonResponse({
-                    'success': True,
-                    'session_active': True,
-                    'interval_id': current_interval.id,
-                    'interval_number': current_interval.interval_number,
-                    'interval_elapsed_seconds': elapsed_seconds,
-                    'interval_duration_minutes': session.work_interval_minutes,
-                    'total_intervals_completed': session.total_intervals_completed,
-                    'total_breaks_taken': session.total_breaks_taken
-                })
-            else:
-                return JsonResponse({
-                    'success': True,
-                    'session_active': True,
-                    'message': 'No active interval found'
-                })
-                
-        except TimerSession.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'session_active': False,
-                'message': 'Session not found'
-            })
-    
-    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+        session = get_object_or_404(TimerSession, id=session_id, user=request.user)
+
+        # Get session state using service layer
+        session_state = TimerSessionService.sync_session_state(session)
+
+        return JsonResponse({
+            'success': True,
+            **session_state
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        logger.error(f"Error syncing session: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': 'Failed to sync session'
+        }, status=500)
 
 
 @login_required
@@ -363,68 +243,30 @@ def sync_session_view(request):
 @require_POST
 def complete_break_view(request):
     """
-    Complete a break
+    Complete a break - Optimized version using service layer
     """
     if request.method == 'POST':
         data = json.loads(request.body)
         break_id = data.get('break_id')
         looked_at_distance = data.get('looked_at_distance', False)
-        
-        break_record = get_object_or_404(BreakRecord, id=break_id, user=request.user)
-        break_record.complete_break(looked_at_distance=looked_at_distance)
-        
-        # Update session statistics
-        session = break_record.session
-        session.total_breaks_taken += 1
-        session.total_intervals_completed += 1  # Increment completed intervals
-        session.save()
-        
-        # Mark interval as completed
-        interval = break_record.interval
-        interval.complete_interval()
-        
-        # Track real-time activity
-        from analytics.models import UserSession, LiveActivityFeed
-        session_key = request.session.session_key
-        if session_key:
-            user_session = UserSession.objects.filter(session_key=session_key).first()
-            if user_session:
-                user_session.breaks_taken_in_session += 1
-                user_session.last_activity = timezone.now()
-                user_session.save()
-        
-        # Create activity feed entry
-        LiveActivityFeed.objects.create(
-            user=request.user,
-            activity_type='break_taken',
-            activity_data={
-                'session_id': session.id,
-                'interval_number': interval.interval_number,
-                'compliant': break_record.is_compliant,
-                'duration_seconds': break_record.break_duration_seconds,
-            }
+
+        # Get break record with select_related to avoid additional queries
+        break_record = get_object_or_404(
+            BreakRecord.objects.select_related('session', 'interval', 'user'),
+            id=break_id,
+            user=request.user
         )
-        
-        # Create next interval if session is still active
-        if session.is_active:
-            next_interval = TimerInterval.objects.create(
-                session=session,
-                interval_number=interval.interval_number + 1
-            )
-            
-            return JsonResponse({
-                'success': True,
-                'next_interval_id': next_interval.id,
-                'is_compliant': break_record.is_compliant,
-                'message': 'Break completed! Starting next interval.'
-            })
-        
+
+        # Use service layer for optimized break completion
+        from .services import BreakService
+        result = BreakService.complete_break(break_record, looked_at_distance)
+
+        # Return the service result directly
         return JsonResponse({
             'success': True,
-            'is_compliant': break_record.is_compliant,
-            'message': 'Break completed!'
+            **result
         })
-    
+
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
 
@@ -443,6 +285,16 @@ def timer_settings_view(request):
         settings.desktop_notification = request.POST.get('desktop_notification') == 'on'
         settings.show_progress_bar = request.POST.get('show_progress_bar') == 'on'
         settings.dark_mode = request.POST.get('dark_mode') == 'on'
+
+        # Smart break duration settings
+        settings.smart_break_enabled = request.POST.get('smart_break_enabled') == 'on'
+        preferred_duration = request.POST.get('preferred_break_duration')
+        if preferred_duration and preferred_duration.isdigit():
+            duration_value = int(preferred_duration)
+            # Validate against available choices
+            valid_durations = [choice[0] for choice in UserTimerSettings.BREAK_DURATION_CHOICES]
+            if duration_value in valid_durations:
+                settings.preferred_break_duration = duration_value
         
         # Sound settings
         settings.notification_sound_type = request.POST.get('notification_sound_type', 'gentle')
@@ -500,10 +352,9 @@ def statistics_view(request):
 
     total_stats['avg_compliance'] = avg_compliance
     
-    # Get recent sessions for detailed view
-    recent_sessions = TimerSession.objects.select_related('user').prefetch_related('intervals', 'breaks').filter(
-        user=request.user
-    ).order_by('-start_time')[:MAX_RECENT_SESSIONS]
+    # Get recent sessions for detailed view - Use optimized utility function
+    from .utils import get_optimized_recent_sessions
+    recent_sessions = get_optimized_recent_sessions(request.user, MAX_RECENT_SESSIONS)
     
     # Prepare chart data
     chart_data = {
@@ -538,56 +389,20 @@ def real_time_dashboard_view(request):
     return _admin_dashboard_view(request)
 
 
-def _check_and_award_achievements(user, streak_data):
+def _check_and_award_achievements(user: User, streak_data: UserStreakData) -> List[Achievement]:
     """
     Check and award achievements for premium users
+
+    Args:
+        user: User instance
+        streak_data: User's streak data
+
+    Returns:
+        List of newly awarded Achievement instances
     """
-    achievements_to_award = []
-    
-    # Streak achievements
-    for achievement_type, required_days in STREAK_ACHIEVEMENTS.items():
-        if streak_data.current_daily_streak >= required_days:
-            achievements_to_award.append(achievement_type)
-    
-    # Session count achievements
-    if streak_data.total_sessions_completed >= SESSION_MASTER_THRESHOLD:
-        achievements_to_award.append('session_master')
-    
-    # Time-based achievements (check current hour in user's timezone)
-    user_current_time = user_now(user)
-    current_hour = user_current_time.hour
-    if EARLY_BIRD_START_HOUR <= current_hour <= EARLY_BIRD_END_HOUR:
-        # Early bird - need to check if they have 10 morning sessions
-        morning_sessions = TimerSession.objects.filter(
-            user=user,
-            start_time__hour__gte=EARLY_BIRD_START_HOUR,
-            start_time__hour__lte=EARLY_BIRD_END_HOUR
-        ).count()
-        if morning_sessions >= EARLY_BIRD_SESSIONS_REQUIRED:
-            achievements_to_award.append('early_bird')
-    
-    if NIGHT_OWL_START_HOUR <= current_hour <= NIGHT_OWL_END_HOUR:
-        # Night owl - need to check if they have 10 evening sessions
-        evening_sessions = TimerSession.objects.filter(
-            user=user,
-            start_time__hour__gte=NIGHT_OWL_START_HOUR,
-            start_time__hour__lte=NIGHT_OWL_END_HOUR
-        ).count()
-        if evening_sessions >= NIGHT_OWL_SESSIONS_REQUIRED:
-            achievements_to_award.append('night_owl')
-    
-    # Award achievements that don't exist yet
-    for achievement_type in achievements_to_award:
-        achievement, created = Achievement.objects.get_or_create(
-            user=user,
-            achievement_type=achievement_type,
-            defaults={
-                'description': f'Earned on {user_today(user)}'
-            }
-        )
-        if created:
-            # Could add notification logic here
-            pass
+    # Use the service layer for achievement processing
+    from accounts.services import AchievementService
+    return AchievementService.check_and_award_achievements(user, streak_data)
 
 
 @login_required
@@ -633,6 +448,61 @@ def premium_themes_view(request):
 
 
 @login_required
+def get_break_settings_view(request):
+    """
+    API endpoint to get user's current break settings
+    """
+    settings, created = UserTimerSettings.objects.get_or_create(user=request.user)
+
+    return JsonResponse({
+        'success': True,
+        'smart_break_enabled': settings.smart_break_enabled,
+        'preferred_break_duration': settings.preferred_break_duration,
+        'effective_break_duration': settings.get_effective_break_duration(),
+        'duration_display_text': settings.get_break_duration_display_text(),
+        'break_duration_choices': UserTimerSettings.BREAK_DURATION_CHOICES
+    })
+
+
+@login_required
+@require_POST
+def update_smart_break_settings_view(request):
+    """
+    API endpoint to update smart break settings
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            settings, created = UserTimerSettings.objects.get_or_create(user=request.user)
+
+            # Update smart break settings
+            if 'smart_break_enabled' in data:
+                settings.smart_break_enabled = bool(data['smart_break_enabled'])
+
+            if 'preferred_break_duration' in data:
+                duration = int(data['preferred_break_duration'])
+                valid_durations = [choice[0] for choice in UserTimerSettings.BREAK_DURATION_CHOICES]
+                if duration in valid_durations:
+                    settings.preferred_break_duration = duration
+                else:
+                    return JsonResponse({'success': False, 'message': 'Invalid break duration'})
+
+            settings.save()
+
+            return JsonResponse({
+                'success': True,
+                'effective_break_duration': settings.get_effective_break_duration(),
+                'duration_display_text': settings.get_break_duration_display_text(),
+                'message': 'Smart break settings updated successfully!'
+            })
+
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            return JsonResponse({'success': False, 'message': 'Invalid request data'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+@login_required
 def update_dark_mode_view(request):
     """
     AJAX endpoint to update user's dark mode preference
@@ -648,3 +518,185 @@ def update_dark_mode_view(request):
         return JsonResponse({'success': True, 'dark_mode': dark_mode})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@login_required
+@require_POST
+def submit_feedback_view(request):
+    """
+    Submit user feedback
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            # Validate required fields
+            feedback_type = data.get('feedback_type')
+            title = data.get('title', '').strip()
+            message = data.get('message', '').strip()
+
+            if not feedback_type or not title or not message:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Feedback type, title, and message are required'
+                })
+
+            # Validate feedback type
+            valid_types = [choice[0] for choice in UserFeedback.FEEDBACK_TYPES]
+            if feedback_type not in valid_types:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Invalid feedback type'
+                })
+
+            # Sanitize input
+            title = bleach.clean(title)
+            message = bleach.clean(message)
+
+            # Create feedback entry
+            feedback = UserFeedback.objects.create(
+                user=request.user,
+                feedback_type=feedback_type,
+                title=title[:200],  # Enforce max length
+                message=message,
+                rating=data.get('rating'),
+                timer_session_id=data.get('session_id'),
+                break_record_id=data.get('break_id'),
+                context_data=data.get('context', {}),
+                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                page_url=data.get('page_url', ''),
+                screen_resolution=data.get('screen_resolution', '')
+            )
+
+            return JsonResponse({
+                'success': True,
+                'feedback_id': feedback.id,
+                'message': 'Thank you for your feedback! We appreciate your input.'
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid JSON data'
+            })
+        except Exception as e:
+            logger.error(f"Error submitting feedback: {e}")
+            return JsonResponse({
+                'success': False,
+                'message': 'An error occurred while submitting your feedback'
+            })
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+@login_required
+def feedback_dashboard_view(request):
+    """
+    User's feedback dashboard
+    """
+    user_feedback = UserFeedback.objects.filter(user=request.user).order_by('-created_at')[:20]
+
+    context = {
+        'feedback_entries': user_feedback,
+        'feedback_types': UserFeedback.FEEDBACK_TYPES,
+    }
+    return render(request, 'timer/feedback_dashboard.html', context)
+
+
+@login_required
+def break_insights_view(request):
+    """
+    Show user insights about their break patterns and suggestions
+    """
+    # Get or create latest analytics
+    from datetime import date, timedelta
+    end_date = date.today()
+    start_date = end_date - timedelta(days=30)
+
+    analytics, created = BreakPreferenceAnalytics.objects.get_or_create(
+        user=request.user,
+        analysis_start_date=start_date,
+        analysis_end_date=end_date,
+        defaults={
+            'preferred_break_duration': 20,
+            'total_sessions_analyzed': 0
+        }
+    )
+
+    if created or not analytics.total_sessions_analyzed:
+        # Calculate analytics if new or empty
+        _calculate_break_analytics(request.user, analytics, start_date, end_date)
+
+    # Get smart break suggestion
+    suggested_duration = analytics.calculate_smart_break_suggestion()
+    current_settings = UserTimerSettings.objects.filter(user=request.user).first()
+
+    # Check if suggestion differs from current setting
+    settings_update_needed = False
+    if current_settings and suggested_duration != current_settings.preferred_break_duration:
+        settings_update_needed = True
+
+    context = {
+        'analytics': analytics,
+        'suggested_duration': suggested_duration,
+        'current_settings': current_settings,
+        'settings_update_needed': settings_update_needed,
+        'break_duration_choices': UserTimerSettings.BREAK_DURATION_CHOICES,
+    }
+    return render(request, 'timer/break_insights.html', context)
+
+
+@login_required
+@require_POST
+def apply_break_suggestion_view(request):
+    """
+    Apply suggested break duration to user settings
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            suggested_duration = int(data.get('suggested_duration', 20))
+
+            # Validate duration
+            valid_durations = [choice[0] for choice in UserTimerSettings.BREAK_DURATION_CHOICES]
+            if suggested_duration not in valid_durations:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Invalid break duration'
+                })
+
+            # Update user settings
+            settings, created = UserTimerSettings.objects.get_or_create(user=request.user)
+            settings.preferred_break_duration = suggested_duration
+            settings.smart_break_enabled = True
+            settings.save()
+
+            return JsonResponse({
+                'success': True,
+                'message': f'Break duration updated to {suggested_duration} seconds!',
+                'new_duration': suggested_duration,
+                'duration_text': settings.get_break_duration_display_text()
+            })
+
+        except (json.JSONDecodeError, ValueError) as e:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid request data'
+            })
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+def _calculate_break_analytics(user: User, analytics: BreakPreferenceAnalytics, start_date: date, end_date: date) -> None:
+    """
+    Calculate break preference analytics for a user
+
+    Args:
+        user: User instance
+        analytics: BreakPreferenceAnalytics instance to update
+        start_date: Analysis start date
+        end_date: Analysis end date
+    """
+    # Use the service layer for break analytics calculation
+    from timer.services import BreakAnalyticsService
+    BreakAnalyticsService.calculate_break_analytics(user, analytics, start_date, end_date)

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Server Error - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="error-page text-center">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-exclamation-triangle fa-5x text-danger"></i>
+                </div>
+
+                <h1 class="display-4 mb-3">500</h1>
+                <h2 class="h4 mb-4">Internal Server Error</h2>
+
+                <div class="error-message mb-4">
+                    <p class="lead">
+                        {% if error_message %}
+                            {{ error_message }}
+                        {% else %}
+                            Something went wrong on our end. We're working to fix it!
+                        {% endif %}
+                    </p>
+                    <p class="text-muted">
+                        Our team has been automatically notified and is looking into the issue.
+                        Please try again in a few minutes.
+                    </p>
+
+                    {% if error_code %}
+                        <small class="text-muted">Error Code: {{ error_code }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="error-actions">
+                    <button onclick="location.reload()" class="btn btn-primary me-3">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+
+                    <a href="{% url 'accounts:home' %}" class="btn btn-outline-primary me-3">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'timer:dashboard' %}" class="btn btn-outline-primary me-3">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'accounts:contact' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-envelope me-2"></i>Report Issue
+                    </a>
+                </div>
+
+                <div class="mt-5">
+                    <div class="alert alert-light">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-lightbulb me-2"></i>What you can do:
+                        </h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Wait a few minutes and try again</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Check your internet connection</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Clear your browser cache</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Contact support if the issue persists</li>
+                        </ul>
+                    </div>
+                </div>
+
+                {% if support_email %}
+                <div class="mt-4">
+                    <p class="text-muted">
+                        Need immediate assistance? Email us at
+                        <a href="mailto:{{ support_email }}">{{ support_email }}</a>
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if error_details and user.is_staff %}
+                <div class="mt-4">
+                    <details class="text-start">
+                        <summary class="btn btn-sm btn-outline-danger">Technical Details (Staff Only)</summary>
+                        <pre class="mt-2 p-3 bg-light border rounded text-danger"><code>{{ error_details }}</code></pre>
+                    </details>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 40px 0;
+}
+
+.error-icon {
+    animation: shake 0.5s infinite alternate;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(5px); }
+}
+
+.error-actions .btn {
+    margin-bottom: 10px;
+}
+
+.alert ul li {
+    margin-bottom: 5px;
+}
+
+@media (max-width: 576px) {
+    .error-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .error-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+</style>
+
+<script>
+// Auto-retry after 30 seconds
+setTimeout(function() {
+    if (confirm('Would you like to automatically retry loading the page?')) {
+        location.reload();
+    }
+}, 30000);
+</script>
+{% endblock %}

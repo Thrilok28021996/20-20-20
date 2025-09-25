@@ -1,0 +1,118 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 6 * * 1'  # Run every Monday at 6 AM UTC
+
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install safety bandit[toml] semgrep
+
+    - name: Run Safety (Dependency Vulnerability Scan)
+      run: |
+        safety check --json --output safety-report.json || true
+        safety check || echo "⚠️ Security vulnerabilities found in dependencies"
+
+    - name: Run Bandit (Security Linting)
+      run: |
+        bandit -r . -x ./*/migrations/,./*/tests/,./static/,./staticfiles/ -f json -o bandit-report.json || true
+        bandit -r . -x ./*/migrations/,./*/tests/,./static/,./staticfiles/ || echo "⚠️ Security issues found in code"
+
+    - name: Run Semgrep (SAST)
+      run: |
+        semgrep --config=auto --json --output=semgrep-report.json . || true
+        semgrep --config=auto . || echo "⚠️ Security patterns detected"
+
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          safety-report.json
+          bandit-report.json
+          semgrep-report.json
+
+  secret-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Run Gitleaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  docker-security:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: |
+        docker build -t 20-20-20:security-scan .
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: '20-20-20:security-scan'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  license-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install pip-licenses
+      run: |
+        python -m pip install --upgrade pip
+        pip install pip-licenses
+        pip install -r requirements.txt
+
+    - name: Check licenses
+      run: |
+        pip-licenses --format=json --output-file=licenses.json
+        pip-licenses --fail-on="GPL v3;AGPL v3" || echo "⚠️ Restrictive licenses detected"
+
+    - name: Upload license report
+      uses: actions/upload-artifact@v3
+      with:
+        name: license-report
+        path: licenses.json

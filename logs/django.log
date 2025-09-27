@@ -93,3 +93,14 @@ INFO 2025-09-20 17:41:40,931 autoreload 51270 8379025408 /Volumes/personal/progr
 INFO 2025-09-20 17:41:41,183 autoreload 51340 8379025408 Watching for file changes with StatReloader
 INFO 2025-09-20 17:41:46,560 autoreload 51340 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
 INFO 2025-09-20 17:41:46,814 autoreload 51350 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-27 12:07:32,659 autoreload 1444 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-27 12:07:44,149 middleware 1444 6164852736 GET /
+INFO 2025-09-27 12:07:44,184 middleware 1444 6164852736 GET / -> 200
+INFO 2025-09-27 12:07:44,185 basehttp 1444 6164852736 "GET / HTTP/1.1" 200 42896
+INFO 2025-09-27 12:07:44,204 basehttp 1444 6164852736 "GET /static/css/custom.css?v=1.2 HTTP/1.1" 200 47529
+WARNING 2025-09-27 12:07:44,976 basehttp 1444 6164852736 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
+WARNING 2025-09-27 12:07:44,976 basehttp 1444 6181679104 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
+INFO 2025-09-27 12:07:47,368 middleware 1444 6164852736 GET /pricing/
+INFO 2025-09-27 12:07:47,374 middleware 1444 6164852736 GET /pricing/ -> 200
+INFO 2025-09-27 12:07:47,376 basehttp 1444 6164852736 "GET /pricing/ HTTP/1.1" 200 31242
+INFO 2025-09-27 12:08:36,022 autoreload 1526 8379025408 Watching for file changes with StatReloader

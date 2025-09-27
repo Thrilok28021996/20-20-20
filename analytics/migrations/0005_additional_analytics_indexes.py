@@ -15,9 +15,11 @@ class Migration(migrations.Migration):
             "CREATE INDEX IF NOT EXISTS analytics_daily_stats_user_date_range_idx ON analytics_daily_stats (user_id, date, total_sessions);",
             reverse_sql="DROP INDEX IF EXISTS analytics_daily_stats_user_date_range_idx;"
         ),
+        # Note: compliance_rate is a calculated property, not a database column
+        # Creating index on the underlying columns used for calculation instead
         migrations.RunSQL(
-            "CREATE INDEX IF NOT EXISTS analytics_daily_stats_compliance_idx ON analytics_daily_stats (user_id, compliance_rate) WHERE compliance_rate = 100.0;",
-            reverse_sql="DROP INDEX IF EXISTS analytics_daily_stats_compliance_idx;"
+            "CREATE INDEX IF NOT EXISTS analytics_daily_stats_compliance_calc_idx ON analytics_daily_stats (user_id, breaks_compliant, total_breaks_taken);",
+            reverse_sql="DROP INDEX IF EXISTS analytics_daily_stats_compliance_calc_idx;"
         ),
 
         # Add indexes for user session tracking
@@ -31,8 +33,9 @@ class Migration(migrations.Migration):
         ),
 
         # Add indexes for satisfaction analytics
+        # Note: SQLite doesn't support INTERVAL, using simplified version
         migrations.RunSQL(
-            "CREATE INDEX IF NOT EXISTS analytics_satisfaction_rating_recent_idx ON analytics_satisfaction_rating (rating_date, rating, recommendation_score) WHERE rating_date >= CURRENT_DATE - INTERVAL '30 days';",
+            "CREATE INDEX IF NOT EXISTS analytics_satisfaction_rating_recent_idx ON analytics_satisfaction_rating (rating_date, rating, recommendation_score);",
             reverse_sql="DROP INDEX IF EXISTS analytics_satisfaction_rating_recent_idx;"
         ),
 

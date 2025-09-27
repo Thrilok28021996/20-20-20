@@ -32,9 +32,9 @@ RUN mkdir -p logs
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Add debugging script
-COPY simple_health.py .
-RUN chmod +x simple_health.py
+# Add debugging and startup scripts
+COPY simple_health.py check_env.py start.sh ./
+RUN chmod +x simple_health.py check_env.py start.sh
 
 # Create non-root user
 RUN adduser --disabled-password --gecos '' appuser \
@@ -48,5 +48,5 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 # Expose port
 EXPOSE 8000
 
-# Run gunicorn with dynamic port for Railway
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 3 --timeout 120 mysite.wsgi:application"]
+# Run startup script
+CMD ["./start.sh"]

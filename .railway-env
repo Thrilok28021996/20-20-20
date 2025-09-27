@@ -4,7 +4,7 @@
 # Django Configuration
 SECRET_KEY=59-tva$#q)l57od0^!1*)82&bzv%*8@k^0(n#ps!10&i&ktsv+
 DEBUG=False
-ALLOWED_HOSTS=threetwentys.railway.app,your-custom-domain.com
+ALLOWED_HOSTS=20-20-20-production.up.railway.app,your-custom-domain.com
 
 # Database (Railway will provide PostgreSQL URL)
 DATABASE_URL=${{Postgres.DATABASE_URL}}
@@ -17,7 +17,7 @@ CORS_ALLOWED_ORIGINS=https://your-frontend-domain.com
 CORS_ALLOW_CREDENTIALS=True
 
 # CSRF Configuration
-CSRF_TRUSTED_ORIGINS=https://threetwentys.railway.app,https://your-custom-domain.com
+CSRF_TRUSTED_ORIGINS=20-20-20-production.up.railway.app,https://your-custom-domain.com
 
 # Security Headers
 SECURE_SSL_REDIRECT=True

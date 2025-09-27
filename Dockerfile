@@ -48,5 +48,5 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# Run crash-safe test to debug 502 error
-CMD ["python", "crash_safe.py"]
+# Run debug server to isolate port binding issue
+CMD ["python", "debug_server.py"]

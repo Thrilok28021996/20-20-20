@@ -96,3 +96,46 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    // CSRF Token debugging
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Debug CSRF on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = getCookie('csrftoken');
+
+        if (!csrfToken) {
+            console.warn('CSRF token cookie not found. This may cause login issues.');
+
+            // Show debug info if in development
+            {% if debug %}
+            const debugAlert = document.createElement('div');
+            debugAlert.className = 'alert alert-warning mt-3';
+            debugAlert.innerHTML = `
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Debug:</strong> CSRF token missing.
+                <a href="{% url 'accounts:csrf_debug' %}" target="_blank">Debug CSRF</a>
+            `;
+            document.querySelector('.container').appendChild(debugAlert);
+            {% endif %}
+        } else {
+            console.log('CSRF token found:', csrfToken.substring(0, 10) + '...');
+        }
+    });
+</script>
+{% endblock %}

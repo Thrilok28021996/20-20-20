@@ -200,3 +200,59 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    // CSRF Token debugging for signup
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Debug CSRF and enhance form
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = getCookie('csrftoken');
+        const form = document.querySelector('form');
+
+        if (!csrfToken) {
+            console.warn('CSRF token cookie not found. This may cause signup issues.');
+
+            // Show debug info if in development
+            {% if debug %}
+            const debugAlert = document.createElement('div');
+            debugAlert.className = 'alert alert-warning mt-3';
+            debugAlert.innerHTML = `
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Debug:</strong> CSRF token missing.
+                <a href="{% url 'accounts:csrf_debug' %}" target="_blank">Debug CSRF</a>
+            `;
+            document.querySelector('.container').appendChild(debugAlert);
+            {% endif %}
+        } else {
+            console.log('CSRF token found:', csrfToken.substring(0, 10) + '...');
+        }
+
+        // Add form submission debugging
+        form.addEventListener('submit', function(e) {
+            const csrfInput = form.querySelector('[name="csrfmiddlewaretoken"]');
+            if (!csrfInput || !csrfInput.value) {
+                console.error('CSRF token input missing or empty');
+                {% if debug %}
+                alert('CSRF Error: Token missing. Check console for details.');
+                e.preventDefault();
+                {% endif %}
+            }
+        });
+    });
+</script>
+{% endblock %}

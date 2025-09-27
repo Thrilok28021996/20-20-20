@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 from django.utils import timezone
+from django.conf import settings
+from django.http import HttpResponse
 from .models import User, UserProfile
 from .forms import SignUpForm, UserProfileForm
 
@@ -498,3 +500,13 @@ def documentation_view(request):
         ]
     }
     return render(request, 'accounts/documentation.html', context)
+
+
+def csrf_debug_view(request):
+    """
+    Debug view to troubleshoot CSRF issues (only available in DEBUG mode)
+    """
+    if not settings.DEBUG:
+        return HttpResponse("Not available in production", status=404)
+
+    return render(request, 'csrf_debug.html')

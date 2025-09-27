@@ -23,4 +23,6 @@ urlpatterns = [
     # Additional SaaS pages
     path('faq/', views.faq_view, name='faq'),
     path('docs/', views.documentation_view, name='documentation'),
+    # Debug views (only in DEBUG mode)
+    path('csrf-debug/', views.csrf_debug_view, name='csrf_debug'),
 ]

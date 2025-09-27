@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSRF Debug Information</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-section { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>CSRF Debug Information</h1>
+
+    <div class="debug-section info">
+        <h3>Current CSRF Token</h3>
+        <p><strong>Token:</strong> {{ csrf_token }}</p>
+        <p><strong>Cookie Present:</strong> <span id="csrf-cookie-status">Checking...</span></p>
+    </div>
+
+    <div class="debug-section info">
+        <h3>Browser Information</h3>
+        <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+        <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+        <p><strong>Referrer:</strong> <span id="referrer"></span></p>
+    </div>
+
+    <div class="debug-section info">
+        <h3>Test CSRF Form</h3>
+        <form method="post" action="{% url 'accounts:login' %}">
+            {% csrf_token %}
+            <p>Username: <input type="text" name="username" value="test@example.com"></p>
+            <p>Password: <input type="password" name="password" value="testpassword"></p>
+            <p><button type="submit">Test Login (Don't worry, won't actually login)</button></p>
+        </form>
+    </div>
+
+    <div class="debug-section info">
+        <h3>Cookie Information</h3>
+        <div id="cookie-info"></div>
+    </div>
+
+    <script>
+        // Get CSRF cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Check CSRF cookie
+        const csrfToken = getCookie('csrftoken');
+        document.getElementById('csrf-cookie-status').textContent = csrfToken ? 'Present' : 'Missing';
+
+        // Display browser info
+        document.getElementById('user-agent').textContent = navigator.userAgent;
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('referrer').textContent = document.referrer || 'None';
+
+        // Display all cookies
+        const cookieInfo = document.getElementById('cookie-info');
+        if (document.cookie) {
+            const cookies = document.cookie.split(';');
+            cookies.forEach(cookie => {
+                const div = document.createElement('div');
+                div.textContent = cookie.trim();
+                cookieInfo.appendChild(div);
+            });
+        } else {
+            cookieInfo.textContent = 'No cookies found';
+        }
+    </script>
+</body>
+</html>

@@ -243,9 +243,15 @@ SESSION_COOKIE_SAMESITE = config("SESSION_COOKIE_SAMESITE", default="Lax")
 
 # CSRF Protection Configuration
 CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=not DEBUG, cast=bool)
-CSRF_COOKIE_HTTPONLY = config("CSRF_COOKIE_HTTPONLY", default=True, cast=bool)
+CSRF_COOKIE_HTTPONLY = config("CSRF_COOKIE_HTTPONLY", default=not DEBUG, cast=bool)
 CSRF_COOKIE_SAMESITE = config("CSRF_COOKIE_SAMESITE", default="Lax")
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
+
+# CSRF Debug Settings for Development
+if DEBUG:
+    CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
+    CSRF_USE_SESSIONS = False
+    CSRF_COOKIE_AGE = None
 
 # Security Headers Configuration
 SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=not DEBUG, cast=bool)

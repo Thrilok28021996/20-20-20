@@ -32,9 +32,18 @@ else:
     print('Superuser already exists')
 EOF
 
-# Test health endpoint
-echo "🏥 Testing health endpoint..."
-python simple_health.py
+# Test Django setup
+echo "🏥 Testing Django setup..."
+python -c "
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
+import django
+django.setup()
+print('✅ Django setup successful')
+from django.db import connection
+connection.ensure_connection()
+print('✅ Database connection successful')
+"
 
 # Start the server
 echo "🌟 Starting Gunicorn server..."

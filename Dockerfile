@@ -32,6 +32,10 @@ RUN mkdir -p logs
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
+# Add debugging script
+COPY simple_health.py .
+RUN chmod +x simple_health.py
+
 # Create non-root user
 RUN adduser --disabled-password --gecos '' appuser \
     && chown -R appuser:appuser /app

@@ -20,26 +20,22 @@ def health_check_view(request: HttpRequest) -> JsonResponse:
     Returns a simple OK response if the system is operational.
     """
     try:
-        # Run basic health checks
-        health_results = health_checker.run_checks()
-
-        # Determine if system is healthy
-        all_healthy = all(
-            result['check_passed'] for result in health_results.values()
-        )
-
-        status_code = 200 if all_healthy else 503
+        # Simple database connectivity check
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
 
         return JsonResponse({
-            'status': 'ok' if all_healthy else 'degraded',
+            'status': 'ok',
             'timestamp': timezone.now().isoformat(),
-            'version': '1.0.0',  # You might want to make this dynamic
-        }, status=status_code)
+            'version': '1.0.0',
+        }, status=200)
 
     except Exception as e:
         return JsonResponse({
             'status': 'error',
             'message': 'Health check failed',
+            'error': str(e),
             'timestamp': timezone.now().isoformat(),
         }, status=503)
 

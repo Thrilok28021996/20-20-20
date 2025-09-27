@@ -48,5 +48,5 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# Run basic Python test to debug 502 error
-CMD ["python", "basic_test.py"]
+# Run crash-safe test to debug 502 error
+CMD ["python", "crash_safe.py"]

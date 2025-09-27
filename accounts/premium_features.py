@@ -37,65 +37,6 @@ PREMIUM_TIMER_PRESETS = [
     }
 ]
 
-# Premium themes (8 custom themes)
-PREMIUM_THEMES = [
-    {
-        'name': 'Ocean Blue',
-        'primary_color': '#1e40af',
-        'secondary_color': '#0ea5e9',
-        'accent_color': '#38bdf8',
-        'description': 'Calming ocean-inspired colors'
-    },
-    {
-        'name': 'Forest Green',
-        'primary_color': '#16a34a',
-        'secondary_color': '#22c55e',
-        'accent_color': '#4ade80',
-        'description': 'Nature-inspired green palette'
-    },
-    {
-        'name': 'Sunset Orange',
-        'primary_color': '#ea580c',
-        'secondary_color': '#f97316',
-        'accent_color': '#fb923c',
-        'description': 'Warm and energizing sunset colors'
-    },
-    {
-        'name': 'Purple Zen',
-        'primary_color': '#7c3aed',
-        'secondary_color': '#8b5cf6',
-        'accent_color': '#a78bfa',
-        'description': 'Mindful purple tones for focus'
-    },
-    {
-        'name': 'Rose Gold',
-        'primary_color': '#be185d',
-        'secondary_color': '#ec4899',
-        'accent_color': '#f472b6',
-        'description': 'Elegant rose gold finish'
-    },
-    {
-        'name': 'Midnight Dark',
-        'primary_color': '#1f2937',
-        'secondary_color': '#374151',
-        'accent_color': '#6b7280',
-        'description': 'Professional dark mode'
-    },
-    {
-        'name': 'Arctic White',
-        'primary_color': '#f8fafc',
-        'secondary_color': '#f1f5f9',
-        'accent_color': '#cbd5e1',
-        'description': 'Clean minimalist white'
-    },
-    {
-        'name': 'Productivity Red',
-        'primary_color': '#dc2626',
-        'secondary_color': '#ef4444',
-        'accent_color': '#f87171',
-        'description': 'Energizing red for productivity'
-    }
-]
 
 # Guided eye exercises (6 types)
 EYE_EXERCISES = [
@@ -233,7 +174,6 @@ def get_user_premium_features(user):
             'smart_timer_presets',
             'advanced_analytics',
             'guided_exercises', 
-            'custom_themes',
             'email_reports',
             'achievements',
             'data_export',

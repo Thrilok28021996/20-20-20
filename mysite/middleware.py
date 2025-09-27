@@ -267,7 +267,7 @@ class ErrorHandlingMiddleware(MiddlewareMixin):
                 {
                     'error_message': error_message,
                     'error_details': traceback.format_exc() if settings.DEBUG else None,
-                    'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com')
+                    'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com')
                 },
                 status=500
             )
@@ -383,7 +383,7 @@ class ErrorHandlingMiddleware(MiddlewareMixin):
             {
                 'error_message': exception.user_message,
                 'error_code': exception.error_code,
-                'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com'),
+                'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
                 'error_details': str(exception) if settings.DEBUG else None
             },
             status=exception.status_code

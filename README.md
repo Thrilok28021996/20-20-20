@@ -213,7 +213,7 @@ Based on market analysis of similar SaaS products:
 All API endpoints require token authentication:
 ```bash
 curl -H "Authorization: Token your-api-token" \
-     https://api.eyehealth2020.com/api/v1/sessions/
+     https://your-api-domain.com/api/v1/sessions/
 ```
 
 ### Key Endpoints
@@ -308,7 +308,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Documentation**: Check the docs/ directory for detailed guides
 - **Issues**: Report bugs and feature requests via GitHub Issues
 - **Community**: Join our community forum for discussions
-- **Email**: Contact support@eyehealth2020.com for direct assistance
+- **Email**: Contact thriloke96@gmail.com for direct assistance
 
 ### Enterprise Support
 - **Priority Support**: Faster response times for paid subscribers  
@@ -346,4 +346,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ for healthier digital work habits**
 
-For more information, visit [https://eyehealth2020.com](https://eyehealth2020.com)# 20-20-20
+For more information, visit the application URL# 20-20-20

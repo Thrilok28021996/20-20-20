@@ -212,7 +212,7 @@ Add to `settings.py`:
 
 ```python
 # Error Handling Configuration
-SUPPORT_EMAIL = 'support@eyehealth2020.com'
+SUPPORT_EMAIL = 'thriloke96@gmail.com'
 ERROR_REPORTING_ENABLED = True
 
 # API Configuration

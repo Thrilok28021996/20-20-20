@@ -65,7 +65,6 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
 
     # Add premium feature checks
     context.update({
-        'can_use_premium_themes': can_access_feature(request.user, 'custom_themes'),
         'can_use_guided_exercises': can_access_feature(request.user, 'guided_exercises'),
     })
 
@@ -421,30 +420,6 @@ def premium_exercises_view(request):
     return render(request, 'timer/premium_exercises.html', context)
 
 
-@login_required 
-def premium_themes_view(request):
-    """
-    Premium theme selection view
-    """
-    from accounts.premium_features import PREMIUM_THEMES
-    
-    if not can_access_feature(request.user, 'custom_themes'):
-        messages.error(request, 'This feature requires a Premium subscription.')
-        return redirect('accounts:pricing')
-    
-    if request.method == 'POST':
-        theme_name = request.POST.get('theme')
-        # Save theme preference to user profile
-        profile = request.user.profile
-        # You would add a theme field to UserProfile model
-        messages.success(request, f'Theme "{theme_name}" applied successfully!')
-        return redirect('timer:dashboard')
-    
-    context = {
-        'themes': PREMIUM_THEMES,
-        'is_premium_user': request.user.is_premium_user,
-    }
-    return render(request, 'timer/premium_themes.html', context)
 
 
 @login_required

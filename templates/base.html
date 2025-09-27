@@ -11,10 +11,10 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{% block og_url %}https://eyehealth2020.com{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}">
     <meta property="og:title" content="{% block og_title %}{{ block.super }}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}{{ block.super }}{% endblock %}">
-    <meta property="og:image" content="{% block og_image %}https://eyehealth2020.com/static/images/og-image.png{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.build_absolute_uri }}{% static 'images/og-image.png' %}{% endblock %}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -280,16 +280,6 @@
                     {% endif %}
                 </ul>
 
-                <!-- Dark Theme Toggle -->
-                <div class="d-flex align-items-center ms-3">
-                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center"
-                            data-toggle-dark-theme
-                            title="Toggle Dark/Light Theme"
-                            style="border: none; background: transparent;">
-                        <i class="fas fa-moon me-1"></i>
-                        <span class="d-none d-md-inline">Theme</span>
-                    </button>
-                </div>
             </div>
         </div>
     </nav>
@@ -351,9 +341,14 @@
                 <div class="col-lg-2 col-md-6 col-sm-6 mb-4">
                     <h6>Connect</h6>
                     <div class="d-flex flex-wrap gap-3">
-                        <a href="#" class="text-light footer-social-link"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="text-light footer-social-link"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="#" class="text-light footer-social-link"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="https://github.com/Thrilok28021996" target="_blank" class="text-light footer-social-link"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="https://www.linkedin.com/in/thrilokemmadisetty/" target="_blank" class="text-light footer-social-link"><i class="fab fa-linkedin fa-lg"></i></a>
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-envelope me-1"></i>
+                            <a href="mailto:thriloke96@gmail.com" class="text-light">thriloke96@gmail.com</a>
+                        </small>
                     </div>
                 </div>
             </div>

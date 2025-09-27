@@ -58,7 +58,7 @@ DEFAULT_NOTIFICATION_SOUND = 'gentle'
 
 # Email Settings
 DEFAULT_FROM_EMAIL_NAME = 'EyeHealth 20-20-20'
-DEFAULT_FROM_EMAIL_DOMAIN = 'noreply@eyehealth2020.com'
+DEFAULT_FROM_EMAIL_DOMAIN = 'thriloke96@gmail.com'
 
 # Cache Settings
 USER_STATS_CACHE_TIMEOUT = 300  # 5 minutes

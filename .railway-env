@@ -36,7 +36,7 @@ EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_HOST_USER=thriloke96@gmail.com
 EMAIL_HOST_PASSWORD=lzuuqibbcagqyamq
-DEFAULT_FROM_EMAIL=thriloke96@gmail.com
+DEFAULT_FROM_EMAIL=EyeHealth 20-20-20 <thriloke96@gmail.com>
 
 # Stripe Configuration (if using payments)
 STRIPE_PUBLISHABLE_KEY=pk_live_...

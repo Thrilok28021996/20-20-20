@@ -205,7 +205,7 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL", default="EyeHealth 20-20-20 <noreply@eyehealth2020.com>"
+    "DEFAULT_FROM_EMAIL", default="EyeHealth 20-20-20 <thriloke96@gmail.com>"
 )
 
 # Celery Configuration - Load from environment variables
@@ -402,7 +402,7 @@ RATELIMIT_USE_CACHE = "default"
 RATELIMIT_ENABLE = True
 
 # Error Handling Configuration
-SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="support@eyehealth2020.com")
+SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="thriloke96@gmail.com")
 ERROR_REPORTING_ENABLED = config("ERROR_REPORTING_ENABLED", default=True, cast=bool)
 
 # Cache Configuration

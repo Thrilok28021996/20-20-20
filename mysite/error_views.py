@@ -54,7 +54,7 @@ def bad_request(request: HttpRequest, exception=None) -> HttpResponse:
     context = {
         'error_message': 'The request could not be understood by the server.',
         'error_code': 'BAD_REQUEST',
-        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com'),
+        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
         'error_details': str(exception) if exception and settings.DEBUG else None
     }
 
@@ -99,7 +99,7 @@ def permission_denied(request: HttpRequest, exception=None) -> HttpResponse:
     context = {
         'error_message': 'You don\'t have permission to access this resource.',
         'error_code': 'PERMISSION_DENIED',
-        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com'),
+        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
         'error_details': str(exception) if exception and settings.DEBUG else None
     }
 
@@ -144,7 +144,7 @@ def page_not_found(request: HttpRequest, exception=None) -> HttpResponse:
     context = {
         'error_message': 'The page you\'re looking for doesn\'t exist.',
         'error_code': 'NOT_FOUND',
-        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com'),
+        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
         'error_details': str(exception) if exception and settings.DEBUG else None
     }
 
@@ -188,7 +188,7 @@ def server_error(request: HttpRequest) -> HttpResponse:
     context = {
         'error_message': 'An unexpected error occurred on our end.',
         'error_code': 'INTERNAL_SERVER_ERROR',
-        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com'),
+        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
         'error_details': None  # Never show server error details to users
     }
 
@@ -242,7 +242,7 @@ def rate_limit_exceeded(request: HttpRequest, exception=None) -> HttpResponse:
         'error_message': 'You\'ve made too many requests. Please slow down!',
         'error_code': 'RATE_LIMIT_EXCEEDED',
         'retry_after': retry_after,
-        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com'),
+        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
         'error_details': str(exception) if exception and settings.DEBUG else None
     }
 
@@ -293,7 +293,7 @@ def service_unavailable(request: HttpRequest, exception=None) -> HttpResponse:
         'error_message': f'{service_name} is temporarily unavailable.',
         'error_code': 'SERVICE_UNAVAILABLE',
         'service_name': service_name,
-        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@eyehealth2020.com'),
+        'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
         'error_details': str(exception) if exception and settings.DEBUG else None
     }
 

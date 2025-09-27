@@ -11,95 +11,95 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-import logging
 from pathlib import Path
-from decouple import config, Csv
+
 import dj_database_url
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security Configuration - Load from environment variables
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
-DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+SECRET_KEY = config(
+    "SECRET_KEY")
+)
+DEBUG = config("DEBUG", default=False, cast=bool)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
-    'django_celery_beat',
-    'django_extensions',
-    'crispy_forms',
-    'crispy_bootstrap5',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
+    "django_celery_beat",
+    "django_extensions",
+    "crispy_forms",
+    "crispy_bootstrap5",
     # Security apps
-    'csp',
-    'axes',
+    "csp",
+    "axes",
     # Project apps
-    'accounts',
-    'timer',
-    'analytics',
-    'notifications',
-    'subscriptions',
-    'payments',
-    'calendars',
+    "accounts",
+    "timer",
+    "analytics",
+    "notifications",
+    "subscriptions",
+    "payments",
+    "calendars",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'axes.middleware.AxesMiddleware',  # Security middleware for failed login attempts
-    'accounts.middleware.TimezoneMiddleware',  # Add timezone middleware after auth
-    'csp.middleware.CSPMiddleware',  # Content Security Policy middleware
-    'mysite.middleware.RequestLoggingMiddleware',  # Request/response logging
-    'mysite.middleware.SecurityHeadersMiddleware',  # Additional security headers
-    'mysite.middleware.ErrorHandlingMiddleware',  # Comprehensive error handling
-    'mysite.middleware.APIErrorResponseMiddleware',  # API error standardization
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "axes.middleware.AxesMiddleware",  # Security middleware for failed login attempts
+    "accounts.middleware.TimezoneMiddleware",  # Add timezone middleware after auth
+    "csp.middleware.CSPMiddleware",  # Content Security Policy middleware
+    "mysite.middleware.RequestLoggingMiddleware",  # Request/response logging
+    "mysite.middleware.SecurityHeadersMiddleware",  # Additional security headers
+    "mysite.middleware.ErrorHandlingMiddleware",  # Comprehensive error handling
+    "mysite.middleware.APIErrorResponseMiddleware",  # API error standardization
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'mysite.urls'
+ROOT_URLCONF = "mysite.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'mysite.wsgi.application'
+WSGI_APPLICATION = "mysite.wsgi.application"
 
 
 # Database Configuration - Support both SQLite and PostgreSQL
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASE_URL = config('DATABASE_URL', default=f'sqlite:///{BASE_DIR}/db.sqlite3')
-DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL)
-}
+DATABASE_URL = config("DATABASE_URL", default=f"sqlite:///{BASE_DIR}/db.sqlite3")
+DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 
 
 # Password validation
@@ -107,22 +107,22 @@ DATABASES = {
 
 # Authentication backends - required for django-axes
 AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesStandaloneBackend',  # Required for django-axes
-    'django.contrib.auth.backends.ModelBackend',
+    "axes.backends.AxesStandaloneBackend",  # Required for django-axes
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -130,9 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -142,218 +142,248 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Payment Configuration - Load from environment variables
-STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY', default='')
-STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY', default='')
-STRIPE_PRICE_ID = config('STRIPE_PRICE_ID', default='')
-STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='')
+STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY", default="")
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
+STRIPE_PRICE_ID = config("STRIPE_PRICE_ID", default="")
+STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET", default="")
 
 # PayPal Configuration
-PAYPAL_TEST = config('PAYPAL_TEST', default=True, cast=bool)
-PAYPAL_RECEIVER_EMAIL = config('PAYPAL_RECEIVER_EMAIL', default='')
+PAYPAL_TEST = config("PAYPAL_TEST", default=True, cast=bool)
+PAYPAL_RECEIVER_EMAIL = config("PAYPAL_RECEIVER_EMAIL", default="")
 
 # Custom User Model
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = "accounts.User"
 
 # Login/Logout URLs
-LOGIN_URL = 'accounts:login'
-LOGIN_REDIRECT_URL = 'timer:dashboard'
-LOGOUT_REDIRECT_URL = 'accounts:home'
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "timer:dashboard"
+LOGOUT_REDIRECT_URL = "accounts:home"
 
 # Django REST Framework
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
 }
 
 # CORS Settings - Load from environment variables
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000,http://127.0.0.1:3000', cast=Csv())
-CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=bool)
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:3000,http://127.0.0.1:3000",
+    cast=Csv(),
+)
+CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=True, cast=bool)
 
 # Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Email Configuration - Load from environment variables
-EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
-EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='EyeHealth 20-20-20 <noreply@eyehealth2020.com>')
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
+)
+EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL", default="EyeHealth 20-20-20 <noreply@eyehealth2020.com>"
+)
 
 # Celery Configuration - Load from environment variables
-REDIS_URL = config('REDIS_URL', default='redis://localhost:6379/0')
+REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 
 # Calendar Integration Configuration
 GOOGLE_CALENDAR_CONFIG = {
-    'client_id': config('GOOGLE_CALENDAR_CLIENT_ID', default=''),
-    'client_secret': config('GOOGLE_CALENDAR_CLIENT_SECRET', default=''),
-    'project_id': config('GOOGLE_CALENDAR_PROJECT_ID', default=''),
+    "client_id": config("GOOGLE_CALENDAR_CLIENT_ID", default=""),
+    "client_secret": config("GOOGLE_CALENDAR_CLIENT_SECRET", default=""),
+    "project_id": config("GOOGLE_CALENDAR_PROJECT_ID", default=""),
 }
-GOOGLE_CALENDAR_REDIRECT_URI = config('GOOGLE_CALENDAR_REDIRECT_URI',
-                                     default='http://localhost:8000/calendars/auth/google/callback/')
+GOOGLE_CALENDAR_REDIRECT_URI = config(
+    "GOOGLE_CALENDAR_REDIRECT_URI",
+    default="http://localhost:8000/calendars/auth/google/callback/",
+)
 
 MICROSOFT_CALENDAR_CONFIG = {
-    'client_id': config('MICROSOFT_CALENDAR_CLIENT_ID', default=''),
-    'client_secret': config('MICROSOFT_CALENDAR_CLIENT_SECRET', default=''),
-    'tenant_id': config('MICROSOFT_CALENDAR_TENANT_ID', default='common'),
+    "client_id": config("MICROSOFT_CALENDAR_CLIENT_ID", default=""),
+    "client_secret": config("MICROSOFT_CALENDAR_CLIENT_SECRET", default=""),
+    "tenant_id": config("MICROSOFT_CALENDAR_TENANT_ID", default="common"),
 }
 
 # Session Configuration - Enhanced Security
-SESSION_COOKIE_AGE = config('SESSION_COOKIE_AGE', default=86400, cast=int)  # 24 hours
+SESSION_COOKIE_AGE = config("SESSION_COOKIE_AGE", default=86400, cast=int)  # 24 hours
 SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=not DEBUG, cast=bool)
-SESSION_COOKIE_HTTPONLY = config('SESSION_COOKIE_HTTPONLY', default=True, cast=bool)
-SESSION_COOKIE_SAMESITE = config('SESSION_COOKIE_SAMESITE', default='Lax')
+SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=not DEBUG, cast=bool)
+SESSION_COOKIE_HTTPONLY = config("SESSION_COOKIE_HTTPONLY", default=True, cast=bool)
+SESSION_COOKIE_SAMESITE = config("SESSION_COOKIE_SAMESITE", default="Lax")
 
 # CSRF Protection Configuration
-CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=not DEBUG, cast=bool)
-CSRF_COOKIE_HTTPONLY = config('CSRF_COOKIE_HTTPONLY', default=True, cast=bool)
-CSRF_COOKIE_SAMESITE = config('CSRF_COOKIE_SAMESITE', default='Lax')
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=not DEBUG, cast=bool)
+CSRF_COOKIE_HTTPONLY = config("CSRF_COOKIE_HTTPONLY", default=True, cast=bool)
+CSRF_COOKIE_SAMESITE = config("CSRF_COOKIE_SAMESITE", default="Lax")
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
 
 # Security Headers Configuration
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=not DEBUG, cast=bool)
-SECURE_BROWSER_XSS_FILTER = config('SECURE_BROWSER_XSS_FILTER', default=True, cast=bool)
-SECURE_CONTENT_TYPE_NOSNIFF = config('SECURE_CONTENT_TYPE_NOSNIFF', default=True, cast=bool)
-SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=31536000 if not DEBUG else 0, cast=int)
-SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=not DEBUG, cast=bool)
-SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', default=not DEBUG, cast=bool)
-SECURE_REFERRER_POLICY = config('SECURE_REFERRER_POLICY', default='strict-origin-when-cross-origin')
-X_FRAME_OPTIONS = 'DENY'
+SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=not DEBUG, cast=bool)
+SECURE_BROWSER_XSS_FILTER = config("SECURE_BROWSER_XSS_FILTER", default=True, cast=bool)
+SECURE_CONTENT_TYPE_NOSNIFF = config(
+    "SECURE_CONTENT_TYPE_NOSNIFF", default=True, cast=bool
+)
+SECURE_HSTS_SECONDS = config(
+    "SECURE_HSTS_SECONDS", default=31536000 if not DEBUG else 0, cast=int
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
+    "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=not DEBUG, cast=bool
+)
+SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", default=not DEBUG, cast=bool)
+SECURE_REFERRER_POLICY = config(
+    "SECURE_REFERRER_POLICY", default="strict-origin-when-cross-origin"
+)
+X_FRAME_OPTIONS = "DENY"
 
 # Content Security Policy
 CSP_DEFAULT_SRC = ["'self'"]
-CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"]
-CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"]
+CSP_SCRIPT_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://js.stripe.com",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+]
+CSP_STYLE_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://fonts.googleapis.com",
+    "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
+]
 CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"]
 CSP_IMG_SRC = ["'self'", "data:", "https:"]
 CSP_CONNECT_SRC = ["'self'", "https://api.stripe.com"]
 
 # Logging Configuration
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
         },
-        'json': {
-            'format': '{"level": "{levelname}", "time": "{asctime}", "module": "{module}", "message": "{message}"}',
-            'style': '{',
-        },
-    },
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        },
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
+        "json": {
+            "format": '{"level": "{levelname}", "time": "{asctime}", "module": "{module}", "message": "{message}"}',
+            "style": "{",
         },
     },
-    'handlers': {
-        'file': {
-            'level': config('LOG_LEVEL', default='INFO'),
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'maxBytes': 1024*1024*15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'verbose',
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
         },
-        'error_file': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'errors.log',
-            'maxBytes': 1024*1024*15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'json',
-            'filters': ['require_debug_false'],
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-            'filters': ['require_debug_true'],
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['file', 'console', 'error_file'],
-            'level': config('LOG_LEVEL', default='INFO'),
-            'propagate': True,
+    "handlers": {
+        "file": {
+            "level": config("LOG_LEVEL", default="INFO"),
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "logs" / "django.log",
+            "maxBytes": 1024 * 1024 * 15,  # 15MB
+            "backupCount": 10,
+            "formatter": "verbose",
         },
-        'django.request': {
-            'handlers': ['error_file', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": BASE_DIR / "logs" / "errors.log",
+            "maxBytes": 1024 * 1024 * 15,  # 15MB
+            "backupCount": 10,
+            "formatter": "json",
+            "filters": ["require_debug_false"],
         },
-        'mysite': {
-            'handlers': ['file', 'console', 'error_file'],
-            'level': 'INFO',
-            'propagate': True,
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "filters": ["require_debug_true"],
         },
-        'timer': {
-            'handlers': ['file', 'console', 'error_file'],
-            'level': 'INFO',
-            'propagate': True,
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "filters": ["require_debug_false"],
         },
-        'accounts': {
-            'handlers': ['file', 'console', 'error_file'],
-            'level': 'INFO',
-            'propagate': True,
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file", "console", "error_file"],
+            "level": config("LOG_LEVEL", default="INFO"),
+            "propagate": True,
         },
-        'analytics': {
-            'handlers': ['file', 'console', 'error_file'],
-            'level': 'INFO',
-            'propagate': True,
+        "django.request": {
+            "handlers": ["error_file", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
         },
-        'payments': {
-            'handlers': ['file', 'console', 'error_file'],
-            'level': 'INFO',
-            'propagate': True,
+        "mysite": {
+            "handlers": ["file", "console", "error_file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "timer": {
+            "handlers": ["file", "console", "error_file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "accounts": {
+            "handlers": ["file", "console", "error_file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "analytics": {
+            "handlers": ["file", "console", "error_file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "payments": {
+            "handlers": ["file", "console", "error_file"],
+            "level": "INFO",
+            "propagate": True,
         },
     },
 }
 
 # Create logs directory if it doesn't exist
-os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+os.makedirs(BASE_DIR / "logs", exist_ok=True)
 
 # Django Axes Configuration (Brute Force Protection)
 AXES_FAILURE_LIMIT = 5  # Number of failed login attempts before lockout
@@ -362,47 +392,54 @@ AXES_LOCKOUT_CALLABLE = None
 AXES_ENABLE_ADMIN = True
 AXES_VERBOSE = True
 AXES_RESET_ON_SUCCESS = True
-AXES_LOCKOUT_URL = '/accounts/locked/'
+AXES_LOCKOUT_URL = "/accounts/locked/"
 # Updated settings for django-axes 6.x compatibility
-AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']  # Replacement for combination lockout
+AXES_LOCKOUT_PARAMETERS = [
+    "username",
+    "ip_address",
+]  # Replacement for combination lockout
 
 # Rate Limiting Configuration
-RATELIMIT_USE_CACHE = 'default'
+RATELIMIT_USE_CACHE = "default"
 RATELIMIT_ENABLE = True
 
 # Error Handling Configuration
-SUPPORT_EMAIL = config('SUPPORT_EMAIL', default='support@eyehealth2020.com')
-ERROR_REPORTING_ENABLED = config('ERROR_REPORTING_ENABLED', default=True, cast=bool)
+SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="support@eyehealth2020.com")
+ERROR_REPORTING_ENABLED = config("ERROR_REPORTING_ENABLED", default=True, cast=bool)
 
 # Cache Configuration
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        },
-        'KEY_PREFIX': 'eyehealth',
-        'TIMEOUT': 300,  # 5 minutes default
+CACHES = (
+    {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": config("REDIS_URL", default="redis://127.0.0.1:6379/1"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+            "KEY_PREFIX": "eyehealth",
+            "TIMEOUT": 300,  # 5 minutes default
+        }
     }
-} if not DEBUG else {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+    if not DEBUG
+    else {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
     }
-}
+)
 
 # API Configuration
-API_DEFAULT_RATE_LIMIT = config('API_DEFAULT_RATE_LIMIT', default='100/h')
-API_AUTHENTICATED_RATE_LIMIT = config('API_AUTHENTICATED_RATE_LIMIT', default='1000/h')
-API_PREMIUM_RATE_LIMIT = config('API_PREMIUM_RATE_LIMIT', default='5000/h')
+API_DEFAULT_RATE_LIMIT = config("API_DEFAULT_RATE_LIMIT", default="100/h")
+API_AUTHENTICATED_RATE_LIMIT = config("API_AUTHENTICATED_RATE_LIMIT", default="1000/h")
+API_PREMIUM_RATE_LIMIT = config("API_PREMIUM_RATE_LIMIT", default="5000/h")
 
 # Error Pages Configuration
 ERROR_PAGE_TEMPLATES = {
-    400: 'errors/error.html',
-    403: 'errors/403.html',
-    404: 'errors/404.html',
-    429: 'errors/rate_limit.html',
-    500: 'errors/500.html',
-    503: 'errors/service_unavailable.html',
+    400: "errors/error.html",
+    403: "errors/403.html",
+    404: "errors/404.html",
+    429: "errors/rate_limit.html",
+    500: "errors/500.html",
+    503: "errors/service_unavailable.html",
 }

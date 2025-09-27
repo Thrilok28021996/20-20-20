@@ -41,12 +41,12 @@ RUN adduser --disabled-password --gecos '' appuser \
     && chown -R appuser:appuser /app
 USER appuser
 
-# Health check with dynamic port
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT:-8000}/health/ || exit 1
+# Health check disabled for Railway deployment
+# HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+#     CMD curl -f http://localhost:${PORT:-8000}/health/ || exit 1
 
 # Expose port
 EXPOSE 8000
 
-# Run debug startup script to troubleshoot
-CMD ["./debug_start.sh"]
+# Run startup script
+CMD ["./start.sh"]

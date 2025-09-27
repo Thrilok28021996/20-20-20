@@ -33,8 +33,8 @@ RUN mkdir -p logs
 RUN python manage.py collectstatic --noinput
 
 # Add debugging and startup scripts
-COPY simple_health.py check_env.py start.sh minimal_health.py debug_start.sh railway_start.sh ./
-RUN chmod +x simple_health.py check_env.py start.sh minimal_health.py debug_start.sh railway_start.sh
+COPY simple_health.py check_env.py start.sh minimal_health.py debug_start.sh railway_start.sh minimal_start.sh ./
+RUN chmod +x simple_health.py check_env.py start.sh minimal_health.py debug_start.sh railway_start.sh minimal_start.sh
 
 # Create non-root user
 RUN adduser --disabled-password --gecos '' appuser \
@@ -48,5 +48,5 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# Run Railway startup script
-CMD ["./railway_start.sh"]
+# Run minimal test to debug 502 error
+CMD ["./minimal_start.sh"]

@@ -22,7 +22,7 @@ python manage.py migrate --noinput
 
 # Create superuser if it doesn't exist (optional)
 echo "👤 Creating superuser if needed..."
-python manage.py shell << EOF
+python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(is_superuser=True).exists():
@@ -30,7 +30,7 @@ if not User.objects.filter(is_superuser=True).exists():
     print('Superuser created')
 else:
     print('Superuser already exists')
-EOF
+"
 
 # Test Django setup
 echo "🏥 Testing Django setup..."
@@ -46,5 +46,6 @@ print('✅ Database connection successful')
 "
 
 # Start the server
-echo "🌟 Starting Gunicorn server..."
-exec gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 3 --timeout 120 mysite.wsgi:application
+echo "🌟 Starting Gunicorn server on port ${PORT:-8000}..."
+echo "🔍 Environment: PORT=${PORT}, ALLOWED_HOSTS=${ALLOWED_HOSTS}"
+exec gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 3 --timeout 120 --access-logfile - --error-logfile - --log-level info mysite.wsgi:application

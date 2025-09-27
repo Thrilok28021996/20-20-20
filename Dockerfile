@@ -48,5 +48,5 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# Run debug server to isolate port binding issue
-CMD ["python", "debug_server.py"]
+# Run Django with Gunicorn on Railway
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile - mysite.wsgi:application"]

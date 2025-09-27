@@ -26,9 +26,9 @@ class Migration(migrations.Migration):
             reverse_sql="DROP INDEX IF EXISTS timer_break_record_user_date_compliance_idx;"
         ),
 
-        # Add indexes for break patterns analysis
+        # Add indexes for break patterns analysis (SQLite compatible)
         migrations.RunSQL(
-            "CREATE INDEX IF NOT EXISTS timer_break_record_hour_analysis_idx ON timer_break_record (user_id, extract(hour from break_start_time), break_completed);",
+            "CREATE INDEX IF NOT EXISTS timer_break_record_hour_analysis_idx ON timer_break_record (user_id, strftime('%H', break_start_time), break_completed);",
             reverse_sql="DROP INDEX IF EXISTS timer_break_record_hour_analysis_idx;"
         ),
 

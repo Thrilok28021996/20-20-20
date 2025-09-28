@@ -317,6 +317,49 @@ class UserBadge(models.Model):
     def __str__(self):
         return f"{self.user.email} - {self.badge.name}"
 
+    @property
+    def progress(self) -> int:
+        """Get current progress value"""
+        return self.progress_data.get('current_progress', 0)
+
+    @property
+    def is_earned(self) -> bool:
+        """Check if badge is fully earned"""
+        if self.badge.requires_sessions:
+            return self.progress >= self.badge.requires_sessions
+        elif self.badge.requires_streak_days:
+            return self.progress >= self.badge.requires_streak_days
+        elif self.badge.requires_compliant_breaks:
+            return self.progress >= self.badge.requires_compliant_breaks
+        elif self.badge.requires_perfect_days:
+            return self.progress >= self.badge.requires_perfect_days
+        return True  # Badge with no requirements is always earned
+
+    @property
+    def progress_percentage(self) -> float:
+        """Calculate progress percentage toward badge completion"""
+        if self.is_earned:
+            return 100.0
+
+        target = None
+        if self.badge.requires_sessions:
+            target = self.badge.requires_sessions
+        elif self.badge.requires_streak_days:
+            target = self.badge.requires_streak_days
+        elif self.badge.requires_compliant_breaks:
+            target = self.badge.requires_compliant_breaks
+        elif self.badge.requires_perfect_days:
+            target = self.badge.requires_perfect_days
+
+        if target and target > 0:
+            return min((self.progress / target) * 100, 100.0)
+        return 0.0
+
+    def update_progress(self, progress_value: int) -> None:
+        """Update progress toward badge completion"""
+        self.progress_data['current_progress'] = progress_value
+        self.save()
+
 
 class Challenge(models.Model):
     """

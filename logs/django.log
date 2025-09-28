@@ -104,3 +104,107 @@ INFO 2025-09-27 12:07:47,368 middleware 1444 6164852736 GET /pricing/
 INFO 2025-09-27 12:07:47,374 middleware 1444 6164852736 GET /pricing/ -> 200
 INFO 2025-09-27 12:07:47,376 basehttp 1444 6164852736 "GET /pricing/ HTTP/1.1" 200 31242
 INFO 2025-09-27 12:08:36,022 autoreload 1526 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-28 05:47:58,141 middleware 20850 6115225600 GET /
+INFO 2025-09-28 05:47:58,157 middleware 20850 6115225600 GET / -> 200
+INFO 2025-09-28 05:47:58,157 basehttp 20850 6115225600 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-28 05:48:08,392 middleware 20850 6115225600 GET /accounts/login/
+INFO 2025-09-28 05:48:08,402 middleware 20850 6115225600 GET /accounts/login/ -> 404
+WARNING 2025-09-28 05:48:08,403 basehttp 20850 6115225600 "GET /accounts/login/ HTTP/1.1" 404 5746
+INFO 2025-09-28 05:48:08,459 middleware 20850 6115225600 GET /accounts/register/
+INFO 2025-09-28 05:48:08,461 middleware 20850 6115225600 GET /accounts/register/ -> 404
+WARNING 2025-09-28 05:48:08,461 basehttp 20850 6115225600 "GET /accounts/register/ HTTP/1.1" 404 5755
+INFO 2025-09-28 05:48:08,519 middleware 20850 6115225600 GET /timer/
+INFO 2025-09-28 05:48:08,521 middleware 20850 6115225600 GET /timer/ -> 404
+WARNING 2025-09-28 05:48:08,521 basehttp 20850 6115225600 "GET /timer/ HTTP/1.1" 404 8633
+INFO 2025-09-28 05:48:21,724 middleware 20850 6115225600 GET /login/
+INFO 2025-09-28 05:48:21,727 middleware 20850 6115225600 GET /login/ -> 200
+INFO 2025-09-28 05:48:21,727 basehttp 20850 6115225600 "GET /login/ HTTP/1.1" 200 21369
+INFO 2025-09-28 05:48:21,785 middleware 20850 6115225600 GET /signup/
+INFO 2025-09-28 05:48:21,791 middleware 20850 6115225600 GET /signup/ -> 200
+INFO 2025-09-28 05:48:21,792 basehttp 20850 6115225600 "GET /signup/ HTTP/1.1" 200 26599
+INFO 2025-09-28 05:48:21,847 middleware 20850 6115225600 GET /
+INFO 2025-09-28 05:48:21,849 middleware 20850 6115225600 GET / -> 200
+INFO 2025-09-28 05:48:21,849 basehttp 20850 6115225600 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-28 05:48:47,804 middleware 20850 6115225600 GET /timer/dashboard/
+INFO 2025-09-28 05:48:47,804 middleware 20850 6115225600 GET /timer/dashboard/ -> 302
+INFO 2025-09-28 05:48:47,804 basehttp 20850 6115225600 "GET /timer/dashboard/ HTTP/1.1" 302 0
+INFO 2025-09-28 05:48:47,864 middleware 20850 6115225600 GET /analytics/
+INFO 2025-09-28 05:48:47,866 middleware 20850 6115225600 GET /analytics/ -> 404
+WARNING 2025-09-28 05:48:47,866 basehttp 20850 6115225600 "GET /analytics/ HTTP/1.1" 404 6825
+INFO 2025-09-28 05:48:47,924 middleware 20850 6115225600 GET /subscriptions/
+INFO 2025-09-28 05:48:47,925 middleware 20850 6115225600 GET /subscriptions/ -> 404
+WARNING 2025-09-28 05:48:47,925 basehttp 20850 6115225600 "GET /subscriptions/ HTTP/1.1" 404 5629
+INFO 2025-09-28 05:48:57,969 middleware 20850 6115225600 GET /analytics/admin-dashboard/
+INFO 2025-09-28 05:48:57,969 middleware 20850 6115225600 GET /analytics/admin-dashboard/ -> 302
+INFO 2025-09-28 05:48:57,969 basehttp 20850 6115225600 "GET /analytics/admin-dashboard/ HTTP/1.1" 302 0
+INFO 2025-09-28 05:48:58,026 middleware 20850 6115225600 GET /payments/
+INFO 2025-09-28 05:48:58,027 middleware 20850 6115225600 GET /payments/ -> 404
+WARNING 2025-09-28 05:48:58,028 basehttp 20850 6115225600 "GET /payments/ HTTP/1.1" 404 7971
+INFO 2025-09-28 05:48:58,085 middleware 20850 6115225600 GET /pricing/
+INFO 2025-09-28 05:48:58,087 middleware 20850 6115225600 GET /pricing/ -> 200
+INFO 2025-09-28 05:48:58,087 basehttp 20850 6115225600 "GET /pricing/ HTTP/1.1" 200 31007
+INFO 2025-09-28 05:49:06,524 middleware 20850 6115225600 GET /payments/upgrade/
+INFO 2025-09-28 05:49:06,525 middleware 20850 6115225600 GET /payments/upgrade/ -> 302
+INFO 2025-09-28 05:49:06,525 basehttp 20850 6115225600 "GET /payments/upgrade/ HTTP/1.1" 302 0
+INFO 2025-09-28 06:35:07,645 middleware 22654 8379025408 POST /timer/start/
+INFO 2025-09-28 06:35:07,646 decorators 22654 8379025408 API call started: start_session_view
+INFO 2025-09-28 06:35:07,646 decorators 22654 8379025408 API request: start_session_view
+ERROR 2025-09-28 06:35:07,646 decorators 22654 8379025408 API call failed: start_session_view - "Attempt to overwrite 'message' in LogRecord"
+ERROR 2025-09-28 06:35:07,646 decorators 22654 8379025408 Unexpected error in API view start_session_view: "Attempt to overwrite 'message' in LogRecord"
+Traceback (most recent call last):
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 49, in wrapper
+    result = view_func(request, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 347, in wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 109, in wrapper
+    raise UserNotAuthenticatedError(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 59, in __init__
+    self._log_error()
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 70, in _log_error
+    logger.log(
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1559, in log
+    self._log(level, msg, args, **kwargs)
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1632, in _log
+    record = self.makeRecord(self.name, level, fn, lno, msg, args,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1606, in makeRecord
+    raise KeyError("Attempt to overwrite %r in LogRecord" % key)
+KeyError: "Attempt to overwrite 'message' in LogRecord"
+INFO 2025-09-28 06:35:07,649 middleware 22654 8379025408 POST /timer/start/ -> 500
+INFO 2025-09-28 06:35:10,664 middleware 22654 8379025408 POST /signup/
+ERROR 2025-09-28 06:35:10,753 middleware 22654 8379025408 Unexpected error: AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
+Traceback (most recent call last):
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 184, in post
+    return super().post(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 153, in post
+    return self.form_valid(form)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py", line 40, in form_valid
+    user = authenticate(username=email, password=raw_password)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/decorators/debug.py", line 42, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/contrib/auth/__init__.py", line 77, in authenticate
+    user = backend.authenticate(request, **credentials)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/helpers.py", line 614, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/backends.py", line 46, in authenticate
+    raise AxesBackendRequestParameterRequired(
+axes.exceptions.AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
+INFO 2025-09-28 06:35:10,779 middleware 22654 8379025408 POST /signup/ -> 500

@@ -236,10 +236,14 @@ def _get_user_statistics(user: User) -> Dict[str, Any]:
 
     compliance_rate = (compliant_breaks / total_breaks * 100) if total_breaks > 0 else 0
 
-    # Calculate perfect days (days with 100% compliance) - Single query
+    # Calculate perfect days (days with 100% compliance) - Using database fields
+    # A perfect day is when all breaks are compliant
+    from django.db.models import F
     perfect_days = DailyStats.objects.filter(
         user=user,
-        compliance_rate=100.0
+        total_breaks_taken__gt=0
+    ).extra(
+        where=["breaks_compliant = total_breaks_taken"]
     ).count()
 
     return {
@@ -524,6 +528,123 @@ def award_session_completion_rewards(user: User, session: 'TimerSession') -> Dic
         },
         'badges_earned': [badge.badge.name for badge in newly_awarded]
     }
+
+
+def calculate_experience_points(user: User, action_type: str = 'session_complete', **kwargs) -> int:
+    """
+    Calculate experience points for various user actions
+
+    Args:
+        user: User instance
+        action_type: Type of action ('session_complete', 'break_compliance', 'streak_bonus', etc.)
+        **kwargs: Additional parameters for calculation
+
+    Returns:
+        int: Experience points earned
+    """
+    base_experience = {
+        'session_complete': 10,
+        'break_compliance': 5,
+        'streak_bonus': 15,
+        'challenge_complete': 50,
+        'badge_earned': 25,
+        'level_up': 100
+    }
+
+    experience = base_experience.get(action_type, 0)
+
+    # Apply multipliers based on user level
+    try:
+        level_data = UserLevel.objects.get(user=user)
+        level_multiplier = 1.0 + (level_data.current_level * 0.1)  # 10% bonus per level
+        experience = int(experience * level_multiplier)
+    except UserLevel.DoesNotExist:
+        pass
+
+    # Apply specific bonuses
+    if action_type == 'session_complete':
+        session_length = kwargs.get('session_length', 1)
+        experience += min(session_length * 2, 20)  # Up to 20 bonus XP for longer sessions
+
+        compliance_rate = kwargs.get('compliance_rate', 0.0)
+        experience += int(compliance_rate * 20)  # Up to 20 bonus XP for compliance
+
+    elif action_type == 'streak_bonus':
+        streak_days = kwargs.get('streak_days', 0)
+        experience = min(streak_days * 5, 100)  # Up to 100 XP for streaks
+
+    return max(experience, 0)
+
+
+def check_badge_eligibility(user: User, badge_id: Optional[int] = None) -> List[Badge]:
+    """
+    Check which badges the user is eligible for
+
+    Args:
+        user: User instance to check
+        badge_id: Optional specific badge ID to check
+
+    Returns:
+        List of Badge instances user is eligible for
+    """
+    # Get badges user doesn't have yet
+    user_badge_ids = set(UserBadge.objects.filter(user=user).values_list('badge_id', flat=True))
+
+    available_badges = Badge.objects.filter(is_active=True)
+    if badge_id:
+        available_badges = available_badges.filter(id=badge_id)
+    else:
+        available_badges = available_badges.exclude(id__in=user_badge_ids)
+
+    # Get user statistics once
+    user_stats = _get_user_statistics(user)
+
+    eligible_badges = []
+    for badge in available_badges:
+        if _check_badge_requirements_optimized(user, badge, user_stats):
+            eligible_badges.append(badge)
+
+    return eligible_badges
+
+
+def update_user_level(user: User, experience_points: int = 0) -> UserLevel:
+    """
+    Update user level based on experience points
+
+    Args:
+        user: User instance to update
+        experience_points: Experience points to add (optional)
+
+    Returns:
+        Updated UserLevel instance
+    """
+    return update_user_level_progress(user, experience_points)
+
+
+def calculate_streak_bonus(user: User) -> int:
+    """
+    Calculate streak bonus experience points
+
+    Args:
+        user: User instance
+
+    Returns:
+        int: Bonus experience points for current streak
+    """
+    try:
+        streak_data = UserStreakData.objects.get(user=user)
+        current_streak = streak_data.current_daily_streak
+
+        # Bonus scaling: 5 XP per day for first 7 days, then 10 XP per day
+        if current_streak <= 7:
+            bonus = current_streak * 5
+        else:
+            bonus = (7 * 5) + ((current_streak - 7) * 10)
+
+        # Cap the bonus at 200 XP
+        return min(bonus, 200)
+    except UserStreakData.DoesNotExist:
+        return 0
 
 
 def get_user_gamification_summary(user: User) -> Dict[str, Any]:

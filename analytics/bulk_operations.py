@@ -2,10 +2,10 @@
 Bulk operations utilities for performance optimization
 Handles bulk database operations to reduce N+1 queries and improve performance
 """
-from typing import Dict, List, Optional, Union, Any, QuerySet
+from typing import Dict, List, Optional, Union, Any
 from datetime import date, datetime, timedelta
 from django.utils import timezone
-from django.db.models import Sum, Count, Avg, Q, F, Max, Min, Prefetch
+from django.db.models import Sum, Count, Avg, Q, F, Max, Min, Prefetch, QuerySet
 from django.db import transaction
 from django.contrib.auth import get_user_model
 import logging

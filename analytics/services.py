@@ -2,7 +2,8 @@
 Analytics service layer for calculations, insights, and reporting
 Handles premium analytics, real-time metrics, and data aggregation
 """
-from typing import Dict, List, Optional, Tuple, Union, Any, QuerySet
+from typing import Dict, List, Optional, Tuple, Union, Any
+from django.db.models import QuerySet
 from datetime import date, datetime, timedelta
 from django.utils import timezone
 from django.db.models import Sum, Count, Avg, Q, F, Max, Min

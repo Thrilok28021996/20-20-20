@@ -35,9 +35,9 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         # Log the user in after successful registration
-        username = form.cleaned_data.get('email')
+        email = form.cleaned_data.get('email')
         raw_password = form.cleaned_data.get('password1')
-        user = authenticate(email=username, password=raw_password)
+        user = authenticate(username=email, password=raw_password)
         if user:
             login(self.request, user)
             # Create user profile

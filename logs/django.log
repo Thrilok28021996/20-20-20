@@ -208,3 +208,190 @@ Traceback (most recent call last):
     raise AxesBackendRequestParameterRequired(
 axes.exceptions.AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
 INFO 2025-09-28 06:35:10,779 middleware 22654 8379025408 POST /signup/ -> 500
+INFO 2025-09-29 04:38:59,141 middleware 34661 8379025408 POST /timer/start/
+INFO 2025-09-29 04:38:59,142 decorators 34661 8379025408 API call started: start_session_view
+INFO 2025-09-29 04:38:59,142 decorators 34661 8379025408 API request: start_session_view
+ERROR 2025-09-29 04:38:59,142 decorators 34661 8379025408 API call failed: start_session_view - "Attempt to overwrite 'message' in LogRecord"
+ERROR 2025-09-29 04:38:59,142 decorators 34661 8379025408 Unexpected error in API view start_session_view: "Attempt to overwrite 'message' in LogRecord"
+Traceback (most recent call last):
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 49, in wrapper
+    result = view_func(request, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 347, in wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 109, in wrapper
+    raise UserNotAuthenticatedError(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 59, in __init__
+    self._log_error()
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 70, in _log_error
+    logger.log(
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1559, in log
+    self._log(level, msg, args, **kwargs)
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1632, in _log
+    record = self.makeRecord(self.name, level, fn, lno, msg, args,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1606, in makeRecord
+    raise KeyError("Attempt to overwrite %r in LogRecord" % key)
+KeyError: "Attempt to overwrite 'message' in LogRecord"
+INFO 2025-09-29 04:38:59,145 middleware 34661 8379025408 POST /timer/start/ -> 500
+INFO 2025-09-29 04:39:01,552 middleware 34661 8379025408 POST /signup/
+ERROR 2025-09-29 04:39:01,641 middleware 34661 8379025408 Unexpected error: AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
+Traceback (most recent call last):
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 184, in post
+    return super().post(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 153, in post
+    return self.form_valid(form)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py", line 40, in form_valid
+    user = authenticate(username=email, password=raw_password)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/decorators/debug.py", line 42, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/contrib/auth/__init__.py", line 77, in authenticate
+    user = backend.authenticate(request, **credentials)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/helpers.py", line 614, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/backends.py", line 46, in authenticate
+    raise AxesBackendRequestParameterRequired(
+axes.exceptions.AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
+INFO 2025-09-29 04:39:01,646 middleware 34661 8379025408 POST /signup/ -> 500
+INFO 2025-09-29 04:43:44,340 autoreload 34943 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-29 04:44:01,428 middleware 34943 6125432832 HEAD /
+INFO 2025-09-29 04:44:01,448 middleware 34943 6125432832 HEAD / -> 200
+INFO 2025-09-29 04:44:01,448 basehttp 34943 6125432832 "HEAD / HTTP/1.1" 200 0
+INFO 2025-09-29 04:44:08,906 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:44:08,909 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:44:08,909 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:44:08,961 middleware 34943 6125432832 GET /accounts/register/
+INFO 2025-09-29 04:44:08,972 middleware 34943 6125432832 GET /accounts/register/ -> 404
+WARNING 2025-09-29 04:44:08,972 basehttp 34943 6125432832 "GET /accounts/register/ HTTP/1.1" 404 5755
+INFO 2025-09-29 04:44:09,024 middleware 34943 6125432832 GET /accounts/login/
+INFO 2025-09-29 04:44:09,025 middleware 34943 6125432832 GET /accounts/login/ -> 404
+WARNING 2025-09-29 04:44:09,026 basehttp 34943 6125432832 "GET /accounts/login/ HTTP/1.1" 404 5746
+INFO 2025-09-29 04:44:24,981 middleware 34943 6125432832 GET /login/
+INFO 2025-09-29 04:44:24,982 middleware 34943 6125432832 GET /login/ -> 200
+INFO 2025-09-29 04:44:24,983 basehttp 34943 6125432832 "GET /login/ HTTP/1.1" 200 21369
+INFO 2025-09-29 04:44:25,034 middleware 34943 6125432832 GET /register/
+INFO 2025-09-29 04:44:25,036 middleware 34943 6125432832 GET /register/ -> 404
+WARNING 2025-09-29 04:44:25,036 basehttp 34943 6125432832 "GET /register/ HTTP/1.1" 404 5728
+INFO 2025-09-29 04:44:33,451 middleware 34943 6125432832 GET /signup/
+INFO 2025-09-29 04:44:33,457 middleware 34943 6125432832 GET /signup/ -> 200
+INFO 2025-09-29 04:44:33,457 basehttp 34943 6125432832 "GET /signup/ HTTP/1.1" 200 26599
+INFO 2025-09-29 04:44:33,505 middleware 34943 6125432832 GET /timer/
+INFO 2025-09-29 04:44:33,507 middleware 34943 6125432832 GET /timer/ -> 404
+WARNING 2025-09-29 04:44:33,507 basehttp 34943 6125432832 "GET /timer/ HTTP/1.1" 404 8633
+INFO 2025-09-29 04:44:40,100 middleware 34943 6125432832 GET /timer/app/
+INFO 2025-09-29 04:44:40,101 middleware 34943 6125432832 GET /timer/app/ -> 404
+WARNING 2025-09-29 04:44:40,102 basehttp 34943 6125432832 "GET /timer/app/ HTTP/1.1" 404 8645
+INFO 2025-09-29 04:44:40,151 middleware 34943 6125432832 GET /pricing/
+INFO 2025-09-29 04:44:40,153 middleware 34943 6125432832 GET /pricing/ -> 200
+INFO 2025-09-29 04:44:40,153 basehttp 34943 6125432832 "GET /pricing/ HTTP/1.1" 200 31007
+INFO 2025-09-29 04:44:46,098 middleware 34943 6125432832 GET /timer/dashboard/
+INFO 2025-09-29 04:44:46,098 middleware 34943 6125432832 GET /timer/dashboard/ -> 302
+INFO 2025-09-29 04:44:46,098 basehttp 34943 6125432832 "GET /timer/dashboard/ HTTP/1.1" 302 0
+INFO 2025-09-29 04:44:46,146 middleware 34943 6125432832 GET /analytics/
+INFO 2025-09-29 04:44:46,148 middleware 34943 6125432832 GET /analytics/ -> 404
+WARNING 2025-09-29 04:44:46,148 basehttp 34943 6125432832 "GET /analytics/ HTTP/1.1" 404 6825
+INFO 2025-09-29 04:44:46,197 middleware 34943 6125432832 GET /about/
+INFO 2025-09-29 04:44:46,200 middleware 34943 6125432832 GET /about/ -> 200
+INFO 2025-09-29 04:44:46,200 basehttp 34943 6125432832 "GET /about/ HTTP/1.1" 200 25795
+INFO 2025-09-29 04:46:14,683 middleware 34943 6125432832 GET /timer/dashboard/
+INFO 2025-09-29 04:46:14,684 middleware 34943 6125432832 GET /timer/dashboard/ -> 302
+INFO 2025-09-29 04:46:14,684 basehttp 34943 6125432832 "GET /timer/dashboard/ HTTP/1.1" 302 0
+INFO 2025-09-29 04:46:14,743 middleware 34943 6125432832 GET /contact/
+INFO 2025-09-29 04:46:14,745 middleware 34943 6125432832 GET /contact/ -> 200
+INFO 2025-09-29 04:46:14,745 basehttp 34943 6125432832 "GET /contact/ HTTP/1.1" 200 27834
+INFO 2025-09-29 04:46:14,800 middleware 34943 6125432832 GET /help/
+INFO 2025-09-29 04:46:14,803 middleware 34943 6125432832 GET /help/ -> 200
+INFO 2025-09-29 04:46:14,803 basehttp 34943 6125432832 "GET /help/ HTTP/1.1" 200 34105
+INFO 2025-09-29 04:46:49,772 middleware 34943 6125432832 GET /nonexistent/
+INFO 2025-09-29 04:46:49,774 middleware 34943 6125432832 GET /nonexistent/ -> 404
+WARNING 2025-09-29 04:46:49,774 basehttp 34943 6125432832 "GET /nonexistent/ HTTP/1.1" 404 5737
+INFO 2025-09-29 04:46:49,824 middleware 34943 6125432832 POST /timer/start/
+WARNING 2025-09-29 04:46:49,825 log 34943 6125432832 Forbidden (CSRF cookie not set.): /timer/start/
+INFO 2025-09-29 04:46:49,825 middleware 34943 6125432832 POST /timer/start/ -> 403
+WARNING 2025-09-29 04:46:49,825 basehttp 34943 6125432832 "POST /timer/start/ HTTP/1.1" 403 2870
+INFO 2025-09-29 04:46:49,876 middleware 34943 6125432832 GET /nonexistent/
+INFO 2025-09-29 04:46:49,878 middleware 34943 6125432832 GET /nonexistent/ -> 404
+WARNING 2025-09-29 04:46:49,878 basehttp 34943 6125432832 "GET /nonexistent/ HTTP/1.1" 404 5737
+INFO 2025-09-29 04:47:01,437 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:01,440 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:01,440 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:01,500 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:01,502 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:01,503 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:01,562 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:01,564 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:01,564 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,588 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,590 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,591 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,598 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,600 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,600 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,607 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,609 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,610 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,620 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,623 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,623 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,630 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,632 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,632 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,639 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,642 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,642 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,649 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,652 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,652 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,659 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,661 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,661 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,668 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,671 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,671 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,678 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,680 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,680 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,728 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,730 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,731 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 04:47:31,778 middleware 34943 6125432832 GET /
+INFO 2025-09-29 04:47:31,780 middleware 34943 6125432832 GET / -> 200
+INFO 2025-09-29 04:47:31,780 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
+INFO 2025-09-29 05:16:46,097 middleware 34943 6125432832 GET /about/
+INFO 2025-09-29 05:16:46,097 middleware 34943 6142259200 GET /about/
+INFO 2025-09-29 05:16:46,098 middleware 34943 6159085568 GET /about/
+INFO 2025-09-29 05:16:46,098 middleware 34943 13170143232 GET /about/
+INFO 2025-09-29 05:16:46,098 middleware 34943 13186969600 GET /about/
+INFO 2025-09-29 05:16:46,117 middleware 34943 13186969600 GET /about/ -> 200
+INFO 2025-09-29 05:16:46,117 middleware 34943 6159085568 GET /about/ -> 200
+INFO 2025-09-29 05:16:46,118 middleware 34943 13170143232 GET /about/ -> 200
+INFO 2025-09-29 05:16:46,119 middleware 34943 6142259200 GET /about/ -> 200
+INFO 2025-09-29 05:16:46,119 middleware 34943 6125432832 GET /about/ -> 200
+INFO 2025-09-29 05:16:46,120 basehttp 34943 13186969600 "GET /about/ HTTP/1.1" 200 25795
+INFO 2025-09-29 05:16:46,120 basehttp 34943 13170143232 "GET /about/ HTTP/1.1" 200 25795
+INFO 2025-09-29 05:16:46,120 basehttp 34943 6159085568 "GET /about/ HTTP/1.1" 200 25795
+INFO 2025-09-29 05:16:46,120 basehttp 34943 6125432832 "GET /about/ HTTP/1.1" 200 25795
+INFO 2025-09-29 05:16:46,120 basehttp 34943 6142259200 "GET /about/ HTTP/1.1" 200 25795
+INFO 2025-09-29 05:16:46,186 middleware 34943 6125432832 GET /login/
+INFO 2025-09-29 05:16:46,187 middleware 34943 6125432832 GET /login/ -> 200
+INFO 2025-09-29 05:16:46,187 basehttp 34943 6125432832 "GET /login/ HTTP/1.1" 200 21369
+INFO 2025-09-29 05:16:46,242 middleware 34943 6125432832 GET /signup/
+INFO 2025-09-29 05:16:46,243 middleware 34943 6125432832 GET /signup/ -> 200
+INFO 2025-09-29 05:16:46,244 basehttp 34943 6125432832 "GET /signup/ HTTP/1.1" 200 26599

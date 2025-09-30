@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Notification Preferences - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>Notification Preferences
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Channel Preferences -->
+                        <h5 class="mb-3"><i class="fas fa-satellite-dish me-2"></i>Notification Channels</h5>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="email_enabled"
+                                           name="email_enabled" {% if preferences.email_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="email_enabled">
+                                        <i class="fas fa-envelope me-2"></i>Email Notifications
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="in_app_enabled"
+                                           name="in_app_enabled" {% if preferences.in_app_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="in_app_enabled">
+                                        <i class="fas fa-bell me-2"></i>In-App Notifications
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="browser_push_enabled"
+                                           name="browser_push_enabled" {% if preferences.browser_push_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="browser_push_enabled">
+                                        <i class="fas fa-globe me-2"></i>Browser Push Notifications
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="desktop_enabled"
+                                           name="desktop_enabled" {% if preferences.desktop_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="desktop_enabled">
+                                        <i class="fas fa-desktop me-2"></i>Desktop Notifications
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Notification Types -->
+                        <h5 class="mb-3"><i class="fas fa-list me-2"></i>Notification Types</h5>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="break_reminders"
+                                           name="break_reminders" {% if preferences.break_reminders %}checked{% endif %}>
+                                    <label class="form-check-label" for="break_reminders">
+                                        <i class="fas fa-clock me-2"></i>Break Reminders
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="daily_summaries"
+                                           name="daily_summaries" {% if preferences.daily_summaries %}checked{% endif %}>
+                                    <label class="form-check-label" for="daily_summaries">
+                                        <i class="fas fa-chart-bar me-2"></i>Daily Summaries
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="weekly_reports"
+                                           name="weekly_reports" {% if preferences.weekly_reports %}checked{% endif %}>
+                                    <label class="form-check-label" for="weekly_reports">
+                                        <i class="fas fa-calendar-week me-2"></i>Weekly Reports
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="streak_milestones"
+                                           name="streak_milestones" {% if preferences.streak_milestones %}checked{% endif %}>
+                                    <label class="form-check-label" for="streak_milestones">
+                                        <i class="fas fa-trophy me-2"></i>Streak Milestones
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="tips_and_advice"
+                                           name="tips_and_advice" {% if preferences.tips_and_advice %}checked{% endif %}>
+                                    <label class="form-check-label" for="tips_and_advice">
+                                        <i class="fas fa-lightbulb me-2"></i>Eye Health Tips
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="promotional_emails"
+                                           name="promotional_emails" {% if preferences.promotional_emails %}checked{% endif %}>
+                                    <label class="form-check-label" for="promotional_emails">
+                                        <i class="fas fa-tag me-2"></i>Promotional Emails
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Timing Preferences -->
+                        <h5 class="mb-3"><i class="fas fa-clock me-2"></i>Timing Preferences</h5>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quiet_hours_start" class="form-label">Quiet Hours Start</label>
+                                    <input type="time" class="form-control" id="quiet_hours_start"
+                                           name="quiet_hours_start"
+                                           value="{{ preferences.quiet_hours_start|time:'H:i' }}">
+                                    <small class="form-text text-muted">No notifications during quiet hours</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quiet_hours_end" class="form-label">Quiet Hours End</label>
+                                    <input type="time" class="form-control" id="quiet_hours_end"
+                                           name="quiet_hours_end"
+                                           value="{{ preferences.quiet_hours_end|time:'H:i' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input" type="checkbox" id="weekend_notifications"
+                                   name="weekend_notifications" {% if preferences.weekend_notifications %}checked{% endif %}>
+                            <label class="form-check-label" for="weekend_notifications">
+                                Enable notifications on weekends
+                            </label>
+                        </div>
+
+                        <hr>
+
+                        <!-- Break Reminder Settings -->
+                        <h5 class="mb-3"><i class="fas fa-pause-circle me-2"></i>Break Reminder Settings</h5>
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="break_reminder_advance_seconds" class="form-label">
+                                        Pre-break Warning (seconds)
+                                    </label>
+                                    <input type="number" class="form-control" id="break_reminder_advance_seconds"
+                                           name="break_reminder_advance_seconds" min="0" max="300"
+                                           value="{{ preferences.break_reminder_advance_seconds }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="max_snooze_count" class="form-label">
+                                        Max Snooze Count
+                                    </label>
+                                    <input type="number" class="form-control" id="max_snooze_count"
+                                           name="max_snooze_count" min="0" max="10"
+                                           value="{{ preferences.max_snooze_count }}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="snooze_duration_minutes" class="form-label">
+                                        Snooze Duration (minutes)
+                                    </label>
+                                    <input type="number" class="form-control" id="snooze_duration_minutes"
+                                           name="snooze_duration_minutes" min="1" max="30"
+                                           value="{{ preferences.snooze_duration_minutes }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'notifications:list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Notifications
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Preferences
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

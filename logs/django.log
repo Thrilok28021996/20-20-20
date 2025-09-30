@@ -395,3 +395,134 @@ INFO 2025-09-29 05:16:46,187 basehttp 34943 6125432832 "GET /login/ HTTP/1.1" 20
 INFO 2025-09-29 05:16:46,242 middleware 34943 6125432832 GET /signup/
 INFO 2025-09-29 05:16:46,243 middleware 34943 6125432832 GET /signup/ -> 200
 INFO 2025-09-29 05:16:46,244 basehttp 34943 6125432832 "GET /signup/ HTTP/1.1" 200 26599
+INFO 2025-09-30 05:48:23,178 autoreload 78881 8379025408 Watching for file changes with StatReloader
+INFO 2025-09-30 05:48:35,317 middleware 78881 6137589760 GET /password-reset/
+INFO 2025-09-30 05:48:35,333 middleware 78881 6137589760 GET /password-reset/ -> 200
+INFO 2025-09-30 05:48:35,333 basehttp 78881 6137589760 "GET /password-reset/ HTTP/1.1" 200 19191
+INFO 2025-09-30 05:49:34,782 middleware 78881 6137589760 GET /password-reset/
+INFO 2025-09-30 05:49:34,784 middleware 78881 6137589760 GET /password-reset/ -> 200
+INFO 2025-09-30 05:49:34,784 basehttp 78881 6137589760 "GET /password-reset/ HTTP/1.1" 200 19191
+ERROR 2025-09-30 05:51:05,186 exception 79166 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+ERROR 2025-09-30 05:51:05,406 exception 79166 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+ERROR 2025-09-30 05:51:41,090 exception 79237 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-30 05:52:01,860 autoreload 78881 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/mysite/settings.py changed, reloading.
+INFO 2025-09-30 05:52:02,543 autoreload 79365 8379025408 Watching for file changes with StatReloader
+ERROR 2025-09-30 05:52:06,404 exception 79385 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-30 05:54:39,360 middleware 79518 8379025408 GET /password-reset/
+INFO 2025-09-30 05:54:39,631 middleware 79518 8379025408 GET /password-reset/ -> 200
+INFO 2025-09-30 05:54:39,631 middleware 79518 8379025408 POST /password-reset/
+INFO 2025-09-30 05:54:44,617 middleware 79518 8379025408 POST /password-reset/ -> 302
+INFO 2025-09-30 05:54:44,619 middleware 79518 8379025408 GET /password-reset/done/
+INFO 2025-09-30 05:54:44,621 middleware 79518 8379025408 GET /password-reset/done/ -> 200
+INFO 2025-09-30 05:55:02,939 middleware 79615 8379025408 GET /password-reset/
+INFO 2025-09-30 05:55:03,188 middleware 79615 8379025408 GET /password-reset/ -> 200
+INFO 2025-09-30 05:55:03,189 middleware 79615 8379025408 POST /password-reset/
+INFO 2025-09-30 05:55:03,199 middleware 79615 8379025408 POST /password-reset/ -> 302
+INFO 2025-09-30 05:55:03,199 middleware 79615 8379025408 GET /password-reset/done/
+INFO 2025-09-30 05:55:03,200 middleware 79615 8379025408 GET /password-reset/done/ -> 200
+INFO 2025-09-30 05:55:03,201 middleware 79615 8379025408 GET /password-reset-confirm/NQ/cwxhrr-c444d7aab4620733f8c20a5da58a529d/
+INFO 2025-09-30 05:55:03,201 middleware 79615 8379025408 GET /password-reset-confirm/NQ/cwxhrr-c444d7aab4620733f8c20a5da58a529d/ -> 302
+INFO 2025-09-30 05:55:03,206 middleware 79615 8379025408 GET /password-reset-confirm/NQ/set-password/
+INFO 2025-09-30 05:55:03,212 middleware 79615 8379025408 GET /password-reset-confirm/NQ/set-password/ -> 200
+INFO 2025-09-30 05:55:03,214 middleware 79615 8379025408 POST /password-reset-confirm/NQ/set-password/
+INFO 2025-09-30 05:55:03,295 middleware 79615 8379025408 POST /password-reset-confirm/NQ/set-password/ -> 302
+INFO 2025-09-30 05:55:03,296 middleware 79615 8379025408 GET /password-reset-complete/
+INFO 2025-09-30 05:55:03,297 middleware 79615 8379025408 GET /password-reset-complete/ -> 200
+INFO 2025-09-30 05:55:19,849 middleware 79673 8379025408 GET /password-reset/
+INFO 2025-09-30 05:55:20,095 middleware 79673 8379025408 GET /password-reset/ -> 200
+INFO 2025-09-30 05:55:20,095 middleware 79673 8379025408 POST /password-reset/
+INFO 2025-09-30 05:55:20,106 middleware 79673 8379025408 POST /password-reset/ -> 302
+INFO 2025-09-30 05:55:20,106 middleware 79673 8379025408 GET /password-reset/done/
+INFO 2025-09-30 05:55:20,107 middleware 79673 8379025408 GET /password-reset/done/ -> 200
+INFO 2025-09-30 05:55:20,107 middleware 79673 8379025408 GET /password-reset-confirm/Ng/cwxhs8-22b99118ae68dfd1b9e7412d1f7a66e8/
+INFO 2025-09-30 05:55:20,108 middleware 79673 8379025408 GET /password-reset-confirm/Ng/cwxhs8-22b99118ae68dfd1b9e7412d1f7a66e8/ -> 302
+INFO 2025-09-30 05:55:20,110 middleware 79673 8379025408 GET /password-reset-confirm/Ng/set-password/
+INFO 2025-09-30 05:55:20,115 middleware 79673 8379025408 GET /password-reset-confirm/Ng/set-password/ -> 200
+INFO 2025-09-30 05:55:20,116 middleware 79673 8379025408 POST /password-reset-confirm/Ng/set-password/
+INFO 2025-09-30 05:55:20,200 middleware 79673 8379025408 POST /password-reset-confirm/Ng/set-password/ -> 302
+INFO 2025-09-30 05:55:20,201 middleware 79673 8379025408 GET /password-reset-complete/
+INFO 2025-09-30 05:55:20,202 middleware 79673 8379025408 GET /password-reset-complete/ -> 200
+INFO 2025-09-30 06:00:25,997 middleware 79840 8379025408 GET /password-reset/
+INFO 2025-09-30 06:00:26,278 middleware 79840 8379025408 GET /password-reset/ -> 200
+INFO 2025-09-30 06:00:26,279 middleware 79840 8379025408 POST /password-reset/
+INFO 2025-09-30 06:00:26,289 middleware 79840 8379025408 POST /password-reset/ -> 302
+INFO 2025-09-30 06:00:26,289 middleware 79840 8379025408 GET /password-reset/done/
+INFO 2025-09-30 06:00:26,290 middleware 79840 8379025408 GET /password-reset/done/ -> 200
+INFO 2025-09-30 06:00:26,290 middleware 79840 8379025408 GET /password-reset-confirm/Nw/cwxi0q-2bac987e013efb996c4a5ded1c2a9ab7/
+INFO 2025-09-30 06:00:26,291 middleware 79840 8379025408 GET /password-reset-confirm/Nw/cwxi0q-2bac987e013efb996c4a5ded1c2a9ab7/ -> 302
+INFO 2025-09-30 06:00:26,294 middleware 79840 8379025408 GET /password-reset-confirm/Nw/set-password/
+INFO 2025-09-30 06:00:26,299 middleware 79840 8379025408 GET /password-reset-confirm/Nw/set-password/ -> 200
+INFO 2025-09-30 06:00:26,301 middleware 79840 8379025408 POST /password-reset-confirm/Nw/set-password/
+INFO 2025-09-30 06:00:26,383 middleware 79840 8379025408 POST /password-reset-confirm/Nw/set-password/ -> 302
+INFO 2025-09-30 06:00:26,385 middleware 79840 8379025408 GET /password-reset-complete/
+INFO 2025-09-30 06:00:26,385 middleware 79840 8379025408 GET /password-reset-complete/ -> 200
+INFO 2025-09-30 06:00:26,543 middleware 79840 8379025408 POST /login/
+INFO 2025-09-30 06:00:26,630 middleware 79840 8379025408 POST /login/ -> 200
+INFO 2025-09-30 06:00:42,167 middleware 79889 8379025408 GET /password-reset/
+INFO 2025-09-30 06:00:42,418 middleware 79889 8379025408 GET /password-reset/ -> 200
+INFO 2025-09-30 06:00:42,418 middleware 79889 8379025408 POST /password-reset/
+INFO 2025-09-30 06:00:42,427 middleware 79889 8379025408 POST /password-reset/ -> 302
+INFO 2025-09-30 06:00:42,428 middleware 79889 8379025408 GET /password-reset/done/
+INFO 2025-09-30 06:00:42,428 middleware 79889 8379025408 GET /password-reset/done/ -> 200
+INFO 2025-09-30 06:00:42,429 middleware 79889 8379025408 GET /password-reset-confirm/OA/cwxi16-b3b4d700228441f3be8b088cb110d331/
+INFO 2025-09-30 06:00:42,429 middleware 79889 8379025408 GET /password-reset-confirm/OA/cwxi16-b3b4d700228441f3be8b088cb110d331/ -> 302
+INFO 2025-09-30 06:00:42,431 middleware 79889 8379025408 GET /password-reset-confirm/OA/set-password/
+INFO 2025-09-30 06:00:42,436 middleware 79889 8379025408 GET /password-reset-confirm/OA/set-password/ -> 200
+INFO 2025-09-30 06:00:42,439 middleware 79889 8379025408 POST /password-reset-confirm/OA/set-password/
+INFO 2025-09-30 06:00:42,520 middleware 79889 8379025408 POST /password-reset-confirm/OA/set-password/ -> 302
+INFO 2025-09-30 06:00:42,522 middleware 79889 8379025408 GET /password-reset-complete/
+INFO 2025-09-30 06:00:42,523 middleware 79889 8379025408 GET /password-reset-complete/ -> 200
+INFO 2025-09-30 06:00:42,683 middleware 79889 8379025408 POST /login/
+INFO 2025-09-30 06:00:42,769 middleware 79889 8379025408 POST /login/ -> 200

@@ -352,6 +352,10 @@ if DEBUG:
     CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 # Security Headers Configuration - Strengthened
+# Railway/Cloud platform proxy SSL header detection
+# Railway handles HTTPS at the load balancer, so we need to trust the proxy headers
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # Force SSL redirect in production
 if not DEBUG:
     SECURE_SSL_REDIRECT = True  # Always redirect to HTTPS in production

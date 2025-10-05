@@ -163,6 +163,9 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# WhiteNoise configuration for efficient static file serving
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -502,6 +505,9 @@ RATELIMIT_ENABLE = True
 # Error Handling Configuration
 SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="thriloke96@gmail.com")
 ERROR_REPORTING_ENABLED = config("ERROR_REPORTING_ENABLED", default=True, cast=bool)
+
+# Site URL for emails and absolute URLs
+SITE_URL = config("SITE_URL", default="http://localhost:8000")
 
 # Sentry Configuration (Error Monitoring)
 SENTRY_DSN = config("SENTRY_DSN", default="")

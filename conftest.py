@@ -532,21 +532,6 @@ def test_data_creator():
             user.subscription_end_date = timezone.now() + timedelta(days=30)
             user.save()
 
-            # Create premium analytics report
-            PremiumAnalyticsReport.objects.create(
-                user=user,
-                report_type='monthly',
-                report_period_start=date.today() - timedelta(days=30),
-                report_period_end=date.today(),
-                total_sessions=30,
-                total_work_hours=60.0,
-                total_breaks=150,
-                compliance_rate=85.0,
-                productivity_score=88.5,
-                is_generated=True,
-                generated_at=timezone.now()
-            )
-
             return user
 
     return TestDataCreator()

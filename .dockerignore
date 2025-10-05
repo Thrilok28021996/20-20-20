@@ -1,54 +1,47 @@
 # Python
-__pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
 # Django
 *.log
-local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
 staticfiles/
 logs/
 
-# Environment variables - CRITICAL: Never commit these!
+# Environment
 .env
 .env.local
 .env.production
-.env.*.local
 *.env
 !.env.example
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
 
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 .claude/
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
 
 # Testing
 .coverage
@@ -57,19 +50,21 @@ htmlcov/
 .tox/
 .hypothesis/
 
+# Documentation
+*.md
+!README.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
 # Celery
 celerybeat-schedule
 celerybeat.pid
 
-# Railway
-.railway/
-
-# Secrets and credentials
-*secret*
-*credentials*
-*.pem
-*.key
-!public.key
+# Node modules (if any)
+node_modules/
+npm-debug.log
 
 # Backups
 *.bak

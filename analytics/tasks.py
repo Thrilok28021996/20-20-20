@@ -1,12 +1,15 @@
 """
 Celery tasks for analytics and real-time metrics
 """
+import logging
 from celery import shared_task
 from django.utils import timezone
 from datetime import date, timedelta
 from .models import RealTimeMetrics, UserSession, DailyStats, WeeklyStats, MonthlyStats
 from .views import update_real_time_metrics
 from accounts.timezone_utils import user_today
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -112,7 +115,7 @@ The EyeHealth 20-20-20 Team
                 )
                 surveys_sent += 1
             except Exception as email_error:
-                print(f"Failed to send survey to {user.email}: {email_error}")
+                logger.error(f"Failed to send survey to {user.email}: {email_error}")
         
         return f"Sent satisfaction surveys to {surveys_sent} users"
     except Exception as e:
@@ -245,7 +248,7 @@ The EyeHealth 20-20-20 Team
                 )
                 reports_sent += 1
             except Exception as email_error:
-                print(f"Failed to send weekly report to {user.email}: {email_error}")
+                logger.error(f"Failed to send weekly report to {user.email}: {email_error}")
         
         return f"Sent weekly insights to {reports_sent} users"
     except Exception as e:

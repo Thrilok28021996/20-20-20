@@ -253,7 +253,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Email Configuration - Load from environment variables with validation
 EMAIL_BACKEND = config(
     "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
-)
+).strip()  # Strip whitespace to prevent issues with trailing newlines
 
 # Validate email backend
 ALLOWED_EMAIL_BACKENDS = [
@@ -266,7 +266,7 @@ ALLOWED_EMAIL_BACKENDS = [
 
 if EMAIL_BACKEND not in ALLOWED_EMAIL_BACKENDS:
     raise ValueError(
-        f"Invalid EMAIL_BACKEND: {EMAIL_BACKEND}. "
+        f"Invalid EMAIL_BACKEND: {repr(EMAIL_BACKEND)}. "
         f"Must be one of: {', '.join(ALLOWED_EMAIL_BACKENDS)}"
     )
 

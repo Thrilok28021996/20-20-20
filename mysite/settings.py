@@ -209,34 +209,39 @@ else:
     # Production CORS settings - only allow production domains
     cors_origins = config(
         "CORS_ALLOWED_ORIGINS",
-        default="",  # No default, must be explicitly set in production
+        default="https://example.com",  # Temporary default for build phase
         cast=Csv(),
     )
 
-    # Validate CORS origins are set in production
-    if not cors_origins or cors_origins == ['']:
+    # Validate CORS origins are set in production (skip during build/collectstatic)
+    # Check if we're in a runtime context (not during collectstatic/check)
+    import sys
+    is_runtime = not any(cmd in sys.argv for cmd in ['collectstatic', 'check', 'makemigrations'])
+
+    if is_runtime and (not cors_origins or cors_origins == [''] or cors_origins == ['https://example.com']):
         raise ValueError(
             "CORS_ALLOWED_ORIGINS must be explicitly set in production. "
             "Add your production domain(s) to the environment variable."
         )
 
     # Validate all origins use HTTPS in production - SECURITY FIX: Proper URL validation
-    from urllib.parse import urlparse
+    if is_runtime:
+        from urllib.parse import urlparse
 
-    for origin in cors_origins:
-        if not origin.startswith('https://'):
-            raise ValueError(
-                f"CORS origin '{origin}' must use HTTPS in production. "
-                f"All production origins must start with 'https://'"
-            )
+        for origin in cors_origins:
+            if not origin.startswith('https://'):
+                raise ValueError(
+                    f"CORS origin '{origin}' must use HTTPS in production. "
+                    f"All production origins must start with 'https://'"
+                )
 
-        # SECURITY FIX: Validate that origin has a proper domain (prevent 'https://' bypass)
-        parsed = urlparse(origin)
-        if not parsed.netloc:
-            raise ValueError(
-                f"CORS origin '{origin}' must include a valid domain. "
-                f"Empty domains are not allowed."
-            )
+            # SECURITY FIX: Validate that origin has a proper domain (prevent 'https://' bypass)
+            parsed = urlparse(origin)
+            if not parsed.netloc:
+                raise ValueError(
+                    f"CORS origin '{origin}' must include a valid domain. "
+                    f"Empty domains are not allowed."
+                )
 
     CORS_ALLOWED_ORIGINS = cors_origins
     CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=True, cast=bool)

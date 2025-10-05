@@ -1,11 +1,39 @@
 # Railway Deployment Fix Guide
 
-## Problem
-Railway build failed with error: `pip: command not found`
+## Problems Fixed
+
+### 1. `pip: command not found`
+Railway's nixpacks builder couldn't find pip command during build.
+
+### 2. `could not translate host name "postgres.railway.internal"`
+Database connection attempted during BUILD phase, but database is only available during DEPLOY phase.
+
+## Key Solution
+
+**Migrations and collectstatic MUST run during deploy, NOT build.**
+
+Build phase: Install dependencies only
+Deploy phase: Run migrations, collectstatic, then start server
 
 ## Solution Options
 
-### Option 1: Use Procfile Only (RECOMMENDED - Simplest)
+### Option 1: Use start.sh Script (RECOMMENDED - Current Setup)
+
+**Already configured!** The project now uses:
+
+- `start.sh` - Startup script that runs migrations → collectstatic → gunicorn
+- `railway.json` - Specifies build command (pip install) and start command (./start.sh)
+
+**How it works:**
+1. **Build phase:** Only installs dependencies (`pip install -r requirements.txt`)
+2. **Deploy phase:** Runs `start.sh` which:
+   - Migrates database (database IS available now)
+   - Collects static files
+   - Starts Gunicorn
+
+**No changes needed - just push and deploy!**
+
+### Option 2: Use Procfile Only (Alternative)
 
 Railway auto-detects Python projects. Remove custom build configs and use Procfile:
 

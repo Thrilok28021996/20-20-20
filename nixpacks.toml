@@ -1,0 +1,15 @@
+# Nixpacks configuration for Railway
+# CRITICAL: Prevent database operations during build phase
+
+[phases.setup]
+nixPkgs = ["python311", "postgresql"]
+
+[phases.install]
+cmds = ["pip install --upgrade pip", "pip install -r requirements.txt"]
+
+# IMPORTANT: NO [phases.build] section!
+# Database is NOT available during build phase
+# Migrations and collectstatic run in start.sh during deploy phase
+
+[start]
+cmd = "./start.sh"

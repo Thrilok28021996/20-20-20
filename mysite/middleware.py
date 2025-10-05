@@ -348,11 +348,26 @@ class ErrorHandlingMiddleware(MiddlewareMixin):
         if exception.status_code < 500:
             messages.error(request, exception.user_message)
 
-            # Try to redirect to a sensible page
+            # Try to redirect to a sensible page with validation
             referer = request.META.get('HTTP_REFERER')
-            if referer and referer.startswith(request.get_host()):
+            if referer:
+                from django.utils.http import url_has_allowed_host_and_scheme
                 from django.http import HttpResponseRedirect
-                return HttpResponseRedirect(referer)
+
+                # SECURITY FIX: Don't trust request.get_host() - only use validated ALLOWED_HOSTS
+                allowed_hosts = settings.ALLOWED_HOSTS.copy()
+
+                # Only add request host if it's already in ALLOWED_HOSTS (prevents Host header spoofing)
+                request_host = request.get_host()
+                if request_host in settings.ALLOWED_HOSTS:
+                    allowed_hosts.append(request_host)
+
+                if url_has_allowed_host_and_scheme(
+                    referer,
+                    allowed_hosts=allowed_hosts,  # Only validated hosts
+                    require_https=request.is_secure()
+                ):
+                    return HttpResponseRedirect(referer)
 
             # Fallback redirects based on exception type
             if isinstance(exception, (TimerError, BreakError)):
@@ -377,14 +392,16 @@ class ErrorHandlingMiddleware(MiddlewareMixin):
         elif exception.status_code >= 500:
             template_name = 'errors/500.html'
 
+        from django.utils.html import escape
+
         return render(
             request,
             template_name,
             {
-                'error_message': exception.user_message,
+                'error_message': escape(exception.user_message),  # Escape to prevent XSS
                 'error_code': exception.error_code,
                 'support_email': getattr(settings, 'SUPPORT_EMAIL', 'thriloke96@gmail.com'),
-                'error_details': str(exception) if settings.DEBUG else None
+                'error_details': escape(str(exception)) if settings.DEBUG else None  # Escape debug info too
             },
             status=exception.status_code
         )
@@ -392,7 +409,12 @@ class ErrorHandlingMiddleware(MiddlewareMixin):
 
 class SecurityHeadersMiddleware(MiddlewareMixin):
     """
-    Middleware to add security headers to all responses.
+    Middleware to add comprehensive security headers to all responses.
+
+    Includes:
+    - Basic security headers (X-Content-Type-Options, X-Frame-Options, etc.)
+    - Advanced security headers (Permissions-Policy, COOP, COEP, CORP)
+    - CORS headers for API requests
     """
 
     def process_response(self, request: HttpRequest, response: HttpResponse) -> HttpResponse:
@@ -406,12 +428,35 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         Returns:
             Response with security headers added
         """
-        # Add security headers
+        # Add security headers (always, not just in production)
+        response['X-Content-Type-Options'] = 'nosniff'
+        response['X-Frame-Options'] = 'DENY'
+        response['X-XSS-Protection'] = '1; mode=block'
+        response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+
+        # Add advanced security headers
+        # Permissions-Policy: Restrict browser features
+        response['Permissions-Policy'] = (
+            'geolocation=(), '
+            'microphone=(), '
+            'camera=(), '
+            'payment=(), '
+            'usb=(), '
+            'magnetometer=(), '
+            'gyroscope=(), '
+            'accelerometer=()'
+        )
+
+        # Cross-Origin-Opener-Policy: Prevent cross-origin attacks
+        response['Cross-Origin-Opener-Policy'] = 'same-origin'
+
+        # Cross-Origin-Embedder-Policy: Prevent loading cross-origin resources
+        # Note: This may need adjustment based on CDN usage
         if not settings.DEBUG:
-            response['X-Content-Type-Options'] = 'nosniff'
-            response['X-Frame-Options'] = 'DENY'
-            response['X-XSS-Protection'] = '1; mode=block'
-            response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+            response['Cross-Origin-Embedder-Policy'] = 'require-corp'
+
+        # Cross-Origin-Resource-Policy: Control resource sharing
+        response['Cross-Origin-Resource-Policy'] = 'same-origin'
 
         # Add CORS headers for API requests
         if request.path.startswith('/api/'):
@@ -442,7 +487,7 @@ class RequestLoggingMiddleware(MiddlewareMixin):
 
     def process_request(self, request: HttpRequest) -> None:
         """
-        Log incoming requests.
+        Log incoming requests with anonymized sensitive data.
 
         Args:
             request: Django request object
@@ -455,8 +500,8 @@ class RequestLoggingMiddleware(MiddlewareMixin):
                 f"{request.method} {request.path}",
                 extra={
                     'user_id': user_id,
-                    'ip_address': self._get_client_ip(request),
-                    'user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                    'ip_address': self._anonymize_ip(self._get_client_ip(request)),
+                    'user_agent': self._anonymize_user_agent(request.META.get('HTTP_USER_AGENT', '')),
                     'content_type': request.META.get('CONTENT_TYPE', ''),
                     'request_size': len(request.body) if hasattr(request, 'body') else 0
                 }
@@ -497,6 +542,27 @@ class RequestLoggingMiddleware(MiddlewareMixin):
         else:
             ip = request.META.get('REMOTE_ADDR', 'unknown')
         return ip
+
+    def _anonymize_ip(self, ip_address: str) -> str:
+        """Anonymize IP address for GDPR compliance."""
+        if ':' in ip_address:  # IPv6
+            parts = ip_address.split(':')
+            return ':'.join(parts[:4]) + ':0000:0000:0000:0000'
+        elif '.' in ip_address:  # IPv4
+            parts = ip_address.split('.')
+            return '.'.join(parts[:3]) + '.0'
+        return 'unknown'
+
+    def _anonymize_user_agent(self, user_agent: str) -> str:
+        """Anonymize user agent string by removing version details."""
+        if not user_agent:
+            return 'unknown'
+        # Keep only browser family and OS, remove specific versions
+        import re
+        # Remove version numbers
+        anonymized = re.sub(r'\d+\.\d+\.\d+', 'x.x.x', user_agent)
+        # Truncate if too long
+        return anonymized[:200]
 
 
 class APIErrorResponseMiddleware(MiddlewareMixin):

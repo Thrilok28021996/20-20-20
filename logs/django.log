@@ -1,528 +1,145 @@
-INFO 2025-09-20 04:21:07,019 autoreload 24851 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:03:13,642 autoreload 40230 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:03:20,412 basehttp 40230 6162870272 "GET / HTTP/1.1" 200 44537
-INFO 2025-09-20 06:03:41,753 basehttp 40230 6162870272 "GET / HTTP/1.1" 200 44537
-INFO 2025-09-20 06:03:41,812 basehttp 40230 6162870272 "GET /static/css/custom.css?v=1.2 HTTP/1.1" 200 47529
-WARNING 2025-09-20 06:03:42,023 basehttp 40230 6325039104 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
-WARNING 2025-09-20 06:03:42,023 basehttp 40230 6162870272 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
-INFO 2025-09-20 06:04:51,136 basehttp 40230 6162870272 "GET /docs/ HTTP/1.1" 200 51416
-WARNING 2025-09-20 06:05:32,102 log 40230 6162870272 Not Found: /favicon.ico
-WARNING 2025-09-20 06:05:32,102 basehttp 40230 6162870272 "GET /favicon.ico HTTP/1.1" 404 5450
-INFO 2025-09-20 06:12:01,292 autoreload 40230 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 06:12:01,596 autoreload 40960 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:12:10,126 autoreload 40960 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 06:12:10,370 autoreload 40970 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:12:17,843 autoreload 40970 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 06:12:18,073 autoreload 40979 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:12:26,609 autoreload 40979 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 06:12:26,859 autoreload 40988 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:23:33,651 basehttp 40988 6134149120 "GET / HTTP/1.1" 200 44537
-INFO 2025-09-20 06:25:14,287 basehttp 40988 6134149120 "GET /pricing/ HTTP/1.1" 200 31222
-INFO 2025-09-20 06:27:20,130 autoreload 40988 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 06:27:20,414 autoreload 41336 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:27:39,346 autoreload 41336 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 06:27:39,588 autoreload 41347 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 06:31:58,893 autoreload 41539 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:05:36,758 basehttp 41347 6135197696 "GET /pricing/ HTTP/1.1" 200 31223
-INFO 2025-09-20 07:05:42,980 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 44968
-INFO 2025-09-20 07:06:52,782 basehttp 41347 6135197696 "GET /pricing/ HTTP/1.1" 200 31223
-INFO 2025-09-20 07:06:57,617 basehttp 41347 6135197696 "GET /signup/ HTTP/1.1" 200 25383
-INFO 2025-09-20 07:14:21,209 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 42892
-INFO 2025-09-20 07:15:26,968 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 42892
-INFO 2025-09-20 07:15:27,619 basehttp 41347 6135197696 "GET / HTTP/1.1" 200 42892
-INFO 2025-09-20 07:16:00,750 basehttp 41347 6135197696 "GET /pricing/ HTTP/1.1" 200 31223
-INFO 2025-09-20 07:20:27,781 autoreload 41347 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 07:20:27,785 autoreload 41539 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 07:20:28,120 autoreload 42282 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:21:42,515 autoreload 42282 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 07:21:42,761 autoreload 42364 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:21:46,058 autoreload 42364 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 07:21:46,290 autoreload 42378 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:22:21,171 basehttp 42378 6193983488 "GET /pricing/ HTTP/1.1" 200 31223
-INFO 2025-09-20 07:22:22,368 basehttp 42378 6193983488 "GET / HTTP/1.1" 200 42894
-INFO 2025-09-20 07:22:23,561 basehttp 42378 6193983488 "GET /pricing/ HTTP/1.1" 200 31223
-INFO 2025-09-20 07:22:24,516 basehttp 42378 6193983488 "GET /about/ HTTP/1.1" 200 26009
-INFO 2025-09-20 07:23:08,195 basehttp 42378 6193983488 "GET /contact/ HTTP/1.1" 200 28141
-INFO 2025-09-20 07:23:54,031 basehttp 42378 6193983488 "GET / HTTP/1.1" 200 42894
-INFO 2025-09-20 07:31:26,963 autoreload 42378 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/mysite/constants.py changed, reloading.
-INFO 2025-09-20 07:31:27,208 autoreload 42686 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:31:48,165 autoreload 42686 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 07:31:48,415 autoreload 42726 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:31:58,999 autoreload 42726 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 07:31:59,267 autoreload 42743 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:32:03,620 autoreload 42743 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 07:32:03,831 autoreload 42752 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:32:16,467 autoreload 42752 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 07:32:16,684 autoreload 42773 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:33:18,139 autoreload 42773 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 07:33:18,372 autoreload 42873 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:41:05,557 autoreload 42873 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/mysite/constants.py changed, reloading.
-INFO 2025-09-20 07:41:05,802 autoreload 43167 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 07:41:15,271 autoreload 43167 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
-INFO 2025-09-20 07:41:15,527 autoreload 43189 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 08:11:03,863 basehttp 43189 6135820288 "GET / HTTP/1.1" 200 42894
-INFO 2025-09-20 08:11:04,833 basehttp 43189 6135820288 "GET / HTTP/1.1" 200 42894
-INFO 2025-09-20 08:11:24,055 basehttp 43189 6135820288 "GET /signup/ HTTP/1.1" 200 25383
-INFO 2025-09-20 08:11:28,391 basehttp 43189 6135820288 "GET /signup/ HTTP/1.1" 200 25383
-INFO 2025-09-20 08:14:01,737 autoreload 43189 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/admin.py changed, reloading.
-INFO 2025-09-20 08:14:02,520 autoreload 43770 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 08:22:55,126 autoreload 43770 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/notifications/models.py changed, reloading.
-INFO 2025-09-20 08:22:55,354 autoreload 43987 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 08:23:09,069 autoreload 43987 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/admin.py changed, reloading.
-INFO 2025-09-20 08:23:09,328 autoreload 44014 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 11:31:27,645 autoreload 44014 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/models.py changed, reloading.
-INFO 2025-09-20 11:31:27,960 autoreload 44650 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 11:33:17,461 basehttp 44650 13170143232 "GET / HTTP/1.1" 200 42894
-INFO 2025-09-20 11:33:21,778 basehttp 44650 13170143232 "GET /pricing/ HTTP/1.1" 200 31237
-INFO 2025-09-20 11:43:04,340 basehttp 44650 13170143232 "GET /about/ HTTP/1.1" 200 26009
-INFO 2025-09-20 13:30:56,679 basehttp 44650 13170143232 "GET /about/ HTTP/1.1" 200 26009
-WARNING 2025-09-20 13:30:56,776 basehttp 44650 13170143232 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
-WARNING 2025-09-20 13:30:56,776 basehttp 44650 13186969600 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
-INFO 2025-09-20 17:29:08,659 basehttp 44650 13170143232 "GET /about/ HTTP/1.1" 200 26011
-INFO 2025-09-20 17:29:08,683 basehttp 44650 13170143232 "GET /static/css/custom.css?v=1.2 HTTP/1.1" 200 47529
-WARNING 2025-09-20 17:29:08,838 basehttp 44650 13186969600 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
-WARNING 2025-09-20 17:29:08,839 basehttp 44650 13170143232 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
-INFO 2025-09-20 17:29:09,727 basehttp 44650 13170143232 "GET / HTTP/1.1" 200 42896
-INFO 2025-09-20 17:36:09,014 autoreload 44650 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 17:36:09,700 autoreload 51225 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 17:37:49,567 autoreload 51225 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/analytics/models.py changed, reloading.
-INFO 2025-09-20 17:37:49,828 autoreload 51248 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 17:38:46,170 autoreload 51248 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/models.py changed, reloading.
-INFO 2025-09-20 17:38:46,436 autoreload 51270 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 17:41:40,931 autoreload 51270 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 17:41:41,183 autoreload 51340 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-20 17:41:46,560 autoreload 51340 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/timer/views.py changed, reloading.
-INFO 2025-09-20 17:41:46,814 autoreload 51350 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-27 12:07:32,659 autoreload 1444 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-27 12:07:44,149 middleware 1444 6164852736 GET /
-INFO 2025-09-27 12:07:44,184 middleware 1444 6164852736 GET / -> 200
-INFO 2025-09-27 12:07:44,185 basehttp 1444 6164852736 "GET / HTTP/1.1" 200 42896
-INFO 2025-09-27 12:07:44,204 basehttp 1444 6164852736 "GET /static/css/custom.css?v=1.2 HTTP/1.1" 200 47529
-WARNING 2025-09-27 12:07:44,976 basehttp 1444 6164852736 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
-WARNING 2025-09-27 12:07:44,976 basehttp 1444 6181679104 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
-INFO 2025-09-27 12:07:47,368 middleware 1444 6164852736 GET /pricing/
-INFO 2025-09-27 12:07:47,374 middleware 1444 6164852736 GET /pricing/ -> 200
-INFO 2025-09-27 12:07:47,376 basehttp 1444 6164852736 "GET /pricing/ HTTP/1.1" 200 31242
-INFO 2025-09-27 12:08:36,022 autoreload 1526 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-28 05:47:58,141 middleware 20850 6115225600 GET /
-INFO 2025-09-28 05:47:58,157 middleware 20850 6115225600 GET / -> 200
-INFO 2025-09-28 05:47:58,157 basehttp 20850 6115225600 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-28 05:48:08,392 middleware 20850 6115225600 GET /accounts/login/
-INFO 2025-09-28 05:48:08,402 middleware 20850 6115225600 GET /accounts/login/ -> 404
-WARNING 2025-09-28 05:48:08,403 basehttp 20850 6115225600 "GET /accounts/login/ HTTP/1.1" 404 5746
-INFO 2025-09-28 05:48:08,459 middleware 20850 6115225600 GET /accounts/register/
-INFO 2025-09-28 05:48:08,461 middleware 20850 6115225600 GET /accounts/register/ -> 404
-WARNING 2025-09-28 05:48:08,461 basehttp 20850 6115225600 "GET /accounts/register/ HTTP/1.1" 404 5755
-INFO 2025-09-28 05:48:08,519 middleware 20850 6115225600 GET /timer/
-INFO 2025-09-28 05:48:08,521 middleware 20850 6115225600 GET /timer/ -> 404
-WARNING 2025-09-28 05:48:08,521 basehttp 20850 6115225600 "GET /timer/ HTTP/1.1" 404 8633
-INFO 2025-09-28 05:48:21,724 middleware 20850 6115225600 GET /login/
-INFO 2025-09-28 05:48:21,727 middleware 20850 6115225600 GET /login/ -> 200
-INFO 2025-09-28 05:48:21,727 basehttp 20850 6115225600 "GET /login/ HTTP/1.1" 200 21369
-INFO 2025-09-28 05:48:21,785 middleware 20850 6115225600 GET /signup/
-INFO 2025-09-28 05:48:21,791 middleware 20850 6115225600 GET /signup/ -> 200
-INFO 2025-09-28 05:48:21,792 basehttp 20850 6115225600 "GET /signup/ HTTP/1.1" 200 26599
-INFO 2025-09-28 05:48:21,847 middleware 20850 6115225600 GET /
-INFO 2025-09-28 05:48:21,849 middleware 20850 6115225600 GET / -> 200
-INFO 2025-09-28 05:48:21,849 basehttp 20850 6115225600 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-28 05:48:47,804 middleware 20850 6115225600 GET /timer/dashboard/
-INFO 2025-09-28 05:48:47,804 middleware 20850 6115225600 GET /timer/dashboard/ -> 302
-INFO 2025-09-28 05:48:47,804 basehttp 20850 6115225600 "GET /timer/dashboard/ HTTP/1.1" 302 0
-INFO 2025-09-28 05:48:47,864 middleware 20850 6115225600 GET /analytics/
-INFO 2025-09-28 05:48:47,866 middleware 20850 6115225600 GET /analytics/ -> 404
-WARNING 2025-09-28 05:48:47,866 basehttp 20850 6115225600 "GET /analytics/ HTTP/1.1" 404 6825
-INFO 2025-09-28 05:48:47,924 middleware 20850 6115225600 GET /subscriptions/
-INFO 2025-09-28 05:48:47,925 middleware 20850 6115225600 GET /subscriptions/ -> 404
-WARNING 2025-09-28 05:48:47,925 basehttp 20850 6115225600 "GET /subscriptions/ HTTP/1.1" 404 5629
-INFO 2025-09-28 05:48:57,969 middleware 20850 6115225600 GET /analytics/admin-dashboard/
-INFO 2025-09-28 05:48:57,969 middleware 20850 6115225600 GET /analytics/admin-dashboard/ -> 302
-INFO 2025-09-28 05:48:57,969 basehttp 20850 6115225600 "GET /analytics/admin-dashboard/ HTTP/1.1" 302 0
-INFO 2025-09-28 05:48:58,026 middleware 20850 6115225600 GET /payments/
-INFO 2025-09-28 05:48:58,027 middleware 20850 6115225600 GET /payments/ -> 404
-WARNING 2025-09-28 05:48:58,028 basehttp 20850 6115225600 "GET /payments/ HTTP/1.1" 404 7971
-INFO 2025-09-28 05:48:58,085 middleware 20850 6115225600 GET /pricing/
-INFO 2025-09-28 05:48:58,087 middleware 20850 6115225600 GET /pricing/ -> 200
-INFO 2025-09-28 05:48:58,087 basehttp 20850 6115225600 "GET /pricing/ HTTP/1.1" 200 31007
-INFO 2025-09-28 05:49:06,524 middleware 20850 6115225600 GET /payments/upgrade/
-INFO 2025-09-28 05:49:06,525 middleware 20850 6115225600 GET /payments/upgrade/ -> 302
-INFO 2025-09-28 05:49:06,525 basehttp 20850 6115225600 "GET /payments/upgrade/ HTTP/1.1" 302 0
-INFO 2025-09-28 06:35:07,645 middleware 22654 8379025408 POST /timer/start/
-INFO 2025-09-28 06:35:07,646 decorators 22654 8379025408 API call started: start_session_view
-INFO 2025-09-28 06:35:07,646 decorators 22654 8379025408 API request: start_session_view
-ERROR 2025-09-28 06:35:07,646 decorators 22654 8379025408 API call failed: start_session_view - "Attempt to overwrite 'message' in LogRecord"
-ERROR 2025-09-28 06:35:07,646 decorators 22654 8379025408 Unexpected error in API view start_session_view: "Attempt to overwrite 'message' in LogRecord"
-Traceback (most recent call last):
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 49, in wrapper
-    result = view_func(request, *args, **kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 347, in wrapper
-    response = view_func(request, *args, **kwargs)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 109, in wrapper
-    raise UserNotAuthenticatedError(
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 59, in __init__
-    self._log_error()
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 70, in _log_error
-    logger.log(
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1559, in log
-    self._log(level, msg, args, **kwargs)
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1632, in _log
-    record = self.makeRecord(self.name, level, fn, lno, msg, args,
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1606, in makeRecord
-    raise KeyError("Attempt to overwrite %r in LogRecord" % key)
-KeyError: "Attempt to overwrite 'message' in LogRecord"
-INFO 2025-09-28 06:35:07,649 middleware 22654 8379025408 POST /timer/start/ -> 500
-INFO 2025-09-28 06:35:10,664 middleware 22654 8379025408 POST /signup/
-ERROR 2025-09-28 06:35:10,753 middleware 22654 8379025408 Unexpected error: AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
-Traceback (most recent call last):
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
-    return self.dispatch(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 143, in dispatch
-    return handler(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 184, in post
-    return super().post(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 153, in post
-    return self.form_valid(form)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py", line 40, in form_valid
-    user = authenticate(username=email, password=raw_password)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/decorators/debug.py", line 42, in sensitive_variables_wrapper
-    return func(*func_args, **func_kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/contrib/auth/__init__.py", line 77, in authenticate
-    user = backend.authenticate(request, **credentials)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/helpers.py", line 614, in inner
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/backends.py", line 46, in authenticate
-    raise AxesBackendRequestParameterRequired(
-axes.exceptions.AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
-INFO 2025-09-28 06:35:10,779 middleware 22654 8379025408 POST /signup/ -> 500
-INFO 2025-09-29 04:38:59,141 middleware 34661 8379025408 POST /timer/start/
-INFO 2025-09-29 04:38:59,142 decorators 34661 8379025408 API call started: start_session_view
-INFO 2025-09-29 04:38:59,142 decorators 34661 8379025408 API request: start_session_view
-ERROR 2025-09-29 04:38:59,142 decorators 34661 8379025408 API call failed: start_session_view - "Attempt to overwrite 'message' in LogRecord"
-ERROR 2025-09-29 04:38:59,142 decorators 34661 8379025408 Unexpected error in API view start_session_view: "Attempt to overwrite 'message' in LogRecord"
-Traceback (most recent call last):
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 49, in wrapper
-    result = view_func(request, *args, **kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 347, in wrapper
-    response = view_func(request, *args, **kwargs)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/decorators.py", line 109, in wrapper
-    raise UserNotAuthenticatedError(
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 59, in __init__
-    self._log_error()
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/mysite/exceptions.py", line 70, in _log_error
-    logger.log(
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1559, in log
-    self._log(level, msg, args, **kwargs)
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1632, in _log
-    record = self.makeRecord(self.name, level, fn, lno, msg, args,
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/logging/__init__.py", line 1606, in makeRecord
-    raise KeyError("Attempt to overwrite %r in LogRecord" % key)
-KeyError: "Attempt to overwrite 'message' in LogRecord"
-INFO 2025-09-29 04:38:59,145 middleware 34661 8379025408 POST /timer/start/ -> 500
-INFO 2025-09-29 04:39:01,552 middleware 34661 8379025408 POST /signup/
-ERROR 2025-09-29 04:39:01,641 middleware 34661 8379025408 Unexpected error: AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
-Traceback (most recent call last):
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
-    return self.dispatch(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/base.py", line 143, in dispatch
-    return handler(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 184, in post
-    return super().post(request, *args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/generic/edit.py", line 153, in post
-    return self.form_valid(form)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py", line 40, in form_valid
-    user = authenticate(username=email, password=raw_password)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/views/decorators/debug.py", line 42, in sensitive_variables_wrapper
-    return func(*func_args, **func_kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/contrib/auth/__init__.py", line 77, in authenticate
-    user = backend.authenticate(request, **credentials)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/helpers.py", line 614, in inner
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/axes/backends.py", line 46, in authenticate
-    raise AxesBackendRequestParameterRequired(
-axes.exceptions.AxesBackendRequestParameterRequired: AxesBackend requires a request as an argument to authenticate
-INFO 2025-09-29 04:39:01,646 middleware 34661 8379025408 POST /signup/ -> 500
-INFO 2025-09-29 04:43:44,340 autoreload 34943 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-29 04:44:01,428 middleware 34943 6125432832 HEAD /
-INFO 2025-09-29 04:44:01,448 middleware 34943 6125432832 HEAD / -> 200
-INFO 2025-09-29 04:44:01,448 basehttp 34943 6125432832 "HEAD / HTTP/1.1" 200 0
-INFO 2025-09-29 04:44:08,906 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:44:08,909 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:44:08,909 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:44:08,961 middleware 34943 6125432832 GET /accounts/register/
-INFO 2025-09-29 04:44:08,972 middleware 34943 6125432832 GET /accounts/register/ -> 404
-WARNING 2025-09-29 04:44:08,972 basehttp 34943 6125432832 "GET /accounts/register/ HTTP/1.1" 404 5755
-INFO 2025-09-29 04:44:09,024 middleware 34943 6125432832 GET /accounts/login/
-INFO 2025-09-29 04:44:09,025 middleware 34943 6125432832 GET /accounts/login/ -> 404
-WARNING 2025-09-29 04:44:09,026 basehttp 34943 6125432832 "GET /accounts/login/ HTTP/1.1" 404 5746
-INFO 2025-09-29 04:44:24,981 middleware 34943 6125432832 GET /login/
-INFO 2025-09-29 04:44:24,982 middleware 34943 6125432832 GET /login/ -> 200
-INFO 2025-09-29 04:44:24,983 basehttp 34943 6125432832 "GET /login/ HTTP/1.1" 200 21369
-INFO 2025-09-29 04:44:25,034 middleware 34943 6125432832 GET /register/
-INFO 2025-09-29 04:44:25,036 middleware 34943 6125432832 GET /register/ -> 404
-WARNING 2025-09-29 04:44:25,036 basehttp 34943 6125432832 "GET /register/ HTTP/1.1" 404 5728
-INFO 2025-09-29 04:44:33,451 middleware 34943 6125432832 GET /signup/
-INFO 2025-09-29 04:44:33,457 middleware 34943 6125432832 GET /signup/ -> 200
-INFO 2025-09-29 04:44:33,457 basehttp 34943 6125432832 "GET /signup/ HTTP/1.1" 200 26599
-INFO 2025-09-29 04:44:33,505 middleware 34943 6125432832 GET /timer/
-INFO 2025-09-29 04:44:33,507 middleware 34943 6125432832 GET /timer/ -> 404
-WARNING 2025-09-29 04:44:33,507 basehttp 34943 6125432832 "GET /timer/ HTTP/1.1" 404 8633
-INFO 2025-09-29 04:44:40,100 middleware 34943 6125432832 GET /timer/app/
-INFO 2025-09-29 04:44:40,101 middleware 34943 6125432832 GET /timer/app/ -> 404
-WARNING 2025-09-29 04:44:40,102 basehttp 34943 6125432832 "GET /timer/app/ HTTP/1.1" 404 8645
-INFO 2025-09-29 04:44:40,151 middleware 34943 6125432832 GET /pricing/
-INFO 2025-09-29 04:44:40,153 middleware 34943 6125432832 GET /pricing/ -> 200
-INFO 2025-09-29 04:44:40,153 basehttp 34943 6125432832 "GET /pricing/ HTTP/1.1" 200 31007
-INFO 2025-09-29 04:44:46,098 middleware 34943 6125432832 GET /timer/dashboard/
-INFO 2025-09-29 04:44:46,098 middleware 34943 6125432832 GET /timer/dashboard/ -> 302
-INFO 2025-09-29 04:44:46,098 basehttp 34943 6125432832 "GET /timer/dashboard/ HTTP/1.1" 302 0
-INFO 2025-09-29 04:44:46,146 middleware 34943 6125432832 GET /analytics/
-INFO 2025-09-29 04:44:46,148 middleware 34943 6125432832 GET /analytics/ -> 404
-WARNING 2025-09-29 04:44:46,148 basehttp 34943 6125432832 "GET /analytics/ HTTP/1.1" 404 6825
-INFO 2025-09-29 04:44:46,197 middleware 34943 6125432832 GET /about/
-INFO 2025-09-29 04:44:46,200 middleware 34943 6125432832 GET /about/ -> 200
-INFO 2025-09-29 04:44:46,200 basehttp 34943 6125432832 "GET /about/ HTTP/1.1" 200 25795
-INFO 2025-09-29 04:46:14,683 middleware 34943 6125432832 GET /timer/dashboard/
-INFO 2025-09-29 04:46:14,684 middleware 34943 6125432832 GET /timer/dashboard/ -> 302
-INFO 2025-09-29 04:46:14,684 basehttp 34943 6125432832 "GET /timer/dashboard/ HTTP/1.1" 302 0
-INFO 2025-09-29 04:46:14,743 middleware 34943 6125432832 GET /contact/
-INFO 2025-09-29 04:46:14,745 middleware 34943 6125432832 GET /contact/ -> 200
-INFO 2025-09-29 04:46:14,745 basehttp 34943 6125432832 "GET /contact/ HTTP/1.1" 200 27834
-INFO 2025-09-29 04:46:14,800 middleware 34943 6125432832 GET /help/
-INFO 2025-09-29 04:46:14,803 middleware 34943 6125432832 GET /help/ -> 200
-INFO 2025-09-29 04:46:14,803 basehttp 34943 6125432832 "GET /help/ HTTP/1.1" 200 34105
-INFO 2025-09-29 04:46:49,772 middleware 34943 6125432832 GET /nonexistent/
-INFO 2025-09-29 04:46:49,774 middleware 34943 6125432832 GET /nonexistent/ -> 404
-WARNING 2025-09-29 04:46:49,774 basehttp 34943 6125432832 "GET /nonexistent/ HTTP/1.1" 404 5737
-INFO 2025-09-29 04:46:49,824 middleware 34943 6125432832 POST /timer/start/
-WARNING 2025-09-29 04:46:49,825 log 34943 6125432832 Forbidden (CSRF cookie not set.): /timer/start/
-INFO 2025-09-29 04:46:49,825 middleware 34943 6125432832 POST /timer/start/ -> 403
-WARNING 2025-09-29 04:46:49,825 basehttp 34943 6125432832 "POST /timer/start/ HTTP/1.1" 403 2870
-INFO 2025-09-29 04:46:49,876 middleware 34943 6125432832 GET /nonexistent/
-INFO 2025-09-29 04:46:49,878 middleware 34943 6125432832 GET /nonexistent/ -> 404
-WARNING 2025-09-29 04:46:49,878 basehttp 34943 6125432832 "GET /nonexistent/ HTTP/1.1" 404 5737
-INFO 2025-09-29 04:47:01,437 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:01,440 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:01,440 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:01,500 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:01,502 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:01,503 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:01,562 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:01,564 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:01,564 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,588 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,590 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,591 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,598 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,600 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,600 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,607 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,609 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,610 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,620 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,623 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,623 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,630 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,632 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,632 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,639 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,642 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,642 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,649 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,652 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,652 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,659 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,661 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,661 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,668 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,671 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,671 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,678 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,680 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,680 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,728 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,730 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,731 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 04:47:31,778 middleware 34943 6125432832 GET /
-INFO 2025-09-29 04:47:31,780 middleware 34943 6125432832 GET / -> 200
-INFO 2025-09-29 04:47:31,780 basehttp 34943 6125432832 "GET / HTTP/1.1" 200 42704
-INFO 2025-09-29 05:16:46,097 middleware 34943 6125432832 GET /about/
-INFO 2025-09-29 05:16:46,097 middleware 34943 6142259200 GET /about/
-INFO 2025-09-29 05:16:46,098 middleware 34943 6159085568 GET /about/
-INFO 2025-09-29 05:16:46,098 middleware 34943 13170143232 GET /about/
-INFO 2025-09-29 05:16:46,098 middleware 34943 13186969600 GET /about/
-INFO 2025-09-29 05:16:46,117 middleware 34943 13186969600 GET /about/ -> 200
-INFO 2025-09-29 05:16:46,117 middleware 34943 6159085568 GET /about/ -> 200
-INFO 2025-09-29 05:16:46,118 middleware 34943 13170143232 GET /about/ -> 200
-INFO 2025-09-29 05:16:46,119 middleware 34943 6142259200 GET /about/ -> 200
-INFO 2025-09-29 05:16:46,119 middleware 34943 6125432832 GET /about/ -> 200
-INFO 2025-09-29 05:16:46,120 basehttp 34943 13186969600 "GET /about/ HTTP/1.1" 200 25795
-INFO 2025-09-29 05:16:46,120 basehttp 34943 13170143232 "GET /about/ HTTP/1.1" 200 25795
-INFO 2025-09-29 05:16:46,120 basehttp 34943 6159085568 "GET /about/ HTTP/1.1" 200 25795
-INFO 2025-09-29 05:16:46,120 basehttp 34943 6125432832 "GET /about/ HTTP/1.1" 200 25795
-INFO 2025-09-29 05:16:46,120 basehttp 34943 6142259200 "GET /about/ HTTP/1.1" 200 25795
-INFO 2025-09-29 05:16:46,186 middleware 34943 6125432832 GET /login/
-INFO 2025-09-29 05:16:46,187 middleware 34943 6125432832 GET /login/ -> 200
-INFO 2025-09-29 05:16:46,187 basehttp 34943 6125432832 "GET /login/ HTTP/1.1" 200 21369
-INFO 2025-09-29 05:16:46,242 middleware 34943 6125432832 GET /signup/
-INFO 2025-09-29 05:16:46,243 middleware 34943 6125432832 GET /signup/ -> 200
-INFO 2025-09-29 05:16:46,244 basehttp 34943 6125432832 "GET /signup/ HTTP/1.1" 200 26599
-INFO 2025-09-30 05:48:23,178 autoreload 78881 8379025408 Watching for file changes with StatReloader
-INFO 2025-09-30 05:48:35,317 middleware 78881 6137589760 GET /password-reset/
-INFO 2025-09-30 05:48:35,333 middleware 78881 6137589760 GET /password-reset/ -> 200
-INFO 2025-09-30 05:48:35,333 basehttp 78881 6137589760 "GET /password-reset/ HTTP/1.1" 200 19191
-INFO 2025-09-30 05:49:34,782 middleware 78881 6137589760 GET /password-reset/
-INFO 2025-09-30 05:49:34,784 middleware 78881 6137589760 GET /password-reset/ -> 200
-INFO 2025-09-30 05:49:34,784 basehttp 78881 6137589760 "GET /password-reset/ HTTP/1.1" 200 19191
-ERROR 2025-09-30 05:51:05,186 exception 79166 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-Traceback (most recent call last):
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
-    response = get_response(request)
-               ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
-    response = self.process_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
-    host = request.get_host()
-           ^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
-    raise DisallowedHost(msg)
-django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-ERROR 2025-09-30 05:51:05,406 exception 79166 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-Traceback (most recent call last):
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
-    response = get_response(request)
-               ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
-    response = self.process_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
-    host = request.get_host()
-           ^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
-    raise DisallowedHost(msg)
-django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-ERROR 2025-09-30 05:51:41,090 exception 79237 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-Traceback (most recent call last):
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
-    response = get_response(request)
-               ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
-    response = self.process_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
-    host = request.get_host()
-           ^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
-    raise DisallowedHost(msg)
-django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-INFO 2025-09-30 05:52:01,860 autoreload 78881 8379025408 /Volumes/personal/programmingFolders/saas/20-20-20/mysite/settings.py changed, reloading.
-INFO 2025-09-30 05:52:02,543 autoreload 79365 8379025408 Watching for file changes with StatReloader
-ERROR 2025-09-30 05:52:06,404 exception 79385 8379025408 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-Traceback (most recent call last):
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
-    response = get_response(request)
-               ^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/utils/deprecation.py", line 133, in __call__
-    response = self.process_request(request)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/middleware/common.py", line 48, in process_request
-    host = request.get_host()
-           ^^^^^^^^^^^^^^^^^^
-  File "/Volumes/personal/conda_envs/webapp/lib/python3.11/site-packages/django/http/request.py", line 150, in get_host
-    raise DisallowedHost(msg)
-django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
-INFO 2025-09-30 05:54:39,360 middleware 79518 8379025408 GET /password-reset/
-INFO 2025-09-30 05:54:39,631 middleware 79518 8379025408 GET /password-reset/ -> 200
-INFO 2025-09-30 05:54:39,631 middleware 79518 8379025408 POST /password-reset/
-INFO 2025-09-30 05:54:44,617 middleware 79518 8379025408 POST /password-reset/ -> 302
-INFO 2025-09-30 05:54:44,619 middleware 79518 8379025408 GET /password-reset/done/
-INFO 2025-09-30 05:54:44,621 middleware 79518 8379025408 GET /password-reset/done/ -> 200
-INFO 2025-09-30 05:55:02,939 middleware 79615 8379025408 GET /password-reset/
-INFO 2025-09-30 05:55:03,188 middleware 79615 8379025408 GET /password-reset/ -> 200
-INFO 2025-09-30 05:55:03,189 middleware 79615 8379025408 POST /password-reset/
-INFO 2025-09-30 05:55:03,199 middleware 79615 8379025408 POST /password-reset/ -> 302
-INFO 2025-09-30 05:55:03,199 middleware 79615 8379025408 GET /password-reset/done/
-INFO 2025-09-30 05:55:03,200 middleware 79615 8379025408 GET /password-reset/done/ -> 200
-INFO 2025-09-30 05:55:03,201 middleware 79615 8379025408 GET /password-reset-confirm/NQ/cwxhrr-c444d7aab4620733f8c20a5da58a529d/
-INFO 2025-09-30 05:55:03,201 middleware 79615 8379025408 GET /password-reset-confirm/NQ/cwxhrr-c444d7aab4620733f8c20a5da58a529d/ -> 302
-INFO 2025-09-30 05:55:03,206 middleware 79615 8379025408 GET /password-reset-confirm/NQ/set-password/
-INFO 2025-09-30 05:55:03,212 middleware 79615 8379025408 GET /password-reset-confirm/NQ/set-password/ -> 200
-INFO 2025-09-30 05:55:03,214 middleware 79615 8379025408 POST /password-reset-confirm/NQ/set-password/
-INFO 2025-09-30 05:55:03,295 middleware 79615 8379025408 POST /password-reset-confirm/NQ/set-password/ -> 302
-INFO 2025-09-30 05:55:03,296 middleware 79615 8379025408 GET /password-reset-complete/
-INFO 2025-09-30 05:55:03,297 middleware 79615 8379025408 GET /password-reset-complete/ -> 200
-INFO 2025-09-30 05:55:19,849 middleware 79673 8379025408 GET /password-reset/
-INFO 2025-09-30 05:55:20,095 middleware 79673 8379025408 GET /password-reset/ -> 200
-INFO 2025-09-30 05:55:20,095 middleware 79673 8379025408 POST /password-reset/
-INFO 2025-09-30 05:55:20,106 middleware 79673 8379025408 POST /password-reset/ -> 302
-INFO 2025-09-30 05:55:20,106 middleware 79673 8379025408 GET /password-reset/done/
-INFO 2025-09-30 05:55:20,107 middleware 79673 8379025408 GET /password-reset/done/ -> 200
-INFO 2025-09-30 05:55:20,107 middleware 79673 8379025408 GET /password-reset-confirm/Ng/cwxhs8-22b99118ae68dfd1b9e7412d1f7a66e8/
-INFO 2025-09-30 05:55:20,108 middleware 79673 8379025408 GET /password-reset-confirm/Ng/cwxhs8-22b99118ae68dfd1b9e7412d1f7a66e8/ -> 302
-INFO 2025-09-30 05:55:20,110 middleware 79673 8379025408 GET /password-reset-confirm/Ng/set-password/
-INFO 2025-09-30 05:55:20,115 middleware 79673 8379025408 GET /password-reset-confirm/Ng/set-password/ -> 200
-INFO 2025-09-30 05:55:20,116 middleware 79673 8379025408 POST /password-reset-confirm/Ng/set-password/
-INFO 2025-09-30 05:55:20,200 middleware 79673 8379025408 POST /password-reset-confirm/Ng/set-password/ -> 302
-INFO 2025-09-30 05:55:20,201 middleware 79673 8379025408 GET /password-reset-complete/
-INFO 2025-09-30 05:55:20,202 middleware 79673 8379025408 GET /password-reset-complete/ -> 200
-INFO 2025-09-30 06:00:25,997 middleware 79840 8379025408 GET /password-reset/
-INFO 2025-09-30 06:00:26,278 middleware 79840 8379025408 GET /password-reset/ -> 200
-INFO 2025-09-30 06:00:26,279 middleware 79840 8379025408 POST /password-reset/
-INFO 2025-09-30 06:00:26,289 middleware 79840 8379025408 POST /password-reset/ -> 302
-INFO 2025-09-30 06:00:26,289 middleware 79840 8379025408 GET /password-reset/done/
-INFO 2025-09-30 06:00:26,290 middleware 79840 8379025408 GET /password-reset/done/ -> 200
-INFO 2025-09-30 06:00:26,290 middleware 79840 8379025408 GET /password-reset-confirm/Nw/cwxi0q-2bac987e013efb996c4a5ded1c2a9ab7/
-INFO 2025-09-30 06:00:26,291 middleware 79840 8379025408 GET /password-reset-confirm/Nw/cwxi0q-2bac987e013efb996c4a5ded1c2a9ab7/ -> 302
-INFO 2025-09-30 06:00:26,294 middleware 79840 8379025408 GET /password-reset-confirm/Nw/set-password/
-INFO 2025-09-30 06:00:26,299 middleware 79840 8379025408 GET /password-reset-confirm/Nw/set-password/ -> 200
-INFO 2025-09-30 06:00:26,301 middleware 79840 8379025408 POST /password-reset-confirm/Nw/set-password/
-INFO 2025-09-30 06:00:26,383 middleware 79840 8379025408 POST /password-reset-confirm/Nw/set-password/ -> 302
-INFO 2025-09-30 06:00:26,385 middleware 79840 8379025408 GET /password-reset-complete/
-INFO 2025-09-30 06:00:26,385 middleware 79840 8379025408 GET /password-reset-complete/ -> 200
-INFO 2025-09-30 06:00:26,543 middleware 79840 8379025408 POST /login/
-INFO 2025-09-30 06:00:26,630 middleware 79840 8379025408 POST /login/ -> 200
-INFO 2025-09-30 06:00:42,167 middleware 79889 8379025408 GET /password-reset/
-INFO 2025-09-30 06:00:42,418 middleware 79889 8379025408 GET /password-reset/ -> 200
-INFO 2025-09-30 06:00:42,418 middleware 79889 8379025408 POST /password-reset/
-INFO 2025-09-30 06:00:42,427 middleware 79889 8379025408 POST /password-reset/ -> 302
-INFO 2025-09-30 06:00:42,428 middleware 79889 8379025408 GET /password-reset/done/
-INFO 2025-09-30 06:00:42,428 middleware 79889 8379025408 GET /password-reset/done/ -> 200
-INFO 2025-09-30 06:00:42,429 middleware 79889 8379025408 GET /password-reset-confirm/OA/cwxi16-b3b4d700228441f3be8b088cb110d331/
-INFO 2025-09-30 06:00:42,429 middleware 79889 8379025408 GET /password-reset-confirm/OA/cwxi16-b3b4d700228441f3be8b088cb110d331/ -> 302
-INFO 2025-09-30 06:00:42,431 middleware 79889 8379025408 GET /password-reset-confirm/OA/set-password/
-INFO 2025-09-30 06:00:42,436 middleware 79889 8379025408 GET /password-reset-confirm/OA/set-password/ -> 200
-INFO 2025-09-30 06:00:42,439 middleware 79889 8379025408 POST /password-reset-confirm/OA/set-password/
-INFO 2025-09-30 06:00:42,520 middleware 79889 8379025408 POST /password-reset-confirm/OA/set-password/ -> 302
-INFO 2025-09-30 06:00:42,522 middleware 79889 8379025408 GET /password-reset-complete/
-INFO 2025-09-30 06:00:42,523 middleware 79889 8379025408 GET /password-reset-complete/ -> 200
-INFO 2025-09-30 06:00:42,683 middleware 79889 8379025408 POST /login/
-INFO 2025-09-30 06:00:42,769 middleware 79889 8379025408 POST /login/ -> 200
+
+INFO 2025-10-05 11:15:42,646 middleware 43504 6159183872 GET /pricing/
+INFO 2025-10-05 11:15:42,649 middleware 43504 6159183872 GET /pricing/ -> 200
+INFO 2025-10-05 11:15:42,653 basehttp 43504 6159183872 "GET /pricing/ HTTP/1.1" 200 37369
+WARNING 2025-10-05 11:15:42,709 basehttp 43504 6159183872 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
+WARNING 2025-10-05 11:15:42,710 basehttp 43504 12901707776 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
+INFO 2025-10-05 11:15:43,425 middleware 43504 6159183872 GET /pricing/
+INFO 2025-10-05 11:15:43,428 middleware 43504 6159183872 GET /pricing/ -> 200
+INFO 2025-10-05 11:15:43,433 basehttp 43504 6159183872 "GET /pricing/ HTTP/1.1" 200 37369
+INFO 2025-10-05 11:15:43,877 middleware 43504 6159183872 GET /pricing/
+INFO 2025-10-05 11:15:43,879 middleware 43504 6159183872 GET /pricing/ -> 200
+INFO 2025-10-05 11:15:43,884 basehttp 43504 6159183872 "GET /pricing/ HTTP/1.1" 200 37369
+INFO 2025-10-05 11:16:38,711 autoreload 44558 8501905408 Watching for file changes with StatReloader
+INFO 2025-10-05 11:16:40,975 middleware 44558 6160740352 GET /pricing/
+INFO 2025-10-05 11:16:40,992 middleware 44558 6160740352 GET /pricing/ -> 200
+INFO 2025-10-05 11:16:40,996 basehttp 44558 6160740352 "GET /pricing/ HTTP/1.1" 200 37369
+INFO 2025-10-05 11:39:10,004 middleware 44558 6160740352 GET /pricing/
+INFO 2025-10-05 11:39:10,011 middleware 44558 6160740352 GET /pricing/ -> 200
+INFO 2025-10-05 11:39:10,167 basehttp 44558 6160740352 "GET /pricing/ HTTP/1.1" 200 35710
+INFO 2025-10-05 11:39:10,189 basehttp 44558 6160740352 "GET /static/css/custom.css?v=1.2 HTTP/1.1" 200 48949
+WARNING 2025-10-05 11:39:10,245 basehttp 44558 6325039104 "GET /static/images/favicon-32x32.png HTTP/1.1" 404 1945
+WARNING 2025-10-05 11:39:10,245 basehttp 44558 6160740352 "GET /static/images/apple-touch-icon.png HTTP/1.1" 404 1954
+INFO 2025-10-05 11:39:44,619 middleware 44558 6160740352 POST /analytics/track-conversion/
+WARNING 2025-10-05 11:39:44,620 log 44558 6160740352 Forbidden (CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.): /analytics/track-conversion/
+INFO 2025-10-05 11:39:44,620 middleware 44558 6160740352 POST /analytics/track-conversion/ -> 403
+WARNING 2025-10-05 11:39:44,625 basehttp 44558 6160740352 "POST /analytics/track-conversion/ HTTP/1.1" 403 2564
+INFO 2025-10-05 11:39:46,018 middleware 44558 6160740352 POST /analytics/track-conversion/
+WARNING 2025-10-05 11:39:46,019 log 44558 6160740352 Forbidden (CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.): /analytics/track-conversion/
+INFO 2025-10-05 11:39:46,019 middleware 44558 6160740352 POST /analytics/track-conversion/ -> 403
+WARNING 2025-10-05 11:39:46,023 basehttp 44558 6160740352 "POST /analytics/track-conversion/ HTTP/1.1" 403 2564
+INFO 2025-10-05 11:39:58,996 middleware 44558 6160740352 GET /timer/dashboard/
+INFO 2025-10-05 11:39:59,036 middleware 44558 6160740352 GET /timer/dashboard/ -> 200
+INFO 2025-10-05 11:39:59,038 basehttp 44558 6160740352 "GET /timer/dashboard/ HTTP/1.1" 200 94849
+INFO 2025-10-05 11:39:59,076 middleware 44558 6160740352 POST /analytics/api/track-activity/
+INFO 2025-10-05 11:39:59,082 middleware 44558 6160740352 POST /analytics/api/track-activity/ -> 200
+INFO 2025-10-05 11:39:59,084 basehttp 44558 6160740352 "POST /analytics/api/track-activity/ HTTP/1.1" 200 17
+INFO 2025-10-05 11:40:05,970 middleware 44558 6160740352 GET /timer/dashboard/
+INFO 2025-10-05 11:40:05,990 middleware 44558 6160740352 GET /timer/dashboard/ -> 200
+INFO 2025-10-05 11:40:05,994 basehttp 44558 6160740352 "GET /timer/dashboard/ HTTP/1.1" 200 94849
+INFO 2025-10-05 11:40:06,027 middleware 44558 6160740352 POST /analytics/api/track-activity/
+INFO 2025-10-05 11:40:06,033 middleware 44558 6160740352 POST /analytics/api/track-activity/ -> 200
+INFO 2025-10-05 11:40:06,035 basehttp 44558 6160740352 "POST /analytics/api/track-activity/ HTTP/1.1" 200 17
+INFO 2025-10-05 11:40:06,954 middleware 44558 6160740352 GET /timer/statistics/
+INFO 2025-10-05 11:40:06,981 middleware 44558 6160740352 GET /timer/statistics/ -> 200
+INFO 2025-10-05 11:40:06,984 basehttp 44558 6160740352 "GET /timer/statistics/ HTTP/1.1" 200 42953
+INFO 2025-10-05 11:40:28,833 middleware 44558 6160740352 GET /timer/statistics/
+INFO 2025-10-05 11:40:28,854 middleware 44558 6160740352 GET /timer/statistics/ -> 200
+INFO 2025-10-05 11:40:28,857 basehttp 44558 6160740352 "GET /timer/statistics/ HTTP/1.1" 200 42953
+INFO 2025-10-05 11:40:29,881 middleware 44558 6160740352 GET /timer/settings/
+INFO 2025-10-05 11:40:29,887 middleware 44558 6160740352 GET /timer/settings/ -> 200
+INFO 2025-10-05 11:40:29,891 basehttp 44558 6160740352 "GET /timer/settings/ HTTP/1.1" 200 47346
+INFO 2025-10-05 11:45:47,962 middleware 44558 6160740352 GET /timer/settings/
+INFO 2025-10-05 11:45:47,970 middleware 44558 6160740352 GET /timer/settings/ -> 200
+INFO 2025-10-05 11:45:47,974 basehttp 44558 6160740352 "GET /timer/settings/ HTTP/1.1" 200 47346
+INFO 2025-10-05 11:45:48,845 middleware 44558 6160740352 GET /timer/settings/
+INFO 2025-10-05 11:45:48,850 middleware 44558 6160740352 GET /timer/settings/ -> 200
+INFO 2025-10-05 11:45:48,853 basehttp 44558 6160740352 "GET /timer/settings/ HTTP/1.1" 200 47346
+INFO 2025-10-05 11:45:49,345 middleware 44558 6160740352 GET /timer/settings/
+INFO 2025-10-05 11:45:49,349 middleware 44558 6160740352 GET /timer/settings/ -> 200
+INFO 2025-10-05 11:45:49,354 basehttp 44558 6160740352 "GET /timer/settings/ HTTP/1.1" 200 47346
+INFO 2025-10-05 11:47:36,478 middleware 44558 6160740352 GET /timer/settings/
+INFO 2025-10-05 11:47:36,485 middleware 44558 6160740352 GET /timer/settings/ -> 200
+INFO 2025-10-05 11:47:36,641 basehttp 44558 6160740352 "GET /timer/settings/ HTTP/1.1" 200 47312
+INFO 2025-10-05 11:48:11,497 middleware 44558 6160740352 GET /timer/settings/
+INFO 2025-10-05 11:48:11,501 middleware 44558 6160740352 GET /timer/settings/ -> 200
+INFO 2025-10-05 11:48:11,506 basehttp 44558 6160740352 "GET /timer/settings/ HTTP/1.1" 200 47312
+INFO 2025-10-05 11:55:28,614 middleware 44558 6160740352 GET /timer/settings/
+INFO 2025-10-05 11:55:28,623 middleware 44558 6160740352 GET /timer/settings/ -> 200
+INFO 2025-10-05 11:55:28,626 basehttp 44558 6160740352 "GET /timer/settings/ HTTP/1.1" 200 46956
+INFO 2025-10-05 11:55:35,925 middleware 44558 6160740352 GET /timer/dashboard/
+INFO 2025-10-05 11:55:35,946 middleware 44558 6160740352 GET /timer/dashboard/ -> 200
+INFO 2025-10-05 11:55:35,950 basehttp 44558 6160740352 "GET /timer/dashboard/ HTTP/1.1" 200 94849
+INFO 2025-10-05 11:55:35,987 middleware 44558 6160740352 POST /analytics/api/track-activity/
+INFO 2025-10-05 11:55:35,994 middleware 44558 6160740352 POST /analytics/api/track-activity/ -> 200
+INFO 2025-10-05 11:55:35,997 basehttp 44558 6160740352 "POST /analytics/api/track-activity/ HTTP/1.1" 200 17
+INFO 2025-10-05 11:55:37,862 middleware 44558 6160740352 GET /pricing/
+INFO 2025-10-05 11:55:37,864 middleware 44558 6160740352 GET /pricing/ -> 200
+INFO 2025-10-05 11:55:37,869 basehttp 44558 6160740352 "GET /pricing/ HTTP/1.1" 200 35710
+INFO 2025-10-05 11:55:40,593 middleware 44558 6160740352 GET /
+INFO 2025-10-05 11:55:40,594 middleware 44558 6160740352 GET / -> 302
+INFO 2025-10-05 11:55:40,598 basehttp 44558 6160740352 "GET / HTTP/1.1" 302 0
+INFO 2025-10-05 11:55:40,611 middleware 44558 6160740352 GET /timer/dashboard/
+INFO 2025-10-05 11:55:40,631 middleware 44558 6160740352 GET /timer/dashboard/ -> 200
+INFO 2025-10-05 11:55:40,633 basehttp 44558 6160740352 "GET /timer/dashboard/ HTTP/1.1" 200 94849
+INFO 2025-10-05 11:55:40,671 middleware 44558 6160740352 POST /analytics/api/track-activity/
+INFO 2025-10-05 11:55:40,678 middleware 44558 6160740352 POST /analytics/api/track-activity/ -> 200
+INFO 2025-10-05 11:55:40,681 basehttp 44558 6160740352 "POST /analytics/api/track-activity/ HTTP/1.1" 200 17
+INFO 2025-10-05 11:55:43,574 middleware 44558 6160740352 GET /
+INFO 2025-10-05 11:55:43,575 middleware 44558 6160740352 GET / -> 302
+INFO 2025-10-05 11:55:43,579 basehttp 44558 6160740352 "GET / HTTP/1.1" 302 0
+INFO 2025-10-05 11:55:43,591 middleware 44558 6160740352 GET /timer/dashboard/
+INFO 2025-10-05 11:55:43,608 middleware 44558 6160740352 GET /timer/dashboard/ -> 200
+INFO 2025-10-05 11:55:43,611 basehttp 44558 6160740352 "GET /timer/dashboard/ HTTP/1.1" 200 94849
+INFO 2025-10-05 11:55:43,652 middleware 44558 6160740352 POST /analytics/api/track-activity/
+INFO 2025-10-05 11:55:43,659 middleware 44558 6160740352 POST /analytics/api/track-activity/ -> 200
+INFO 2025-10-05 11:55:43,662 basehttp 44558 6160740352 "POST /analytics/api/track-activity/ HTTP/1.1" 200 17
+INFO 2025-10-05 11:55:49,678 middleware 44558 6160740352 GET /
+INFO 2025-10-05 11:55:49,679 middleware 44558 6160740352 GET / -> 302
+INFO 2025-10-05 11:55:49,682 basehttp 44558 6160740352 "GET / HTTP/1.1" 302 0
+INFO 2025-10-05 11:55:49,692 middleware 44558 6160740352 GET /timer/dashboard/
+INFO 2025-10-05 11:55:49,712 middleware 44558 6160740352 GET /timer/dashboard/ -> 200
+INFO 2025-10-05 11:55:49,714 basehttp 44558 6160740352 "GET /timer/dashboard/ HTTP/1.1" 200 94849
+INFO 2025-10-05 11:55:49,745 middleware 44558 6160740352 POST /analytics/api/track-activity/
+INFO 2025-10-05 11:55:49,750 middleware 44558 6160740352 POST /analytics/api/track-activity/ -> 200
+INFO 2025-10-05 11:55:49,752 basehttp 44558 6160740352 "POST /analytics/api/track-activity/ HTTP/1.1" 200 17
+INFO 2025-10-05 11:55:52,731 middleware 44558 6160740352 GET /pricing/
+INFO 2025-10-05 11:55:52,732 middleware 44558 6160740352 GET /pricing/ -> 200
+INFO 2025-10-05 11:55:52,735 basehttp 44558 6160740352 "GET /pricing/ HTTP/1.1" 200 35710
+INFO 2025-10-05 11:58:39,100 autoreload 44558 8501905408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-10-05 11:58:39,356 autoreload 46894 8501905408 Watching for file changes with StatReloader
+INFO 2025-10-05 12:00:27,499 middleware 46894 12901707776 GET /pricing/
+INFO 2025-10-05 12:00:27,524 middleware 46894 12901707776 GET /pricing/ -> 200
+INFO 2025-10-05 12:00:27,678 basehttp 46894 12901707776 "GET /pricing/ HTTP/1.1" 200 34217
+INFO 2025-10-05 12:00:39,699 middleware 46894 12901707776 GET /pricing/
+INFO 2025-10-05 12:00:39,701 middleware 46894 12901707776 GET /pricing/ -> 200
+INFO 2025-10-05 12:00:39,706 basehttp 46894 12901707776 "GET /pricing/ HTTP/1.1" 200 34217
+INFO 2025-10-05 12:00:42,530 middleware 46894 12901707776 GET /timer/settings/
+INFO 2025-10-05 12:00:42,539 middleware 46894 12901707776 GET /timer/settings/ -> 200
+INFO 2025-10-05 12:00:42,543 basehttp 46894 12901707776 "GET /timer/settings/ HTTP/1.1" 200 46956
+INFO 2025-10-05 12:00:45,914 middleware 46894 12901707776 GET /settings/
+INFO 2025-10-05 12:00:45,918 middleware 46894 12901707776 GET /settings/ -> 200
+INFO 2025-10-05 12:00:45,922 basehttp 46894 12901707776 "GET /settings/ HTTP/1.1" 200 43909
+INFO 2025-10-05 12:01:10,164 middleware 46894 12901707776 GET /contact/
+INFO 2025-10-05 12:01:10,167 middleware 46894 12901707776 GET /contact/ -> 200
+INFO 2025-10-05 12:01:10,172 basehttp 46894 12901707776 "GET /contact/ HTTP/1.1" 200 37013
+INFO 2025-10-05 12:01:13,202 middleware 46894 12901707776 GET /favicon.ico
+INFO 2025-10-05 12:01:13,216 middleware 46894 12901707776 GET /favicon.ico -> 404
+WARNING 2025-10-05 12:01:13,220 basehttp 46894 12901707776 "GET /favicon.ico HTTP/1.1" 404 6611
+INFO 2025-10-05 12:01:16,179 middleware 46894 12901707776 GET /contact/
+INFO 2025-10-05 12:01:16,182 middleware 46894 12901707776 GET /contact/ -> 200
+INFO 2025-10-05 12:01:16,186 basehttp 46894 12901707776 "GET /contact/ HTTP/1.1" 200 37013
+INFO 2025-10-05 12:02:21,982 autoreload 46894 8501905408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/urls.py changed, reloading.
+INFO 2025-10-05 12:02:22,227 autoreload 46999 8501905408 Watching for file changes with StatReloader
+INFO 2025-10-05 12:02:28,540 autoreload 46999 8501905408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/urls.py changed, reloading.
+INFO 2025-10-05 12:02:28,781 autoreload 47021 8501905408 Watching for file changes with StatReloader
+INFO 2025-10-05 12:03:26,131 middleware 47021 6129184768 GET /settings/
+INFO 2025-10-05 12:03:26,175 middleware 47021 6129184768 GET /settings/ -> 200
+INFO 2025-10-05 12:03:26,178 basehttp 47021 6129184768 "GET /settings/ HTTP/1.1" 200 42825
+INFO 2025-10-05 12:03:28,826 middleware 47021 6129184768 GET /password-change/
+INFO 2025-10-05 12:03:28,846 middleware 47021 6129184768 GET /password-change/ -> 200
+INFO 2025-10-05 12:03:28,849 basehttp 47021 6129184768 "GET /password-change/ HTTP/1.1" 200 28930
+INFO 2025-10-05 12:03:41,352 autoreload 47021 8501905408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/views.py changed, reloading.
+INFO 2025-10-05 12:03:41,629 autoreload 47182 8501905408 Watching for file changes with StatReloader
+INFO 2025-10-05 12:03:49,013 autoreload 47182 8501905408 /Volumes/personal/programmingFolders/saas/20-20-20/accounts/urls.py changed, reloading.
+INFO 2025-10-05 12:03:49,259 autoreload 47209 8501905408 Watching for file changes with StatReloader

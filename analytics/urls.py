@@ -10,7 +10,8 @@ urlpatterns = [
     path('api/track-activity/', views.track_user_activity, name='track_activity'),
     path('api/submit-rating/', views.submit_satisfaction_rating, name='submit_rating'),
     path('api/live-feed/', views.live_activity_feed_api, name='live_feed_api'),
-    
+    path('track-conversion/', views.track_conversion, name='track_conversion'),
+
     # Admin dashboard
     path('admin-dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
 ]

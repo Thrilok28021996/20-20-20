@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 from .models import TimerSession, TimerInterval, BreakRecord, UserTimerSettings, UserFeedback, BreakPreferenceAnalytics
 from analytics.models import DailyStats
 from accounts.models import Achievement, UserStreakData
-from accounts.premium_features import PREMIUM_TIMER_PRESETS, EYE_EXERCISES, can_access_feature
+# Premium features removed
 from accounts.timezone_utils import user_today, user_now, user_localtime
 from mysite.constants import (
     FREE_DAILY_INTERVAL_LIMIT, FREE_DAILY_SESSION_LIMIT, DEFAULT_WORK_INTERVAL_MINUTES,
@@ -63,10 +63,7 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
         request.user, MAX_RECENT_SESSIONS
     )
 
-    # Add premium feature checks
-    context.update({
-        'can_use_guided_exercises': can_access_feature(request.user, 'guided_exercises'),
-    })
+    # No premium features
 
     return render(request, 'timer/dashboard.html', context)
 
@@ -207,17 +204,44 @@ def take_break_view(request: HttpRequest) -> JsonResponse:
 def sync_session_view(request: HttpRequest) -> JsonResponse:
     """
     Sync timer session state for webapp persistence using service layer
+
+    Security: Explicit ownership check with select_for_update to prevent IDOR and race conditions
     """
     from .services import TimerSessionService
+    from django.db import transaction
 
     try:
         data = json.loads(request.body)
         session_id = data.get('session_id')
 
-        session = get_object_or_404(TimerSession, id=session_id, user=request.user)
+        # Explicit ownership validation to prevent IDOR
+        if not session_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Session ID is required'
+            }, status=400)
 
-        # Get session state using service layer
-        session_state = TimerSessionService.sync_session_state(session)
+        # Use transaction with row-level locking to prevent race conditions
+        with transaction.atomic():
+            # Verify session exists and belongs to authenticated user
+            # Use select_for_update to lock the row and prevent concurrent modifications
+            try:
+                session = TimerSession.objects.select_for_update().select_related('user').get(
+                    id=session_id,
+                    user=request.user
+                )
+            except TimerSession.DoesNotExist:
+                logger.warning(
+                    f"IDOR attempt: User {request.user.id} tried to access session {session_id}",
+                    extra={'user_id': request.user.id, 'session_id': session_id}
+                )
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Session not found or access denied'
+                }, status=404)
+
+            # Get session state using service layer
+            session_state = TimerSessionService.sync_session_state(session)
 
         return JsonResponse({
             'success': True,
@@ -243,28 +267,38 @@ def sync_session_view(request: HttpRequest) -> JsonResponse:
 def complete_break_view(request):
     """
     Complete a break - Optimized version using service layer
+
+    Uses @transaction.atomic (via decorator below) to ensure atomicity when updating:
+    - break_record (mark as completed)
+    - session.total_breaks_taken (increment counter)
+    - interval (mark as completed)
+    - New TimerInterval creation
+    - Gamification data updates
     """
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        break_id = data.get('break_id')
-        looked_at_distance = data.get('looked_at_distance', False)
+    from django.db import transaction
 
-        # Get break record with select_related to avoid additional queries
-        break_record = get_object_or_404(
-            BreakRecord.objects.select_related('session', 'interval', 'user'),
-            id=break_id,
-            user=request.user
-        )
+    with transaction.atomic():
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            break_id = data.get('break_id')
+            looked_at_distance = data.get('looked_at_distance', False)
 
-        # Use service layer for optimized break completion
-        from .services import BreakService
-        result = BreakService.complete_break(break_record, looked_at_distance)
+            # Get break record with select_related to avoid additional queries
+            break_record = get_object_or_404(
+                BreakRecord.objects.select_related('session', 'interval', 'user'),
+                id=break_id,
+                user=request.user
+            )
 
-        # Return the service result directly
-        return JsonResponse({
-            'success': True,
-            **result
-        })
+            # Use service layer for optimized break completion
+            from .services import BreakService
+            result = BreakService.complete_break(break_record, looked_at_distance)
+
+            # Return the service result directly
+            return JsonResponse({
+                'success': True,
+                **result
+            })
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
@@ -272,47 +306,82 @@ def complete_break_view(request):
 @login_required
 def timer_settings_view(request):
     """
-    Timer settings configuration
+    Timer settings configuration with proper input validation
     """
     settings, created = UserTimerSettings.objects.get_or_create(user=request.user)
-    
-    if request.method == 'POST':
-        # Update timer settings
-        settings.work_interval_minutes = int(request.POST.get('work_interval_minutes', 20))
-        settings.break_duration_seconds = int(request.POST.get('break_duration_seconds', 20))
-        settings.sound_notification = request.POST.get('sound_notification') == 'on'
-        settings.desktop_notification = request.POST.get('desktop_notification') == 'on'
-        settings.show_progress_bar = request.POST.get('show_progress_bar') == 'on'
-        settings.dark_mode = request.POST.get('dark_mode') == 'on'
 
-        # Smart break duration settings
-        settings.smart_break_enabled = request.POST.get('smart_break_enabled') == 'on'
-        preferred_duration = request.POST.get('preferred_break_duration')
-        if preferred_duration and preferred_duration.isdigit():
-            duration_value = int(preferred_duration)
-            # Validate against available choices
-            valid_durations = [choice[0] for choice in UserTimerSettings.BREAK_DURATION_CHOICES]
-            if duration_value in valid_durations:
-                settings.preferred_break_duration = duration_value
-        
-        # Sound settings
-        settings.notification_sound_type = request.POST.get('notification_sound_type', 'gentle')
+    if request.method == 'POST':
         try:
-            sound_volume = float(request.POST.get('sound_volume', 0.5))
-            settings.sound_volume = max(0.0, min(1.0, sound_volume))  # Clamp between 0 and 1
-        except (ValueError, TypeError):
-            settings.sound_volume = 0.5  # Default fallback
-        
-        # Premium features
-        if request.user.is_premium_user:
-            settings.auto_start_break = request.POST.get('auto_start_break') == 'on'
-            settings.auto_start_work = request.POST.get('auto_start_work') == 'on'
-            settings.custom_break_messages = request.POST.get('custom_break_messages', '')
-        
-        settings.save()
-        messages.success(request, 'Timer settings updated successfully!')
-        return redirect('timer:settings')
-    
+            # Validate and sanitize work interval minutes
+            work_interval_str = request.POST.get('work_interval_minutes', '20')
+            if not work_interval_str.isdigit():
+                messages.error(request, 'Work interval must be a valid number')
+                return redirect('timer:settings')
+            work_interval = int(work_interval_str)
+            if not (1 <= work_interval <= 120):  # Between 1 minute and 2 hours
+                messages.error(request, 'Work interval must be between 1 and 120 minutes')
+                return redirect('timer:settings')
+            settings.work_interval_minutes = work_interval
+
+            # Validate and sanitize break duration seconds
+            break_duration_str = request.POST.get('break_duration_seconds', '20')
+            if not break_duration_str.isdigit():
+                messages.error(request, 'Break duration must be a valid number')
+                return redirect('timer:settings')
+            break_duration = int(break_duration_str)
+            if not (5 <= break_duration <= 300):  # Between 5 seconds and 5 minutes
+                messages.error(request, 'Break duration must be between 5 and 300 seconds')
+                return redirect('timer:settings')
+            settings.break_duration_seconds = break_duration
+
+            # Boolean settings (safe - no injection risk)
+            settings.sound_notification = request.POST.get('sound_notification') == 'on'
+            settings.desktop_notification = request.POST.get('desktop_notification') == 'on'
+            settings.show_progress_bar = request.POST.get('show_progress_bar') == 'on'
+            settings.dark_mode = request.POST.get('dark_mode') == 'on'
+
+            # Smart break duration settings with validation
+            settings.smart_break_enabled = request.POST.get('smart_break_enabled') == 'on'
+            preferred_duration = request.POST.get('preferred_break_duration', '')
+            if preferred_duration and preferred_duration.isdigit():
+                duration_value = int(preferred_duration)
+                # Validate against available choices
+                valid_durations = [choice[0] for choice in UserTimerSettings.BREAK_DURATION_CHOICES]
+                if duration_value in valid_durations:
+                    settings.preferred_break_duration = duration_value
+                else:
+                    messages.warning(request, 'Invalid break duration selected, using default')
+
+            # Sound settings with validation
+            sound_type = request.POST.get('notification_sound_type', 'gentle')
+            valid_sound_types = ['gentle', 'chime', 'bell', 'beep']  # Define valid options
+            if sound_type in valid_sound_types:
+                settings.notification_sound_type = sound_type
+            else:
+                settings.notification_sound_type = 'gentle'
+
+            try:
+                sound_volume_str = request.POST.get('sound_volume', '0.5')
+                sound_volume = float(sound_volume_str)
+                if not (0.0 <= sound_volume <= 1.0):
+                    sound_volume = 0.5
+                settings.sound_volume = sound_volume
+            except (ValueError, TypeError):
+                settings.sound_volume = 0.5  # Default fallback
+
+            settings.save()
+            messages.success(request, 'Timer settings updated successfully!')
+            return redirect('timer:settings')
+
+        except ValueError as e:
+            logger.error(f"Value error in timer settings for user {request.user.id}: {e}")
+            messages.error(request, 'Invalid settings values provided')
+            return redirect('timer:settings')
+        except Exception as e:
+            logger.error(f"Error updating timer settings for user {request.user.id}: {e}")
+            messages.error(request, 'An error occurred while updating settings')
+            return redirect('timer:settings')
+
     return render(request, 'timer/settings.html', {'settings': settings})
 
 
@@ -355,14 +424,14 @@ def statistics_view(request):
     from .utils import get_optimized_recent_sessions
     recent_sessions = get_optimized_recent_sessions(request.user, MAX_RECENT_SESSIONS)
     
-    # Prepare chart data
+    # Prepare chart data with proper JSON serialization
     chart_data = {
-        'dates': [stat.date.strftime('%Y-%m-%d') for stat in daily_stats],
-        'work_minutes': [stat.total_work_minutes for stat in daily_stats],
-        'breaks_taken': [stat.total_breaks_taken for stat in daily_stats],
-        'compliance_rates': [stat.compliance_rate for stat in daily_stats]
+        'dates': json.dumps([stat.date.strftime('%b %d') for stat in daily_stats]),
+        'work_minutes': json.dumps([stat.total_work_minutes or 0 for stat in daily_stats]),
+        'breaks_taken': json.dumps([stat.total_breaks_taken or 0 for stat in daily_stats]),
+        'compliance_rates': json.dumps([float(stat.compliance_rate) if stat.compliance_rate else 0.0 for stat in daily_stats])
     }
-    
+
     context = {
         'daily_stats': daily_stats,
         'total_stats': total_stats,
@@ -404,20 +473,7 @@ def _check_and_award_achievements(user: User, streak_data: UserStreakData) -> Li
     return AchievementService.check_and_award_achievements(user, streak_data)
 
 
-@login_required
-def premium_exercises_view(request):
-    """
-    Premium guided eye exercises view
-    """
-    if not can_access_feature(request.user, 'guided_exercises'):
-        messages.error(request, 'This feature requires a Premium subscription.')
-        return redirect('accounts:pricing')
-    
-    context = {
-        'exercises': EYE_EXERCISES,
-        'is_premium_user': request.user.is_premium_user,
-    }
-    return render(request, 'timer/premium_exercises.html', context)
+# Premium exercises view removed
 
 
 
@@ -483,14 +539,20 @@ def update_dark_mode_view(request):
     AJAX endpoint to update user's dark mode preference
     """
     if request.method == 'POST':
-        dark_mode = request.POST.get('dark_mode') == 'on'
+        try:
+            dark_mode = request.POST.get('dark_mode') == 'on'
 
-        # Get or create timer settings for the user
-        settings, created = TimerSettings.objects.get_or_create(user=request.user)
-        settings.dark_mode = dark_mode
-        settings.save()
+            # Get or create timer settings for the user
+            settings, created = UserTimerSettings.objects.get_or_create(user=request.user)
+            settings.dark_mode = dark_mode
+            settings.save()
 
-        return JsonResponse({'success': True, 'dark_mode': dark_mode})
+            logger.info(f"Updated dark mode for user {request.user.id}: {dark_mode}")
+            return JsonResponse({'success': True, 'dark_mode': dark_mode})
+
+        except Exception as e:
+            logger.error(f"Error updating dark mode for user {request.user.id}: {e}")
+            return JsonResponse({'success': False, 'error': 'Failed to update dark mode'})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 

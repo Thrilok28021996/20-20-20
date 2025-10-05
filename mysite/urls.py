@@ -21,8 +21,6 @@ urlpatterns = [
     path('timer/', include('timer.urls')),
     path('analytics/', include('analytics.urls')),
     path('notifications/', include('notifications.urls')),
-    path('subscriptions/', include('subscriptions.urls')),
-    path('payments/', include('payments.urls')),
     path('calendars/', include('calendars.urls')),
     # Health and monitoring endpoints
     path('health/', include('mysite.health_urls')),

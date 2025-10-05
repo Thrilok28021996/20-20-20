@@ -22,10 +22,7 @@ from timer.models import (
 from analytics.models import (
     DailyStats, WeeklyStats, MonthlyStats, UserBehaviorEvent,
     EngagementMetrics, UserSession, UserSatisfactionRating,
-    RealTimeMetrics, LiveActivityFeed, PremiumAnalyticsReport, PremiumInsight
-)
-from payments.models import (
-    StripeSubscription, StripePayment, PayPalSubscription, PayPalPayment
+    RealTimeMetrics, LiveActivityFeed
 )
 
 
@@ -443,54 +440,6 @@ def user_session_factory():
         }
         return UserSession.objects.create(user=user, **session_defaults)
     return create_user_session
-
-
-# ===== PAYMENT FIXTURES =====
-
-@pytest.fixture
-def stripe_subscription_factory():
-    """Factory for creating Stripe subscriptions"""
-    def create_subscription(user, **kwargs):
-        subscription_defaults = {
-            'stripe_subscription_id': 'sub_test123',
-            'stripe_customer_id': 'cus_test123',
-            'amount': Decimal('9.99'),
-            'currency': 'USD',
-            'status': 'active',
-            'activated_at': timezone.now(),
-            'next_payment_date': timezone.now() + timedelta(days=30),
-            'card_brand': 'visa',
-            'card_last4': '4242',
-            'card_exp_month': 12,
-            'card_exp_year': 2025,
-            **kwargs
-        }
-        subscription, created = StripeSubscription.objects.get_or_create(
-            user=user, defaults=subscription_defaults
-        )
-        return subscription
-    return create_subscription
-
-
-@pytest.fixture
-def stripe_payment_factory():
-    """Factory for creating Stripe payments"""
-    def create_payment(user, subscription=None, **kwargs):
-        payment_defaults = {
-            'stripe_payment_intent_id': 'pi_test123',
-            'payment_status': 'completed',
-            'amount': Decimal('9.99'),
-            'currency': 'USD',
-            'stripe_customer_id': 'cus_test123',
-            'card_brand': 'visa',
-            'card_last4': '4242',
-            'payment_date': timezone.now(),
-            **kwargs
-        }
-        return StripePayment.objects.create(
-            user=user, subscription=subscription, **payment_defaults
-        )
-    return create_payment
 
 
 # ===== UTILITY FIXTURES =====

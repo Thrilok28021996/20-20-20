@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load timezone_tags %}
 
 {% block title %}Dashboard - EyeHealth 20-20-20{% endblock %}
 
@@ -102,10 +103,26 @@
             transform: translateX(-50%) scale(0.8);
         }
     }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px 10px rgba(13, 110, 253, 0);
+        }
+    }
+
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="container mt-4">
     <!-- Welcome Header -->
     <div class="row mb-4">
@@ -118,11 +135,6 @@
                         Today is {% now "l, F j, Y" %}
                     </p>
                 </div>
-                {% if not user.is_premium_user %}
-                    <a href="{% url 'accounts:pricing' %}" class="btn btn-warning">
-                        <i class="fas fa-crown me-2"></i>Upgrade to Premium
-                    </a>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -133,12 +145,13 @@
             <div class="timer-container text-center">
                 {% if active_session %}
                     <h3 class="mb-3">
-                        <i class="fas fa-play-circle me-2"></i>Session Active
-                        <span class="badge bg-success ms-2">Interval {{ active_session.total_intervals_completed|add:1 }}</span>
+                        <i class="fas fa-play-circle me-2"></i>Timer Active
+                        <span class="badge bg-success ms-2">{{ intervals_today }} intervals today</span>
                     </h3>
                 {% else %}
                     <h3 class="mb-3">
                         <i class="fas fa-pause-circle me-2"></i>Ready to Start
+                        <span class="badge bg-info ms-2">{{ intervals_today }} intervals used</span>
                     </h3>
                 {% endif %}
                 
@@ -160,22 +173,21 @@
                 
                 <div class="mt-4">
                     {% if active_session %}
-                        <button class="btn btn-danger btn-lg me-3" onclick="endSession()">
-                            <i class="fas fa-stop me-2"></i>End Session
+                        <button class="btn btn-danger btn-lg me-3" id="end-session-btn">
+                            <i class="fas fa-stop me-2"></i>Stop Timer
                         </button>
-                        <button class="btn btn-outline-light btn-lg" onclick="takeBreak()">
+                        <button class="btn btn-outline-light btn-lg" id="take-break-btn">
                             <i class="fas fa-coffee me-2"></i>Take Break Now
                         </button>
                     {% else %}
                         {% if can_start_session %}
-                            <button class="btn btn-success btn-lg" onclick="startSession()">
+                            <button class="btn btn-success btn-lg" id="start-session-btn">
                                 <i class="fas fa-play me-2"></i>Start 20-20-20 Timer
                             </button>
                         {% else %}
                             <div class="alert alert-warning mt-3">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
-                                You've reached your daily limit of {{ daily_interval_limit }} intervals ({{ intervals_today }}/{{ daily_interval_limit }}).
-                                <a href="{% url 'accounts:pricing' %}" class="alert-link">Upgrade to Premium</a> for unlimited intervals.
+                                You've reached your daily limit. Come back tomorrow to continue!
                             </div>
                         {% endif %}
                     {% endif %}
@@ -183,9 +195,8 @@
                 
                 {% if active_session %}
                     <div class="mt-3">
-                        <small>
-                            Session started: {{ active_session.start_time|time:"g:i A" }} | 
-                            Intervals completed: {{ active_session.total_intervals_completed }} | 
+                        <small class="text-white-50">
+                            Started: <span id="session-start-time">{{ active_session.start_time|user_timezone:user|time:"g:i A" }}</span> |
                             Breaks taken: {{ active_session.total_breaks_taken }}
                         </small>
                     </div>
@@ -199,34 +210,20 @@
         <div class="col-12">
             <h4 class="mb-3">
                 <i class="fas fa-chart-line me-2"></i>Today's Progress
-                {% if not user.is_premium_user %}
-                    <small class="text-muted ms-2">({{ intervals_today }}/{{ daily_interval_limit }} intervals used)</small>
-                {% endif %}
             </h4>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card session-card h-100">
-                <div class="card-body text-center">
-                    <div class="text-primary mb-2">
-                        <i class="fas fa-clock fa-2x"></i>
-                    </div>
-                    <h3 class="mb-1">{{ today_stats.total_work_minutes|default:0 }}</h3>
-                    <p class="text-muted mb-0">Minutes Worked</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 mb-3">
+        <div class="col-lg-4 col-md-6 mb-3">
             <div class="card session-card h-100">
                 <div class="card-body text-center">
                     <div class="text-success mb-2">
                         <i class="fas fa-tasks fa-2x"></i>
                     </div>
-                    <h3 class="mb-1">{{ today_stats.total_intervals_completed|default:0 }}</h3>
-                    <p class="text-muted mb-0">Intervals Completed</p>
+                    <h3 class="mb-1">{{ intervals_today }}</h3>
+                    <p class="text-muted mb-0">Intervals Used Today</p>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3">
+        <div class="col-lg-4 col-md-6 mb-3">
             <div class="card session-card h-100">
                 <div class="card-body text-center">
                     <div class="text-warning mb-2">
@@ -237,7 +234,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3">
+        <div class="col-lg-4 col-md-6 mb-3">
             <div class="card session-card h-100">
                 <div class="card-body text-center">
                     <div class="text-info mb-2">
@@ -245,6 +242,24 @@
                     </div>
                     <h3 class="mb-1">{{ today_stats.compliance_rate|floatformat:0|default:0 }}%</h3>
                     <p class="text-muted mb-0">Compliance Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sponsored Content (AdSense Placeholder) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-light">
+                <div class="card-body text-center py-3">
+                    <small class="text-muted">Sponsored · Supports Free Eye Health Tools</small>
+                    <div id="adsense-banner" class="my-2">
+                        <!-- Google AdSense code will go here -->
+                        <!-- Replace this div with your AdSense code -->
+                        <div style="min-height: 90px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px;">
+                            <p class="text-muted mb-0"><small>🎯 Ad Space - Keep this app free!</small></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -311,13 +326,67 @@
         </div>
     </div>
 
-    <!-- Recent Sessions -->
+    <!-- Recommended Eye Health Products (Affiliate) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-glasses me-2"></i>Protect Your Eyes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Recommended products to complement the 20-20-20 rule:</p>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-glasses fa-3x text-primary mb-2"></i>
+                                <h6>Blue Light Glasses</h6>
+                                <p class="small text-muted">Filter harmful blue light from screens</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">
+                                    View on Amazon <i class="fas fa-external-link-alt ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-eye-dropper fa-3x text-info mb-2"></i>
+                                <h6>Lubricating Eye Drops</h6>
+                                <p class="small text-muted">Relieve dry eyes from screen time</p>
+                                <a href="#" class="btn btn-sm btn-outline-info" target="_blank" rel="noopener">
+                                    View on Amazon <i class="fas fa-external-link-alt ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-laptop fa-3x text-success mb-2"></i>
+                                <h6>Monitor Light Bar</h6>
+                                <p class="small text-muted">Reduce screen glare & eye strain</p>
+                                <a href="#" class="btn btn-sm btn-outline-success" target="_blank" rel="noopener">
+                                    View on Amazon <i class="fas fa-external-link-alt ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            These are affiliate links. Purchases help keep this app free!
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
-                        <i class="fas fa-history me-2"></i>Recent Sessions
+                        <i class="fas fa-history me-2"></i>Recent Activity
                     </h5>
                     <a href="{% url 'timer:statistics' %}" class="btn btn-outline-primary btn-sm">
                         <i class="fas fa-chart-bar me-1"></i>View All Statistics
@@ -330,8 +399,7 @@
                                 <thead>
                                     <tr>
                                         <th>Date</th>
-                                        <th>Start Time</th>
-                                        <th>Duration</th>
+                                        <th>Time</th>
                                         <th>Intervals</th>
                                         <th>Breaks</th>
                                         <th>Status</th>
@@ -340,14 +408,13 @@
                                 <tbody>
                                     {% for session in recent_sessions %}
                                     <tr>
-                                        <td>{{ session.start_time|date:"M j" }}</td>
-                                        <td>{{ session.start_time|time:"g:i A" }}</td>
-                                        <td>{{ session.duration_minutes }} min</td>
+                                        <td>{{ session.start_time|user_timezone:user|date:"M j" }}</td>
+                                        <td>{{ session.start_time|user_timezone:user|time:"g:i A" }}</td>
                                         <td>
-                                            <span class="badge bg-primary">{{ session.total_intervals_completed }}</span>
+                                            <span class="badge bg-primary">{{ session.total_intervals_completed }} interval{{ session.total_intervals_completed|pluralize }}</span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-success">{{ session.total_breaks_taken }}</span>
+                                            <span class="badge bg-success">{{ session.total_breaks_taken }} break{{ session.total_breaks_taken|pluralize }}</span>
                                         </td>
                                         <td>
                                             {% if session.is_active %}
@@ -364,8 +431,8 @@
                     {% else %}
                         <div class="text-center py-4">
                             <i class="fas fa-clock fa-3x text-muted mb-3"></i>
-                            <h5>No sessions yet</h5>
-                            <p class="text-muted">Start your first 20-20-20 timer session to begin tracking your eye health progress.</p>
+                            <h5>No activity yet</h5>
+                            <p class="text-muted">Start your first 20-20-20 timer to begin tracking your eye health progress.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -393,7 +460,7 @@
                 
                 <div class="break-timer mb-4">
                     <div class="display-4 text-primary" id="break-countdown">20</div>
-                    <p>seconds remaining</p>
+                    <p id="countdown-status">seconds remaining</p>
                 </div>
                 
                 <div class="form-check mb-3">
@@ -404,13 +471,13 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="skipBreak()">
+                <button type="button" class="btn btn-secondary" id="skip-break-btn">
                     <i class="fas fa-forward me-2"></i>Skip Break
                 </button>
-                <button type="button" class="btn btn-success" onclick="completeBreak()">
+                <button type="button" class="btn btn-success" id="complete-break-btn">
                     <i class="fas fa-check me-2"></i>Break Complete
                 </button>
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="forceCloseModal('user_initiated')" title="Close if modal is stuck">
+                <button type="button" class="btn btn-outline-danger btn-sm" id="force-close-modal-btn" title="Close if modal is stuck">
                     <i class="fas fa-times me-1"></i>Force Close
                 </button>
             </div>
@@ -420,7 +487,47 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script nonce="{{ request.csp_nonce }}">
+    // Utility function to get CSRF token from cookie or DOM
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function getCSRFToken() {
+        // Try to get from cookie first
+        let token = getCookie('csrftoken');
+
+        // Fallback: get from DOM element
+        if (!token) {
+            const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (csrfInput) {
+                token = csrfInput.value;
+            }
+        }
+
+        // Fallback: get from meta tag
+        if (!token) {
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            if (csrfMeta) {
+                token = csrfMeta.getAttribute('content');
+            }
+        }
+
+        console.log('🔐 CSRF Token retrieved:', token ? 'Found' : 'Not found');
+        return token;
+    }
+
     let timerInterval;
     let currentSession = {% if active_session %}{{ active_session.id }}{% else %}null{% endif %};
     let currentInterval = {% if active_interval %}{{ active_interval.id }}{% else %}null{% endif %};
@@ -431,36 +538,62 @@
     let isModalStuck = false;
 
     function startSession() {
-        fetch('{% url "timer:start_session" %}', {
+        console.log('🚀 Starting timer session...');
+
+        // Get CSRF token using enhanced function
+        const csrfToken = getCSRFToken();
+
+        if (!csrfToken) {
+            console.error('❌ CSRF token not found');
+            alert('Security token missing. Please refresh the page and try again.');
+            return;
+        }
+
+        const url = '{% url "timer:start_session" %}';
+        console.log('📡 Sending request to:', url);
+
+        fetch(url, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/json',
             },
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('📥 Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('📦 Response data:', data);
             if (data.success) {
+                console.log('✅ Session started successfully');
                 currentSession = data.session_id;
                 currentInterval = data.interval_id;
                 startTimer();
                 location.reload();
             } else {
-                alert(data.message);
+                console.error('❌ Server returned error:', data.message);
+                alert(data.message || 'Failed to start session');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('❌ Error starting session:', error);
+            alert('Failed to start session. Please check the console for details.');
         });
     }
 
     function endSession() {
         if (!currentSession) return;
-        
+
+        const csrfToken = getCSRFToken();
+
         fetch('{% url "timer:end_session" %}', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/json',
             },
         })
@@ -480,11 +613,13 @@
 
     function takeBreak() {
         if (!currentSession || !currentInterval) return;
-        
+
+        const csrfToken = getCSRFToken();
+
         fetch('{% url "timer:take_break" %}', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -515,15 +650,17 @@
         }
         
         const lookedAtDistance = document.getElementById('looked-distance')?.checked || false;
-        
+
+        const csrfToken = getCSRFToken();
+
         // Add timeout to prevent hanging
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-        
+
         fetch('{% url "timer:complete_break" %}', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -541,22 +678,23 @@
         })
         .then(data => {
             if (data.success) {
+                console.log('✅ Break completed successfully');
                 currentBreak = null;
                 currentInterval = data.next_interval_id;
+
+                // Hide modal first
                 hideBreakModal();
-                
-                // Only reset timer if we have a next interval
-                if (currentInterval) {
-                    resetTimer();
-                }
-                
-                if (data.is_compliant) {
-                    showNotification('Great job! You followed the 20-20-20 rule correctly.', 'success');
-                } else {
-                    showNotification('Break completed. Remember to look at distant objects next time!', 'info');
-                }
+
+                // Wait for modal to fully hide before starting timer
+                setTimeout(() => {
+                    if (currentInterval) {
+                        console.log('▶️ Starting next interval...');
+                        resetTimer();
+                    }
+                }, 500);
+
             } else {
-                console.error('Break completion failed:', data.message);
+                console.error('❌ Break completion failed:', data.message);
                 showNotification('Break completion failed: ' + (data.message || 'Unknown error'), 'error');
                 // Still close modal to prevent getting stuck
                 hideBreakModal();
@@ -651,25 +789,40 @@
     }
 
     function onTimerComplete() {
+        console.log('⏰ Timer completed! Starting break...');
         stopTimer();
-        showBreakModal();
-        
-        // Play enhanced notification sound if enabled
-        {% if settings.sound_notification %}
-            // Small delay to ensure modal is visible before sound
-            setTimeout(() => {
-                playNotificationSound();
-            }, 100);
-        {% endif %}
-        
-        // Show browser notification if enabled
+
+        // Play notification sound (works even in background)
+        playNotificationSound();
+
+        // Show browser notification if enabled (works even when tab is inactive)
         if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Time for a break!', {
-                body: 'Look at something 20 feet away for 20 seconds.',
-                icon: '/static/images/eye-icon.png'
+            const notification = new Notification('⏰ 20-20-20 Break Time!', {
+                body: 'Look at something 20 feet away for 20 seconds to rest your eyes.',
+                icon: '/static/images/eye-icon.png',
+                badge: '/static/images/eye-icon.png',
+                tag: 'break-reminder', // Prevents duplicate notifications
+                requireInteraction: true, // Keeps notification visible
+                vibrate: [200, 100, 200], // Vibration pattern for mobile
+                silent: false, // Allow sound
             });
+
+            // When user clicks the notification, focus the tab
+            notification.onclick = function(event) {
+                event.preventDefault();
+                window.focus();
+                this.close();
+            };
         }
-        
+
+        // Show break modal (only if tab is active)
+        if (!document.hidden) {
+            showBreakModal();
+        } else {
+            console.log('📱 Tab is inactive, notification sent. Modal will show when you return.');
+            pendingBreakModal = true;
+        }
+
         // Automatically take break
         takeBreak();
     }
@@ -715,32 +868,49 @@
 
     function hideBreakModal() {
         try {
+            console.log('🚪 Hiding break modal...');
             clearModalTimeouts();
+
             const modalElement = document.getElementById('breakModal');
             if (!modalElement) {
-                console.warn('Modal element not found during hide');
+                console.warn('⚠️ Modal element not found during hide');
                 return;
             }
-            
+
             const modal = bootstrap.Modal.getInstance(modalElement);
             if (modal) {
+                console.log('✅ Using Bootstrap modal.hide()');
                 modal.hide();
+
+                // Force remove backdrop after hide (sometimes Bootstrap doesn't clean up)
+                setTimeout(() => {
+                    const backdrops = document.querySelectorAll('.modal-backdrop');
+                    backdrops.forEach(backdrop => {
+                        console.log('🧹 Removing lingering backdrop');
+                        backdrop.remove();
+                    });
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }, 300);
             } else {
+                console.log('⚠️ No modal instance, using fallback');
                 // Fallback: manually hide modal
                 modalElement.style.display = 'none';
                 modalElement.classList.remove('show');
                 document.body.classList.remove('modal-open');
-                
-                // Remove backdrop if it exists
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+
+                // Remove all backdrops
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
             }
-            
+
             isModalStuck = false;
+            console.log('✅ Modal hidden successfully');
         } catch (error) {
-            console.error('Error hiding break modal:', error);
+            console.error('❌ Error hiding break modal:', error);
             forceCloseModal('error');
         }
     }
@@ -768,20 +938,35 @@
             if (breakTime <= 0) {
                 clearInterval(breakModalTimeout);
                 breakModalTimeout = null;
+
+                // Update countdown display
                 if (countdownElement) {
-                    countdownElement.textContent = 'Done!';
+                    countdownElement.textContent = '✓';
+                    countdownElement.classList.add('text-success');
                 }
-                
-                // Auto-complete break after countdown
-                setTimeout(() => {
-                    if (currentBreak) {
-                        completeBreak();
-                    } else {
-                        // If no break record, just close modal
-                        hideBreakModal();
-                        resetTimer();
-                    }
-                }, 2000);
+
+                // Update status message
+                const statusElement = document.getElementById('countdown-status');
+                if (statusElement) {
+                    statusElement.innerHTML = '<strong class="text-success">Break complete! Click below to continue.</strong>';
+                }
+
+                // Highlight the complete break button
+                const completeBtn = document.getElementById('complete-break-btn');
+                if (completeBtn) {
+                    completeBtn.classList.remove('btn-success');
+                    completeBtn.classList.add('btn-primary', 'pulse-animation');
+                    completeBtn.innerHTML = '<i class="fas fa-play me-2"></i>Continue to Next Interval';
+                }
+
+                // Auto-check the looked at distance checkbox
+                const lookedCheckbox = document.getElementById('looked-distance');
+                if (lookedCheckbox && !lookedCheckbox.checked) {
+                    lookedCheckbox.checked = true;
+                }
+
+                // Show completion message
+                console.log('✅ Break countdown complete! Waiting for user to continue...');
             }
         }, 1000);
     }
@@ -789,23 +974,29 @@
     // Enhanced audio notification system
     function playNotificationSound() {
         try {
-            // Get user's sound preferences
+            // Get user's sound preferences (default to enabled if not set)
             const soundType = '{{ settings.notification_sound_type|default:"gentle" }}';
-            const soundEnabled = {{ settings.sound_notification|yesno:"true,false" }};
-            const soundVolume = {{ settings.sound_volume|default:0.5 }};
-            
+            const soundEnabled = {% if settings.sound_notification == False %}false{% else %}true{% endif %};
+            const soundVolume = {{ settings.sound_volume|default:0.7 }};
+
+            console.log('🔊 Playing notification sound:', {soundType, soundEnabled, soundVolume});
+
             if (!soundEnabled) {
-                console.log('Sound notifications disabled by user');
+                console.log('🔇 Sound notifications disabled by user');
                 return;
             }
-            
+
             // Play sound based on user preference
             playBreakReminderSound(soundType, soundVolume);
-            
+
         } catch (error) {
-            console.error('Error playing notification sound:', error);
+            console.error('❌ Error playing notification sound:', error);
             // Fallback to basic beep
-            playBasicBeep();
+            try {
+                playBasicBeep();
+            } catch (e) {
+                console.error('❌ Fallback beep also failed:', e);
+            }
         }
     }
     
@@ -846,9 +1037,12 @@
     
     function playWebAudioSound(soundConfig, volume = 0.5) {
         try {
+            console.log('🎵 Creating audio context...');
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const { frequency, duration, pattern } = soundConfig;
-            
+
+            console.log('🎵 Playing sound with config:', {frequency, duration, pattern, volume});
+
             let currentTime = audioContext.currentTime;
             
             pattern.forEach((amplitude, index) => {
@@ -1124,14 +1318,103 @@
         }
     }
 
+    // Request notification permissions for background alerts
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            if (Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('✅ Notification permission granted');
+                        showNotification('Notifications enabled! You\'ll receive break reminders even when on other tabs.', 'success');
+                    } else {
+                        console.log('⚠️ Notification permission denied');
+                    }
+                });
+            } else if (Notification.permission === 'granted') {
+                console.log('✅ Notification permission already granted');
+            }
+        } else {
+            console.warn('⚠️ This browser does not support notifications');
+        }
+    }
+
+    // Clean up any lingering modal backdrops from previous sessions
+    function cleanupModalBackdrops() {
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        if (backdrops.length > 0) {
+            console.log('🧹 Cleaning up', backdrops.length, 'lingering modal backdrop(s)');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }
+    }
+
     // Initialize escape mechanisms and audio
+    cleanupModalBackdrops();
     addEmergencyEscape();
     initializeAudioSystem();
+
+    // Request notification permission if timer is active
+    {% if active_session %}
+        requestNotificationPermission();
+    {% endif %}
+
+    // Handle page visibility changes - show modal when user returns to tab
+    let pendingBreakModal = false;
+
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            console.log('👁️ Tab became visible');
+
+            // If there's a pending break modal, show it now
+            if (pendingBreakModal) {
+                console.log('📱 Showing pending break modal');
+                showBreakModal();
+                pendingBreakModal = false;
+            }
+
+            // Sync timer state when returning to tab
+            if (currentSession) {
+                syncTimerState();
+            }
+        } else {
+            console.log('👁️‍🗨️ Tab hidden');
+        }
+    });
+
+    // Mark that we need to show modal when tab becomes visible
+    window.setPendingBreakModal = function() {
+        pendingBreakModal = true;
+    };
     
+    // Display session start time in user's browser timezone
+    {% if active_session %}
+        // Update session start time display with browser's local time
+        const sessionStartTimeElement = document.getElementById('session-start-time');
+        if (sessionStartTimeElement) {
+            const startTime = new Date('{{ active_session.start_time|date:"c" }}');
+            const localTimeString = startTime.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            // Show browser timezone if different from user's set timezone
+            const browserTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const userTZ = '{{ user.timezone }}';
+            if (browserTZ !== userTZ) {
+                sessionStartTimeElement.innerHTML = `${localTimeString} <small class="text-muted">(${browserTZ})</small>`;
+            } else {
+                sessionStartTimeElement.textContent = localTimeString;
+            }
+        }
+    {% endif %}
+
     // Initialize timer if there's an active session (with better error handling)
     {% if active_session %}
         try {
             // Calculate remaining time based on current interval
+            // Use ISO format which includes timezone info
             const sessionStartTime = new Date('{{ active_session.start_time|date:"c" }}');
             const now = new Date();
             const elapsedMinutes = Math.floor((now - sessionStartTime) / 60000);
@@ -1198,15 +1481,17 @@
             console.log('No active session to sync');
             return;
         }
-        
+
+        const csrfToken = getCSRFToken();
+
         // Add timeout to prevent hanging requests
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-        
+
         fetch('{% url "timer:sync_session" %}', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -1336,10 +1621,12 @@
     
     // Track activity when user interacts
     function trackDashboardActivity(eventType, eventData = {}) {
+        const csrfToken = getCSRFToken();
+
         fetch('{% url "analytics:track_activity" %}', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -1403,6 +1690,67 @@
     console.log('💡 Use window.testModalFixes() to test emergency mechanisms');
     console.log('🔊 Use window.testBreakSound("gentle"|"chime"|"beep"|"bell") to test sounds');
     console.log('🔧 Emergency shortcuts: Double ESC to force close modal, Ctrl+Alt+R to refresh if stuck');
+
+    // Add event listeners for buttons (CSP compliant - no inline onclick)
+    function attachEventListeners() {
+        console.log('🔧 Attaching event listeners...');
+
+        // Start session button
+        const startBtn = document.getElementById('start-session-btn');
+        if (startBtn) {
+            startBtn.addEventListener('click', startSession);
+            console.log('✅ Start session button listener attached');
+        } else {
+            console.warn('⚠️ Start session button not found');
+        }
+
+        // End session button
+        const endBtn = document.getElementById('end-session-btn');
+        if (endBtn) {
+            endBtn.addEventListener('click', endSession);
+            console.log('✅ End session button listener attached');
+        } else {
+            console.log('ℹ️ End session button not found (no active session)');
+        }
+
+        // Take break button
+        const breakBtn = document.getElementById('take-break-btn');
+        if (breakBtn) {
+            breakBtn.addEventListener('click', takeBreak);
+            console.log('✅ Take break button listener attached');
+        } else {
+            console.log('ℹ️ Take break button not found (no active session)');
+        }
+
+        // Modal buttons
+        const skipBreakBtn = document.getElementById('skip-break-btn');
+        if (skipBreakBtn) {
+            skipBreakBtn.addEventListener('click', skipBreak);
+            console.log('✅ Skip break button listener attached');
+        }
+
+        const completeBreakBtn = document.getElementById('complete-break-btn');
+        if (completeBreakBtn) {
+            completeBreakBtn.addEventListener('click', completeBreak);
+            console.log('✅ Complete break button listener attached');
+        }
+
+        const forceCloseBtn = document.getElementById('force-close-modal-btn');
+        if (forceCloseBtn) {
+            forceCloseBtn.addEventListener('click', function() {
+                forceCloseModal('user_initiated');
+            });
+            console.log('✅ Force close button listener attached');
+        }
+    }
+
+    // Try both DOMContentLoaded and immediate execution
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachEventListeners);
+    } else {
+        // DOM already loaded
+        attachEventListeners();
+    }
     
     // Audio system initialization and browser compatibility
     function initializeAudioSystem() {

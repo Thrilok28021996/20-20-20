@@ -105,17 +105,13 @@ class TimerSessionService:
     @staticmethod
     def check_daily_limits(user: User) -> Tuple[bool, int, Union[int, float]]:
         """
-        Check if user can start new session based on daily limits
+        Check if user can start new session - no limits, all users have unlimited access
 
         Args:
             user: User instance
 
         Returns:
             Tuple of (can_start: bool, intervals_today: int, daily_limit: int|float)
-
-        Raises:
-            DailyLimitExceededError: If user has exceeded daily limits
-            DataCalculationError: If calculation fails
         """
         try:
             if not user or not user.is_authenticated:
@@ -124,32 +120,16 @@ class TimerSessionService:
                     context={'user_id': getattr(user, 'id', None)}
                 )
 
-            # Premium users have unlimited access
-            if hasattr(user, 'is_premium_user') and user.is_premium_user:
-                return True, 0, float('inf')
-
+            # All users have unlimited access
             user_date_today = user_today(user)
             intervals_today = TimerInterval.objects.filter(
                 session__user=user,
                 start_time__date=user_date_today
             ).count()
 
-            can_start = intervals_today < FREE_DAILY_INTERVAL_LIMIT
+            return True, intervals_today, 999999  # Unlimited (display as large number instead of inf)
 
-            if not can_start:
-                raise DailyLimitExceededError(
-                    message=f"Daily limit of {FREE_DAILY_INTERVAL_LIMIT} intervals exceeded",
-                    context={
-                        'user_id': user.id,
-                        'intervals_today': intervals_today,
-                        'daily_limit': FREE_DAILY_INTERVAL_LIMIT,
-                        'subscription_type': getattr(user, 'subscription_type', 'free')
-                    }
-                )
-
-            return can_start, intervals_today, FREE_DAILY_INTERVAL_LIMIT
-
-        except (UserNotFoundError, DailyLimitExceededError):
+        except UserNotFoundError:
             raise
         except Exception as e:
             raise DataCalculationError(
@@ -163,6 +143,7 @@ class TimerSessionService:
     def create_session(user: User) -> TimerSession:
         """
         Create a new timer session with first interval
+        Uses select_for_update EARLY to prevent race conditions
 
         Args:
             user: User instance
@@ -182,14 +163,13 @@ class TimerSessionService:
                     context={'user_id': getattr(user, 'id', None)}
                 )
 
-            # Check daily limits first
-            can_start, intervals_today, daily_limit = TimerSessionService.check_daily_limits(user)
-            if not can_start:
-                # This will raise DailyLimitExceededError
-                pass
+            # CRITICAL FIX: Acquire lock BEFORE checking limits to prevent TOCTOU race condition
+            # Lock user's existing sessions FIRST to prevent concurrent creation
+            existing_session = TimerSession.objects.select_for_update().filter(
+                user=user,
+                is_active=True
+            ).first()
 
-            # Check for existing active session
-            existing_session = TimerSessionService.get_active_session(user)
             if existing_session:
                 raise SessionAlreadyActiveError(
                     message=f"User {user.email} already has an active session",
@@ -199,6 +179,12 @@ class TimerSessionService:
                         'session_start_time': existing_session.start_time.isoformat()
                     }
                 )
+
+            # NOW check daily limits with lock held (prevents race)
+            can_start, intervals_today, daily_limit = TimerSessionService.check_daily_limits(user)
+            if not can_start:
+                # This will raise DailyLimitExceededError
+                pass
 
             # Get user settings for session configuration
             try:
@@ -700,23 +686,52 @@ class UserSettingsService:
 
     @staticmethod
     def update_settings(user: User, settings_data: Dict[str, Any]) -> UserTimerSettings:
-        """Update user timer settings with validation"""
+        """
+        Update user timer settings with validation
+
+        Raises:
+            ValueError: If validation fails
+        """
+        from mysite.constants import (
+            MIN_WORK_INTERVAL_MINUTES, MAX_WORK_INTERVAL_MINUTES,
+            MIN_BREAK_DURATION_SECONDS, MAX_BREAK_DURATION_SECONDS,
+            MIN_LONG_BREAK_MINUTES, MAX_LONG_BREAK_MINUTES
+        )
+
         settings = UserSettingsService.get_or_create_settings(user)
 
-        # Basic timer settings
+        # Basic timer settings with validation
         if 'work_interval_minutes' in settings_data:
-            settings.work_interval_minutes = int(settings_data['work_interval_minutes'])
+            work_minutes = int(settings_data['work_interval_minutes'])
+            if not MIN_WORK_INTERVAL_MINUTES <= work_minutes <= MAX_WORK_INTERVAL_MINUTES:
+                raise ValueError(
+                    f"Work interval must be between {MIN_WORK_INTERVAL_MINUTES} and {MAX_WORK_INTERVAL_MINUTES} minutes"
+                )
+            settings.work_interval_minutes = work_minutes
 
         if 'break_duration_seconds' in settings_data:
-            settings.break_duration_seconds = int(settings_data['break_duration_seconds'])
+            break_seconds = int(settings_data['break_duration_seconds'])
+            if not MIN_BREAK_DURATION_SECONDS <= break_seconds <= MAX_BREAK_DURATION_SECONDS:
+                raise ValueError(
+                    f"Break duration must be between {MIN_BREAK_DURATION_SECONDS} and {MAX_BREAK_DURATION_SECONDS} seconds"
+                )
+            settings.break_duration_seconds = break_seconds
 
-        # Notification settings
-        boolean_fields = [
+        if 'long_break_minutes' in settings_data:
+            long_break = int(settings_data['long_break_minutes'])
+            if not MIN_LONG_BREAK_MINUTES <= long_break <= MAX_LONG_BREAK_MINUTES:
+                raise ValueError(
+                    f"Long break must be between {MIN_LONG_BREAK_MINUTES} and {MAX_LONG_BREAK_MINUTES} minutes"
+                )
+            settings.long_break_minutes = long_break
+
+        # Notification settings - SECURITY FIX: Explicit whitelist to prevent mass assignment
+        ALLOWED_BOOLEAN_FIELDS = {
             'sound_notification', 'desktop_notification', 'show_progress_bar',
             'dark_mode', 'smart_break_enabled'
-        ]
+        }
 
-        for field in boolean_fields:
+        for field in ALLOWED_BOOLEAN_FIELDS:
             if field in settings_data:
                 setattr(settings, field, bool(settings_data[field]))
 
@@ -738,10 +753,10 @@ class UserSettingsService:
             except (ValueError, TypeError):
                 settings.sound_volume = 0.5
 
-        # Premium features
+        # Premium features - SECURITY FIX: Explicit whitelist for premium fields
         if user.is_premium_user:
-            premium_fields = ['auto_start_break', 'auto_start_work', 'custom_break_messages']
-            for field in premium_fields:
+            ALLOWED_PREMIUM_FIELDS = {'auto_start_break', 'auto_start_work', 'custom_break_messages'}
+            for field in ALLOWED_PREMIUM_FIELDS:
                 if field in settings_data:
                     if field == 'custom_break_messages':
                         setattr(settings, field, str(settings_data[field]))
@@ -756,14 +771,29 @@ class DailyStatsService:
     """Service class for daily statistics management"""
 
     @staticmethod
+    @transaction.atomic
     def update_daily_stats(user: User, session: TimerSession) -> DailyStats:
-        """Update daily statistics after session completion"""
+        """
+        Update daily statistics after session completion
+
+        Uses select_for_update() to prevent lost updates from concurrent requests
+        """
         user_date_today = user_today(user)
-        today_stats, created = DailyStats.objects.get_or_create(
+
+        # Use select_for_update to lock the row and prevent concurrent modification
+        today_stats = DailyStats.objects.select_for_update().filter(
             user=user,
             date=user_date_today
-        )
+        ).first()
 
+        if not today_stats:
+            # Create if doesn't exist (lock is still held via transaction)
+            today_stats = DailyStats.objects.create(
+                user=user,
+                date=user_date_today
+            )
+
+        # Now safely update with lock held
         today_stats.total_work_minutes += session.total_work_minutes
         today_stats.total_intervals_completed += session.total_intervals_completed
         today_stats.total_breaks_taken += session.total_breaks_taken
@@ -796,8 +826,13 @@ class StreakService:
     """Service class for streak management"""
 
     @staticmethod
+    @transaction.atomic
     def update_streak_data(user: User, session: TimerSession) -> UserStreakData:
-        """Update user streak data after session completion"""
+        """
+        Update user streak data after session completion
+
+        Uses @transaction.atomic for safety when called independently
+        """
         streak_data, created = UserStreakData.objects.get_or_create(user=user)
         streak_data.total_sessions_completed += 1
 

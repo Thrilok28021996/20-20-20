@@ -29,13 +29,13 @@ class UserService:
         """Create or update user profile with provided data"""
         profile, created = UserProfile.objects.get_or_create(user=user)
 
-        # Update profile fields
-        updateable_fields = [
+        # Update profile fields - SECURITY FIX: Explicit whitelist to prevent mass assignment
+        ALLOWED_PROFILE_FIELDS = {
             'age', 'occupation', 'daily_screen_time_hours', 'wears_glasses',
             'has_eye_strain', 'last_eye_checkup', 'timezone', 'preferred_language'
-        ]
+        }
 
-        for field in updateable_fields:
+        for field in ALLOWED_PROFILE_FIELDS:
             if field in profile_data:
                 setattr(profile, field, profile_data[field])
 
@@ -604,37 +604,20 @@ class PremiumFeatureService:
 
     @staticmethod
     def get_user_premium_features(user: User) -> Dict[str, Any]:
-        """Get available premium features for user"""
-        from accounts.premium_features import PREMIUM_TIMER_PRESETS, EYE_EXERCISES, can_access_feature
-
+        """Get available features for user - all features are now free"""
         features = {
             'timer_presets': [],
             'eye_exercises': [],
-            'custom_themes': False,
-            'advanced_analytics': False,
-            'guided_exercises': False,
+            'custom_themes': True,
+            'advanced_analytics': True,
+            'guided_exercises': True,
         }
-
-        if can_access_feature(user, 'smart_timer_presets'):
-            features['timer_presets'] = PREMIUM_TIMER_PRESETS
-
-        if can_access_feature(user, 'guided_exercises'):
-            features['eye_exercises'] = EYE_EXERCISES
-            features['guided_exercises'] = True
-
-        if can_access_feature(user, 'custom_themes'):
-            features['custom_themes'] = True
-
-        if can_access_feature(user, 'premium_analytics'):
-            features['advanced_analytics'] = True
-
         return features
 
     @staticmethod
     def check_feature_access(user: User, feature_name: str) -> bool:
-        """Check if user has access to specific premium feature"""
-        from accounts.premium_features import can_access_feature
-        return can_access_feature(user, feature_name)
+        """Check if user has access to specific feature - always True (all features free)"""
+        return True
 
 
 class AchievementService:

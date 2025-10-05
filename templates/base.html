@@ -227,6 +227,11 @@
                                 <i class="fas fa-cog me-1"></i>Timer Settings
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#supportModal">
+                                <i class="fas fa-heart me-1 text-danger"></i>Support Us
+                            </a>
+                        </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link fw-500" href="{% url 'accounts:pricing' %}">Pricing</a>
@@ -245,9 +250,6 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-1"></i>{{ user.first_name|default:user.username }}
-                                {% if user.is_premium_user %}
-                                    <span class="badge bg-warning text-dark ms-1">{{ user.subscription_type|upper }}</span>
-                                {% endif %}
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
@@ -256,12 +258,6 @@
                                 <li><a class="dropdown-item" href="{% url 'accounts:settings' %}">
                                     <i class="fas fa-cog me-2"></i>Settings
                                 </a></li>
-                                {% if not user.is_premium_user %}
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-warning" href="{% url 'accounts:pricing' %}">
-                                        <i class="fas fa-crown me-2"></i>Upgrade to Premium
-                                    </a></li>
-                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
                                     <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -295,6 +291,65 @@
             {% endfor %}
         </div>
     {% endif %}
+
+    <!-- Support Us Modal -->
+    <div class="modal fade" id="supportModal" tabindex="-1" aria-labelledby="supportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient text-white" style="background: linear-gradient(135deg, #059669 0%, #2563eb 100%);">
+                    <h5 class="modal-title" id="supportModalLabel">
+                        <i class="fas fa-heart me-2"></i>Support EyeHealth 20-20-20
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">
+                        <i class="fas fa-info-circle me-2"></i>EyeHealth 20-20-20 is 100% free for everyone. Your support helps us keep it that way!
+                    </p>
+
+                    <div class="d-grid gap-3">
+                        <!-- Ko-fi -->
+                        <a href="https://ko-fi.com/eyehealth2020" target="_blank" class="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-between">
+                            <span>
+                                <i class="fas fa-coffee me-2"></i>Buy us a coffee on Ko-fi
+                            </span>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+
+                        <!-- Buy Me a Coffee -->
+                        <a href="https://www.buymeacoffee.com/eyehealth2020" target="_blank" class="btn btn-outline-warning btn-lg d-flex align-items-center justify-content-between">
+                            <span>
+                                <i class="fas fa-mug-hot me-2"></i>Support on Buy Me a Coffee
+                            </span>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+
+                        <!-- PayPal -->
+                        <a href="https://www.paypal.com/paypalme/thrilok202020" target="_blank" class="btn btn-outline-info btn-lg d-flex align-items-center justify-content-between">
+                            <span>
+                                <i class="fab fa-paypal me-2"></i>Donate via PayPal
+                            </span>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="fw-bold mb-2"><i class="fas fa-heart text-danger me-2"></i>Your donation helps us:</h6>
+                        <ul class="mb-0 small">
+                            <li>Keep the app free for everyone worldwide</li>
+                            <li>Maintain and improve server infrastructure</li>
+                            <li>Add new eye health features and exercises</li>
+                            <li>Provide better user support</li>
+                        </ul>
+                    </div>
+
+                    <p class="text-center text-muted mt-3 mb-0 small">
+                        <i class="fas fa-lock me-1"></i>Secure payment processing through trusted platforms
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="container-fluid">
@@ -370,7 +425,7 @@
             crossorigin="anonymous"></script>
     
     <!-- Custom JavaScript -->
-    <script>
+    <script nonce="{{ request.csp_nonce }}">
         // Timer functionality
         class Timer {
             constructor() {
@@ -514,8 +569,105 @@
                 toggleDarkTheme();
             }
         });
+
+        // Conversion Tracking for Monetization
+        function trackConversion(eventName, eventData = {}) {
+            // Send to backend for analytics
+            if (typeof fetch !== 'undefined') {
+                fetch('/analytics/track-conversion/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        event: eventName,
+                        data: eventData,
+                        timestamp: new Date().toISOString(),
+                        url: window.location.href
+                    })
+                }).catch(err => console.log('Analytics error:', err));
+            }
+
+            // Google Analytics (if configured)
+            if (typeof gtag !== 'undefined') {
+                gtag('event', eventName, eventData);
+            }
+        }
+
+        function getCSRFToken() {
+            let token = getCookie('csrftoken');
+            if (!token) {
+                const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfInput) {
+                    token = csrfInput.value;
+                }
+            }
+            return token;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Track affiliate link clicks
+        document.addEventListener('click', function(e) {
+            const affiliateLink = e.target.closest('a[href*="amazon.com"], a[href*="amzn.to"]');
+            if (affiliateLink) {
+                const productName = affiliateLink.querySelector('.fw-bold')?.textContent || 'Unknown Product';
+                trackConversion('affiliate_click', {
+                    product: productName,
+                    url: affiliateLink.href
+                });
+            }
+        });
+
+        // Track donation button clicks
+        document.addEventListener('click', function(e) {
+            const donationLink = e.target.closest('#supportModal a[href*="ko-fi"], #supportModal a[href*="buymeacoffee"], #supportModal a[href*="paypal"]');
+            if (donationLink) {
+                let platform = 'unknown';
+                if (donationLink.href.includes('ko-fi')) platform = 'kofi';
+                else if (donationLink.href.includes('buymeacoffee')) platform = 'buymeacoffee';
+                else if (donationLink.href.includes('paypal')) platform = 'paypal';
+
+                trackConversion('donation_click', {
+                    platform: platform
+                });
+            }
+        });
+
+        // Track enterprise demo requests
+        const enterpriseForm = document.querySelector('form[action*="contact"]');
+        if (enterpriseForm && window.location.pathname.includes('enterprise')) {
+            enterpriseForm.addEventListener('submit', function(e) {
+                const companySize = document.getElementById('company_size')?.value || 'unknown';
+                trackConversion('enterprise_demo_request', {
+                    company_size: companySize
+                });
+            });
+        }
+
+        // Track support modal opens
+        const supportModal = document.getElementById('supportModal');
+        if (supportModal) {
+            supportModal.addEventListener('show.bs.modal', function() {
+                trackConversion('support_modal_opened');
+            });
+        }
     </script>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

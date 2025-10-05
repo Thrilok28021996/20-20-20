@@ -73,7 +73,6 @@ def real_time_metrics_api(request):
 
 
 @login_required
-@login_required
 @ratelimit(key='user', rate='50/m', method='POST')
 @require_POST
 def track_user_activity(request):
@@ -126,7 +125,6 @@ def track_user_activity(request):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
-@login_required
 @login_required
 @ratelimit(key='user', rate='5/m', method='POST')
 @require_POST
@@ -192,6 +190,56 @@ def submit_satisfaction_rating(request):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
+@require_POST
+@ratelimit(key='ip', rate='100/h', method='POST')
+def track_conversion(request):
+    """
+    Track conversion events for monetization analytics (affiliate clicks, donations, enterprise requests)
+    """
+    try:
+        data = json.loads(request.body)
+        event_name = bleach.clean(data.get('event', ''))
+        event_data = data.get('data', {})
+        timestamp = data.get('timestamp')
+        url = bleach.clean(data.get('url', ''))
+
+        # Validate event name
+        allowed_events = [
+            'affiliate_click',
+            'donation_click',
+            'enterprise_demo_request',
+            'support_modal_opened'
+        ]
+
+        if event_name not in allowed_events:
+            return JsonResponse({'success': False, 'error': 'Invalid event type'}, status=400)
+
+        # Log conversion event
+        user = request.user if request.user.is_authenticated else None
+
+        # Store in UserBehaviorEvent for tracking
+        UserBehaviorEvent.objects.create(
+            user=user,
+            event_type=event_name,
+            event_metadata={
+                'data': event_data,
+                'url': url,
+                'timestamp': timestamp
+            }
+        )
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Conversion tracked successfully'
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=400)
+
+
 @admin_required
 def live_activity_feed_api(request):
     """
@@ -233,8 +281,13 @@ def user_dashboard_metrics_api(request):
         total_breaks=Sum('total_breaks_taken'),
         total_intervals=Sum('total_intervals_completed'),
         total_sessions=Sum('total_sessions'),
-        avg_compliance=Avg('compliance_rate')
+        total_breaks_compliant=Sum('breaks_compliant')
     )
+
+    # Calculate average compliance rate
+    total_breaks = week_stats['total_breaks'] or 0
+    total_compliant = week_stats['total_breaks_compliant'] or 0
+    avg_compliance = (total_compliant / total_breaks * 100) if total_breaks > 0 else 0
     
     # Current streak
     profile = request.user.profile if hasattr(request.user, 'profile') else None
@@ -243,19 +296,24 @@ def user_dashboard_metrics_api(request):
     # Active session info
     active_session = TimerSession.objects.filter(user=request.user, is_active=True).first()
     
+    # Calculate today's compliance rate
+    today_compliance = 0.0
+    if today_stats and today_stats.total_breaks_taken > 0:
+        today_compliance = (today_stats.breaks_compliant / today_stats.total_breaks_taken * 100)
+
     data = {
         'today': {
             'work_minutes': today_stats.total_work_minutes if today_stats else 0,
             'breaks_taken': today_stats.total_breaks_taken if today_stats else 0,
             'intervals_completed': today_stats.total_intervals_completed if today_stats else 0,
-            'compliance_rate': today_stats.compliance_rate if today_stats else 0.0,
+            'compliance_rate': round(today_compliance, 1),
             'sessions': today_stats.total_sessions if today_stats else 0,
         },
         'this_week': {
             'work_minutes': week_stats['total_work_minutes'] or 0,
             'breaks_taken': week_stats['total_breaks'] or 0,
             'intervals_completed': week_stats['total_intervals'] or 0,
-            'avg_compliance': round(week_stats['avg_compliance'] or 0.0, 1),
+            'avg_compliance': round(avg_compliance, 1),
             'sessions': week_stats['total_sessions'] or 0,
         },
         'streaks': {

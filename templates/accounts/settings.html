@@ -189,14 +189,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Account Type</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" value="{% if user.is_premium_user %}Premium{% else %}Free{% endif %}" disabled>
-                                    {% if not user.is_premium_user %}
-                                        <a href="{% url 'accounts:pricing' %}" class="btn btn-outline-warning">
-                                            <i class="fas fa-arrow-up me-1"></i>Upgrade
-                                        </a>
-                                    {% endif %}
-                                </div>
+                                <input type="text" class="form-control" value="Free - Full Access" disabled>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Member Since</label>
@@ -220,27 +213,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <a href="{% url 'accounts:contact' %}" class="btn btn-outline-primary">
+                                <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary">
                                     <i class="fas fa-key me-2"></i>Change Password
                                 </a>
-                                <div class="form-text mt-2">Contact support to update your password</div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <a href="{% url 'accounts:contact' %}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-download me-2"></i>Download My Data
-                                </a>
-                                <div class="form-text mt-2">Contact support to export your data</div>
+                                <div class="form-text mt-2">Update your account password</div>
                             </div>
                         </div>
-                        <div class="section-divider"></div>
-                        <h6 class="mb-3">Data Sharing Preferences</h6>
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="analytics_sharing" checked disabled>
-                            <label class="form-check-label" for="analytics_sharing">
-                                <i class="fas fa-chart-bar me-2"></i>Anonymous usage analytics
-                            </label>
-                        </div>
-                        <div class="form-text">Help us improve the service by sharing anonymous usage data</div>
                     </div>
                 </div>
             </div>
@@ -314,7 +292,7 @@
                 <ul>
                     <li>All your timer sessions and statistics</li>
                     <li>Your profile and settings</li>
-                    <li>Any premium subscription</li>
+                    <li>All account data</li>
                     <li>All associated data</li>
                 </ul>
                 <div class="form-group mt-3">
@@ -375,8 +353,25 @@
     // Handle account deletion
     confirmDeleteBtn.addEventListener('click', function() {
         if (confirmEmailInput.value === '{{ user.email }}') {
-            // In a real implementation, this would submit to a delete endpoint
-            alert('Account deletion is not implemented in this demo. Please contact support.');
+            // Submit the form to delete the account
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "accounts:delete_account" %}';
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = '{{ csrf_token }}';
+            form.appendChild(csrfInput);
+
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_confirmation';
+            emailInput.value = confirmEmailInput.value;
+            form.appendChild(emailInput);
+
+            document.body.appendChild(form);
+            form.submit();
         }
     });
 

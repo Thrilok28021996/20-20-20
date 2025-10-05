@@ -68,20 +68,6 @@
                     </div>
                 </div>
 
-                {% if user.is_authenticated and not user.is_premium_user %}
-                <div class="mt-4">
-                    <div class="card border-primary">
-                        <div class="card-body text-center">
-                            <h6 class="card-title">
-                                <i class="fas fa-star text-warning me-2"></i>Upgrade to Premium
-                            </h6>
-                            <p class="card-text">
-                                Get higher rate limits and unlimited access to all features.
-                            </p>
-                            <a href="{% url 'accounts:pricing' %}" class="btn btn-sm btn-primary">
-                                <i class="fas fa-crown me-2"></i>View Plans
-                            </a>
-                        </div>
                     </div>
                 </div>
                 {% endif %}

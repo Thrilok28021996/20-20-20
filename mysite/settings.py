@@ -49,8 +49,6 @@ INSTALLED_APPS = [
     "timer",
     "analytics",
     "notifications",
-    "subscriptions",
-    "payments",
     "calendars",
 ]
 
@@ -60,11 +58,14 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # CRITICAL FIX: AuthenticationMiddleware MUST come before CsrfViewMiddleware
+    # This prevents CSRF bypass vulnerabilities and logout CSRF attacks
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "axes.middleware.AxesMiddleware",  # Security middleware for failed login attempts
     "accounts.middleware.TimezoneMiddleware",  # Add timezone middleware after auth
     "csp.middleware.CSPMiddleware",  # Content Security Policy middleware
+    "mysite.rate_limit_middleware.PasswordResetRateLimitMiddleware",  # Email-based rate limiting for password resets
     "mysite.middleware.RequestLoggingMiddleware",  # Request/response logging
     "mysite.middleware.SecurityHeadersMiddleware",  # Additional security headers
     "mysite.middleware.ErrorHandlingMiddleware",  # Comprehensive error handling
@@ -97,7 +98,22 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # Database Configuration - Support both SQLite and PostgreSQL
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASE_URL = config("DATABASE_URL", default=f"sqlite:///{BASE_DIR}/db.sqlite3")
+
+# Force PostgreSQL in production
+if not DEBUG and 'sqlite' in DATABASE_URL.lower():
+    raise ValueError(
+        "SQLite is not allowed in production. Please configure PostgreSQL by setting DATABASE_URL environment variable."
+    )
+
 DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
+
+# Add connection pooling for PostgreSQL
+if 'postgresql' in DATABASE_URL or 'postgres' in DATABASE_URL:
+    DATABASES['default']['CONN_MAX_AGE'] = config('DB_CONN_MAX_AGE', default=600, cast=int)  # 10 minutes
+    DATABASES['default']['OPTIONS'] = {
+        'connect_timeout': 10,
+        'options': '-c statement_timeout=10000'  # 10 second timeout (reduced from 30s to prevent locks)
+    }
 
 
 # Password validation
@@ -115,6 +131,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 12,  # Increased from default 8 to 12 for better security
+        }
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -152,15 +171,6 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Payment Configuration - Load from environment variables
-STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY", default="")
-STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
-STRIPE_PRICE_ID = config("STRIPE_PRICE_ID", default="")
-STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET", default="")
-
-# PayPal Configuration
-PAYPAL_TEST = config("PAYPAL_TEST", default=True, cast=bool)
-PAYPAL_RECEIVER_EMAIL = config("PAYPAL_RECEIVER_EMAIL", default="")
 
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
@@ -183,30 +193,104 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 20,
 }
 
-# CORS Settings - Load from environment variables
-CORS_ALLOWED_ORIGINS = config(
-    "CORS_ALLOWED_ORIGINS",
-    default="http://localhost:3000,http://127.0.0.1:3000",
-    cast=Csv(),
-)
-CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=True, cast=bool)
+# CORS Settings - Restrict to production domains only
+if DEBUG:
+    # Development CORS settings
+    CORS_ALLOWED_ORIGINS = config(
+        "CORS_ALLOWED_ORIGINS",
+        default="http://localhost:3000,http://127.0.0.1:3000",
+        cast=Csv(),
+    )
+    CORS_ALLOW_CREDENTIALS = False  # Disable credentials in development
+else:
+    # Production CORS settings - only allow production domains
+    cors_origins = config(
+        "CORS_ALLOWED_ORIGINS",
+        default="",  # No default, must be explicitly set in production
+        cast=Csv(),
+    )
+
+    # Validate CORS origins are set in production
+    if not cors_origins or cors_origins == ['']:
+        raise ValueError(
+            "CORS_ALLOWED_ORIGINS must be explicitly set in production. "
+            "Add your production domain(s) to the environment variable."
+        )
+
+    # Validate all origins use HTTPS in production - SECURITY FIX: Proper URL validation
+    from urllib.parse import urlparse
+
+    for origin in cors_origins:
+        if not origin.startswith('https://'):
+            raise ValueError(
+                f"CORS origin '{origin}' must use HTTPS in production. "
+                f"All production origins must start with 'https://'"
+            )
+
+        # SECURITY FIX: Validate that origin has a proper domain (prevent 'https://' bypass)
+        parsed = urlparse(origin)
+        if not parsed.netloc:
+            raise ValueError(
+                f"CORS origin '{origin}' must include a valid domain. "
+                f"Empty domains are not allowed."
+            )
+
+    CORS_ALLOWED_ORIGINS = cors_origins
+    CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=True, cast=bool)
 
 # Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-# Email Configuration - Load from environment variables
+# Email Configuration - Load from environment variables with validation
 EMAIL_BACKEND = config(
     "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
 )
+
+# Validate email backend
+ALLOWED_EMAIL_BACKENDS = [
+    'django.core.mail.backends.smtp.EmailBackend',
+    'django.core.mail.backends.console.EmailBackend',
+    'django.core.mail.backends.filebased.EmailBackend',
+    'django.core.mail.backends.locmem.EmailBackend',  # For testing
+    'django.core.mail.backends.dummy.EmailBackend',  # For testing
+]
+
+if EMAIL_BACKEND not in ALLOWED_EMAIL_BACKENDS:
+    raise ValueError(
+        f"Invalid EMAIL_BACKEND: {EMAIL_BACKEND}. "
+        f"Must be one of: {', '.join(ALLOWED_EMAIL_BACKENDS)}"
+    )
+
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL", default="EyeHealth 20-20-20 <thriloke96@gmail.com>"
+    "DEFAULT_FROM_EMAIL", default="EyeHealth 20-20-20 <noreply@eyehealth2020.com>"
 )
+
+# Validate email configuration in production for SMTP backend
+if not DEBUG and EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
+    required_email_settings = {
+        'EMAIL_HOST': EMAIL_HOST,
+        'EMAIL_HOST_USER': EMAIL_HOST_USER,
+        'EMAIL_HOST_PASSWORD': EMAIL_HOST_PASSWORD,
+        'DEFAULT_FROM_EMAIL': DEFAULT_FROM_EMAIL,
+    }
+
+    missing_settings = [
+        key for key, value in required_email_settings.items()
+        if not value or value == ""
+    ]
+
+    if missing_settings:
+        raise ValueError(
+            f"Production email configuration incomplete. "
+            f"Missing required settings: {', '.join(missing_settings)}. "
+            f"Please set these environment variables."
+        )
 
 # Celery Configuration - Load from environment variables
 REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
@@ -237,59 +321,72 @@ MICROSOFT_CALENDAR_CONFIG = {
 # Session Configuration - Enhanced Security
 SESSION_COOKIE_AGE = config("SESSION_COOKIE_AGE", default=86400, cast=int)  # 24 hours
 SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=not DEBUG, cast=bool)
-SESSION_COOKIE_HTTPONLY = config("SESSION_COOKIE_HTTPONLY", default=True, cast=bool)
+# Always use secure cookies in production, configurable in dev
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True  # Force True in production
+    CSRF_COOKIE_SECURE = True  # Force True in production
+else:
+    SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=False, cast=bool)
+    CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=False, cast=bool)
+
+SESSION_COOKIE_HTTPONLY = True  # Always True for security
 SESSION_COOKIE_SAMESITE = config("SESSION_COOKIE_SAMESITE", default="Lax")
 
-# CSRF Protection Configuration
-CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=not DEBUG, cast=bool)
-CSRF_COOKIE_HTTPONLY = config("CSRF_COOKIE_HTTPONLY", default=not DEBUG, cast=bool)
+# CSRF Protection Configuration - Strengthened
+# Use consistent CSRF storage across environments
+CSRF_USE_SESSIONS = True  # Always use sessions for CSRF tokens (most secure)
+CSRF_COOKIE_HTTPONLY = True  # Always True for security
 CSRF_COOKIE_SAMESITE = config("CSRF_COOKIE_SAMESITE", default="Lax")
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
 
 # CSRF Debug Settings for Development
 if DEBUG:
     CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
-    CSRF_USE_SESSIONS = False
-    CSRF_COOKIE_AGE = None
 
-# Security Headers Configuration
-SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=not DEBUG, cast=bool)
-SECURE_BROWSER_XSS_FILTER = config("SECURE_BROWSER_XSS_FILTER", default=True, cast=bool)
-SECURE_CONTENT_TYPE_NOSNIFF = config(
-    "SECURE_CONTENT_TYPE_NOSNIFF", default=True, cast=bool
-)
-SECURE_HSTS_SECONDS = config(
-    "SECURE_HSTS_SECONDS", default=31536000 if not DEBUG else 0, cast=int
-)
-SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
-    "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=not DEBUG, cast=bool
-)
-SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", default=not DEBUG, cast=bool)
+# Security Headers Configuration - Strengthened
+# Force SSL redirect in production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True  # Always redirect to HTTPS in production
+    # Strengthen HSTS settings for production
+    SECURE_HSTS_SECONDS = 63072000  # 2 years (recommended for production)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+else:
+    # Allow HTTPS testing in development but don't force it
+    SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=False, cast=bool)
+    # Enable HSTS in dev for testing but with shorter duration
+    SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=3600, cast=int)  # 1 hour for dev testing
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = config("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False, cast=bool)
+    SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", default=False, cast=bool)
+
+# Always enforce these security headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
 SECURE_REFERRER_POLICY = config(
     "SECURE_REFERRER_POLICY", default="strict-origin-when-cross-origin"
 )
 X_FRAME_OPTIONS = "DENY"
 
-# Content Security Policy
+# Content Security Policy - Improved (remove unsafe-inline, use nonces)
 CSP_DEFAULT_SRC = ["'self'"]
 CSP_SCRIPT_SRC = [
     "'self'",
-    "'unsafe-inline'",
-    "https://js.stripe.com",
     "https://cdn.jsdelivr.net",
     "https://cdnjs.cloudflare.com",
 ]
 CSP_STYLE_SRC = [
     "'self'",
-    "'unsafe-inline'",
+    "'unsafe-inline'",  # Keep for Bootstrap/CSS frameworks
     "https://fonts.googleapis.com",
     "https://cdn.jsdelivr.net",
     "https://cdnjs.cloudflare.com",
 ]
 CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"]
 CSP_IMG_SRC = ["'self'", "data:", "https:"]
-CSP_CONNECT_SRC = ["'self'", "https://api.stripe.com"]
+CSP_CONNECT_SRC = ["'self'"]
+# Use nonces for inline scripts instead of unsafe-inline
+CSP_INCLUDE_NONCE_IN = ['script-src']
 
 # Logging Configuration
 LOGGING = {
@@ -378,11 +475,6 @@ LOGGING = {
             "level": "INFO",
             "propagate": True,
         },
-        "payments": {
-            "handlers": ["file", "console", "error_file"],
-            "level": "INFO",
-            "propagate": True,
-        },
     },
 }
 
@@ -411,27 +503,128 @@ RATELIMIT_ENABLE = True
 SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="thriloke96@gmail.com")
 ERROR_REPORTING_ENABLED = config("ERROR_REPORTING_ENABLED", default=True, cast=bool)
 
-# Cache Configuration
-CACHES = (
-    {
+# Sentry Configuration (Error Monitoring)
+SENTRY_DSN = config("SENTRY_DSN", default="")
+if SENTRY_DSN and not DEBUG:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.redis import RedisIntegration
+    from sentry_sdk.integrations.celery import CeleryIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(),
+            RedisIntegration(),
+            CeleryIntegration(),
+        ],
+        # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
+        # We recommend adjusting this value in production (0.1 = 10%)
+        traces_sample_rate=config("SENTRY_TRACES_SAMPLE_RATE", default=0.1, cast=float),
+        # Send 100% of error events (adjust as needed)
+        sample_rate=1.0,
+        # Set environment
+        environment=config("SENTRY_ENVIRONMENT", default="production"),
+        # Include user information
+        send_default_pii=False,  # Don't send PII by default
+        # Before send hook to scrub sensitive data
+        before_send=lambda event, hint: _sanitize_sentry_event(event),
+    )
+
+
+def _sanitize_sentry_event(event):
+    """
+    Sanitize Sentry events to remove sensitive data before sending.
+
+    Removes:
+    - Sensitive headers (Authorization, Cookie, CSRF tokens)
+    - Request body containing passwords or sensitive data
+    - Query strings with sensitive parameters
+    """
+    # Remove sensitive headers
+    if 'request' in event and 'headers' in event['request']:
+        headers = event['request']['headers']
+        sensitive_headers = ['Authorization', 'Cookie', 'X-CSRF-Token', 'X-CSRFToken']
+        for header in sensitive_headers:
+            if header in headers:
+                headers[header] = '[Filtered]'
+
+    # Remove sensitive query parameters
+    if 'request' in event and 'query_string' in event['request']:
+        qs = event['request']['query_string']
+        if qs and any(key in qs.lower() for key in ['password', 'token', 'secret', 'key', 'api_key']):
+            event['request']['query_string'] = '[Filtered]'
+
+    # Remove request body if it contains sensitive data
+    if 'request' in event and 'data' in event['request']:
+        data = event['request'].get('data', {})
+        # Check if data is a dict or string
+        sensitive_keys = ['password', 'token', 'secret', 'api_key', 'credit_card', 'ssn']
+
+        if isinstance(data, dict):
+            for key in list(data.keys()):
+                if any(sensitive in key.lower() for sensitive in sensitive_keys):
+                    data[key] = '[Filtered]'
+        elif isinstance(data, str):
+            # If it's a string (like JSON), filter if it contains sensitive keywords
+            if any(sensitive in data.lower() for sensitive in sensitive_keys):
+                event['request']['data'] = '[Filtered - Contains Sensitive Data]'
+
+    return event
+
+# Cache Configuration with versioning
+CACHE_VERSION = config("CACHE_VERSION", default=1, cast=int)
+
+# Use dict syntax (standard Django convention)
+if not DEBUG:
+    # Production: Redis cache with connection pooling
+    CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
             "LOCATION": config("REDIS_URL", default="redis://127.0.0.1:6379/1"),
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PARSER_CLASS": "redis.connection.HiredisParser",
+                "CONNECTION_POOL_CLASS_KWARGS": {
+                    "max_connections": 50,
+                    "retry_on_timeout": True,
+                },
+                "SOCKET_CONNECT_TIMEOUT": 5,  # seconds
+                "SOCKET_TIMEOUT": 5,  # seconds
             },
-            "KEY_PREFIX": "eyehealth",
+            "KEY_PREFIX": f"eyehealth:v{CACHE_VERSION}",
+            "VERSION": CACHE_VERSION,
             "TIMEOUT": 300,  # 5 minutes default
         }
     }
-    if not DEBUG
-    else {
+else:
+    # Development: Local memory cache
+    CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
             "LOCATION": "unique-snowflake",
+            "KEY_PREFIX": f"eyehealth:v{CACHE_VERSION}",
+            "VERSION": CACHE_VERSION,
         }
     }
-)
+
+# Cache key prefixes for different data types
+CACHE_KEY_PREFIXES = {
+    'user_stats': 'stats:user',
+    'dashboard': 'dashboard',
+    'analytics': 'analytics',
+    'session': 'session',
+    'subscription': 'subscription',
+}
+
+# Cache timeouts for different data types
+CACHE_TIMEOUTS = {
+    'user_stats': 300,  # 5 minutes
+    'dashboard': 60,  # 1 minute
+    'analytics': 600,  # 10 minutes
+    'session': 1800,  # 30 minutes
+    'subscription': 3600,  # 1 hour
+}
 
 # API Configuration
 API_DEFAULT_RATE_LIMIT = config("API_DEFAULT_RATE_LIMIT", default="100/h")
@@ -447,3 +640,4 @@ ERROR_PAGE_TEMPLATES = {
     500: "errors/500.html",
     503: "errors/service_unavailable.html",
 }
+

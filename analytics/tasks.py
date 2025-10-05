@@ -204,8 +204,13 @@ def generate_weekly_insights():
             ).aggregate(
                 total_work_minutes=Sum('total_work_minutes'),
                 total_breaks=Sum('total_breaks_taken'),
-                avg_compliance=Avg('compliance_rate')
+                total_breaks_compliant=Sum('breaks_compliant')
             )
+
+            # Calculate average compliance
+            total_breaks = weekly_stats['total_breaks'] or 0
+            total_compliant = weekly_stats['total_breaks_compliant'] or 0
+            weekly_stats['avg_compliance'] = (total_compliant / total_breaks * 100) if total_breaks > 0 else 0
             
             # Generate insights
             insights = generate_user_insights(user, weekly_stats)

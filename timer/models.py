@@ -40,6 +40,14 @@ class TimerSession(models.Model):
             models.Index(fields=['user', 'is_active']),
             models.Index(fields=['start_time']),
         ]
+        constraints = [
+            # Prevent multiple active sessions per user
+            models.UniqueConstraint(
+                fields=['user'],
+                condition=models.Q(is_active=True),
+                name='unique_active_session_per_user'
+            )
+        ]
 
     def __str__(self) -> str:
         status = "Active" if self.is_active else "Completed"
@@ -169,13 +177,35 @@ class BreakRecord(models.Model):
     
     @property
     def is_compliant(self) -> bool:
-        """Check if break meets duration criteria and distance look requirement"""
-        # Get user's expected break duration
-        user_settings = getattr(self.user, 'timer_settings', None)
-        expected_duration = user_settings.get_effective_break_duration() if user_settings else 20
+        """
+        Check if break meets duration criteria and distance look requirement
 
-        # Break is compliant if it meets expected duration and user looked at distance
-        return self.break_duration_seconds >= expected_duration and self.looked_at_distance
+        Handles None/null values safely to prevent crashes
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        try:
+            # Get user's expected break duration with error handling
+            user_settings = getattr(self.user, 'timer_settings', None)
+            if user_settings:
+                try:
+                    expected_duration = user_settings.get_effective_break_duration()
+                except Exception as e:
+                    logger.warning(f"Failed to get break duration for user {self.user.id}: {e}")
+                    expected_duration = 20
+            else:
+                expected_duration = 20
+
+            # Ensure break_duration_seconds is valid (handle None/null)
+            duration = self.break_duration_seconds or 0
+
+            # Break is compliant if it meets expected duration and user looked at distance
+            return duration >= expected_duration and bool(self.looked_at_distance)
+
+        except Exception as e:
+            logger.error(f"Error checking break compliance for break {self.id}: {e}")
+            return False
 
 
 class UserTimerSettings(models.Model):

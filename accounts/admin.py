@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
+from django.conf import settings
+from django.contrib import messages
 from .models import User, UserProfile
 
 
@@ -10,9 +12,9 @@ class CustomUserAdmin(UserAdmin):
     Custom admin interface for User model
     """
     list_display = (
-        'email', 'username', 'first_name', 'last_name', 
-        'subscription_type', 'is_verified', 'is_active', 
-        'date_joined', 'subscription_status'
+        'email', 'username', 'first_name', 'last_name',
+        'subscription_type', 'is_verified', 'is_active',
+        'date_joined', 'subscription_status', 'test_premium_badge'
     )
     list_filter = (
         'subscription_type', 'is_verified', 'is_active', 
@@ -52,13 +54,52 @@ class CustomUserAdmin(UserAdmin):
             '<span style="color: red;">Inactive</span>'
         )
     subscription_status.short_description = 'Subscription Status'
-    
-    actions = ['make_pro_users', 'send_welcome_email']
-    
+
+    def test_premium_badge(self, obj):
+        """Show badge if this is a test premium subscription"""
+        if settings.DEBUG and obj.test_premium_metadata.get('is_test'):
+            return format_html(
+                '<span style="background-color: #ffc107; color: #000; padding: 2px 8px; border-radius: 3px; font-size: 11px;">TEST</span>'
+            )
+        return ''
+    test_premium_badge.short_description = 'Test?'
+
+    actions = ['make_pro_users', 'grant_test_premium_action', 'revoke_test_premium_action', 'send_welcome_email']
+
     def make_pro_users(self, request, queryset):
         updated = queryset.update(subscription_type='premium')
         self.message_user(request, f'{updated} users upgraded to Premium.')
     make_pro_users.short_description = "Upgrade selected users to Premium"
+
+    def grant_test_premium_action(self, request, queryset):
+        """Grant 30-day test premium to selected users (DEBUG only)"""
+        if not settings.DEBUG:
+            self.message_user(
+                request,
+                'Test premium can only be granted in DEBUG mode',
+                level=messages.ERROR
+            )
+            return
+
+        # Premium features removed - all users have full access
+        self.message_user(
+            request,
+            'All users now have full access to all features for free',
+            level=messages.INFO
+        )
+
+    grant_test_premium_action.short_description = "Grant Test Premium (deprecated)"
+
+    def revoke_test_premium_action(self, request, queryset):
+        """Revoke test premium from selected users (deprecated)"""
+        # Premium features removed - all users have full access
+        self.message_user(
+            request,
+            'All users now have full access to all features for free',
+            level=messages.INFO
+        )
+
+    revoke_test_premium_action.short_description = "Revoke Test Premium (deprecated)"
 
 
 @admin.register(UserProfile)

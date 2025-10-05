@@ -1,15 +1,19 @@
 """
-Health monitoring and system status URL configuration.
+Health check and monitoring URLs.
 """
 from django.urls import path
-from . import health_views
+from .health_check import (
+    health_check,
+    detailed_health_check,
+    readiness_check,
+    liveness_check
+)
 
 app_name = 'health'
 
 urlpatterns = [
-    path('', health_views.health_check_view, name='health_check'),
-    path('detailed/', health_views.detailed_health_view, name='detailed_health'),
-    path('errors/', health_views.error_metrics_view, name='error_metrics'),
-    path('performance/', health_views.performance_metrics_view, name='performance_metrics'),
-    path('status/', health_views.system_status_view, name='system_status'),
+    path('', health_check, name='health'),
+    path('detailed/', detailed_health_check, name='detailed'),
+    path('ready/', readiness_check, name='ready'),
+    path('live/', liveness_check, name='live'),
 ]

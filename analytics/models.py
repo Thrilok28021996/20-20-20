@@ -368,32 +368,35 @@ class RealTimeMetrics(models.Model):
     """
     Store real-time system-wide metrics updated frequently
     """
-    timestamp = models.DateTimeField(default=timezone.now)
-    
+    timestamp = models.DateTimeField(default=timezone.now, db_index=True)  # Added index for performance
+
     # Active users metrics
     active_users_count = models.PositiveIntegerField(default=0)
     active_sessions_count = models.PositiveIntegerField(default=0)
     users_in_break = models.PositiveIntegerField(default=0)
     users_working = models.PositiveIntegerField(default=0)
-    
+
     # Real-time counters
     total_breaks_today = models.PositiveIntegerField(default=0)
     total_work_minutes_today = models.PositiveIntegerField(default=0)
     total_sessions_today = models.PositiveIntegerField(default=0)
-    
+
     # Satisfaction metrics
     average_satisfaction_rating = models.FloatField(default=0.0)
     nps_score = models.FloatField(default=0.0)
-    
+
     # System health
     server_response_time_ms = models.PositiveIntegerField(default=0)
     database_query_time_ms = models.PositiveIntegerField(default=0)
-    
+
     class Meta:
         db_table = 'analytics_realtime_metrics'
         verbose_name = 'Real-Time Metrics'
         verbose_name_plural = 'Real-Time Metrics'
         ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['-timestamp'], name='realtime_ts_idx'),
+        ]
     
     def __str__(self):
         return f"Metrics - {self.timestamp} - {self.active_users_count} active users"
@@ -409,7 +412,22 @@ class RealTimeMetrics(models.Model):
         return latest
     
     def update_metrics(self) -> None:
-        """Update all real-time metrics - Heavily optimized to reduce database queries"""
+        """
+        Update all real-time metrics - Heavily optimized to reduce database queries
+
+        Fixed: Added date filtering to prevent unbounded queries
+
+        NOTE: For production, consider running this method via a background job (Celery)
+        to avoid blocking requests. Example Celery task:
+
+        @shared_task
+        def update_realtime_metrics():
+            from analytics.models import RealTimeMetrics
+            latest = RealTimeMetrics.get_latest_metrics()
+            latest.update_metrics()
+
+        Then schedule it to run every 30-60 seconds.
+        """
         from timer.models import TimerSession, BreakRecord
         from django.db.models import Q
 
@@ -417,9 +435,14 @@ class RealTimeMetrics(models.Model):
         today = now.date()
         cutoff_time = now - timedelta(minutes=5)  # Active within last 5 minutes
         break_cutoff = now - timedelta(minutes=2)  # Break cutoff time
+        # Add date range to prevent loading all historical data
+        date_range_start = today - timedelta(days=7)  # Only look at last 7 days for activity
 
         # Single optimized query for user session metrics
-        user_session_stats = UserSession.objects.aggregate(
+        # Filter to recent activity only to prevent loading all historical data
+        user_session_stats = UserSession.objects.filter(
+            last_activity__gte=date_range_start
+        ).aggregate(
             active_users=Count(
                 'id',
                 filter=Q(is_active=True, last_activity__gte=cutoff_time)
@@ -428,7 +451,10 @@ class RealTimeMetrics(models.Model):
         )
 
         # Single optimized query for timer session metrics
-        timer_session_stats = TimerSession.objects.aggregate(
+        # Filter to today's data only
+        timer_session_stats = TimerSession.objects.filter(
+            start_time__date__gte=date_range_start
+        ).aggregate(
             users_working=Count('id', filter=Q(is_active=True)),
             sessions_today=Count('id', filter=Q(start_time__date=today)),
             work_minutes_today=Sum(
@@ -438,7 +464,10 @@ class RealTimeMetrics(models.Model):
         )
 
         # Single optimized query for break metrics
-        break_stats = BreakRecord.objects.aggregate(
+        # Filter to today's data only
+        break_stats = BreakRecord.objects.filter(
+            break_start_time__date__gte=date_range_start
+        ).aggregate(
             users_in_break=Count(
                 'id',
                 filter=Q(
@@ -524,322 +553,11 @@ class LiveActivityFeed(models.Model):
     
     @classmethod
     def get_recent_public_activities(cls, limit: int = 10):
-        """Get recent public activities for live feed"""
-        return cls.objects.filter(is_public=True)[:limit]
+        """
+        Get recent public activities for live feed
+
+        Fixed: Added ordering to prevent inconsistent results
+        """
+        return cls.objects.filter(is_public=True).order_by('-timestamp')[:limit]
 
 
-class PremiumAnalyticsReport(models.Model):
-    """
-    Generated premium analytics reports for users
-    """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='premium_reports')
-
-    # Report metadata
-    report_type = models.CharField(
-        max_length=20,
-        choices=[
-            ('weekly', 'Weekly Report'),
-            ('monthly', 'Monthly Report'),
-            ('quarterly', 'Quarterly Report'),
-            ('yearly', 'Yearly Report'),
-        ]
-    )
-    report_period_start = models.DateField()
-    report_period_end = models.DateField()
-
-    # Key metrics
-    total_sessions = models.PositiveIntegerField(default=0)
-    total_work_hours = models.FloatField(default=0.0)
-    total_breaks = models.PositiveIntegerField(default=0)
-    compliance_rate = models.FloatField(default=0.0)
-    productivity_score = models.FloatField(default=0.0)
-
-    # Advanced insights
-    peak_productivity_hours = models.JSONField(default=list)  # [14, 15, 16] for 2-4pm
-    most_productive_days = models.JSONField(default=list)  # ['Monday', 'Tuesday']
-    break_patterns = models.JSONField(default=dict)  # Analysis of break timing
-    improvement_suggestions = models.JSONField(default=list)  # AI-generated suggestions
-
-    # Health impact metrics
-    estimated_eye_strain_reduction = models.FloatField(default=0.0)
-    estimated_productivity_boost = models.FloatField(default=0.0)
-    health_score = models.FloatField(default=0.0)  # 0-100 overall health score
-
-    # Comparison data
-    vs_previous_period = models.JSONField(default=dict)  # % change from previous period
-    vs_user_average = models.JSONField(default=dict)  # vs user's historical average
-    vs_community_average = models.JSONField(default=dict)  # vs community benchmarks
-
-    # Report status
-    is_generated = models.BooleanField(default=False)
-    generated_at = models.DateTimeField(null=True, blank=True)
-    generation_time_seconds = models.PositiveIntegerField(default=0)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'analytics_premium_report'
-        verbose_name = 'Premium Analytics Report'
-        verbose_name_plural = 'Premium Analytics Reports'
-        unique_together = ['user', 'report_type', 'report_period_start']
-        ordering = ['-report_period_start']
-
-    def __str__(self):
-        return f"{self.user.email} - {self.get_report_type_display()} - {self.report_period_start}"
-
-    def generate_report(self) -> None:
-        """Generate the analytics report with insights"""
-        start_time = timezone.now()
-
-        # Calculate basic metrics
-        self._calculate_basic_metrics()
-
-        # Generate advanced insights
-        self._analyze_productivity_patterns()
-        self._calculate_health_impact()
-        self._generate_improvement_suggestions()
-        self._calculate_comparisons()
-
-        # Mark as generated
-        self.is_generated = True
-        self.generated_at = timezone.now()
-        self.generation_time_seconds = int((timezone.now() - start_time).total_seconds())
-        self.save()
-
-    def _calculate_basic_metrics(self) -> None:
-        """Calculate basic report metrics"""
-        from timer.models import TimerSession, BreakRecord
-
-        # Get sessions in report period
-        sessions = TimerSession.objects.filter(
-            user=self.user,
-            start_time__date__gte=self.report_period_start,
-            start_time__date__lte=self.report_period_end,
-            is_active=False
-        )
-
-        self.total_sessions = sessions.count()
-        self.total_work_hours = sum(session.total_work_minutes for session in sessions) / 60.0
-
-        # Get breaks in report period
-        breaks = BreakRecord.objects.filter(
-            user=self.user,
-            break_start_time__date__gte=self.report_period_start,
-            break_start_time__date__lte=self.report_period_end,
-            break_completed=True
-        )
-
-        self.total_breaks = breaks.count()
-
-        # Calculate compliance rate
-        if self.total_breaks > 0:
-            compliant_breaks = breaks.filter(
-                break_duration_seconds__gte=20,
-                looked_at_distance=True
-            ).count()
-            self.compliance_rate = (compliant_breaks / self.total_breaks) * 100
-        else:
-            self.compliance_rate = 0.0
-
-        # Calculate productivity score (based on compliance, consistency, etc.)
-        self.productivity_score = self._calculate_productivity_score(sessions, breaks)
-
-    def _calculate_productivity_score(self, sessions, breaks):
-        """Calculate overall productivity score (0-100)"""
-        if not sessions.exists():
-            return 0.0
-
-        # Components of productivity score
-        consistency_score = self._calculate_consistency_score(sessions)
-        compliance_score = self.compliance_rate
-        engagement_score = min(100, (self.total_work_hours / 40.0) * 100)  # Up to 40 hours/week
-
-        # Weighted average
-        productivity_score = (
-            consistency_score * 0.4 +
-            compliance_score * 0.4 +
-            engagement_score * 0.2
-        )
-
-        return round(productivity_score, 1)
-
-    def _calculate_consistency_score(self, sessions):
-        """Calculate consistency score based on regular usage"""
-        period_days = (self.report_period_end - self.report_period_start).days + 1
-        active_days = sessions.values('start_time__date').distinct().count()
-
-        if period_days == 0:
-            return 0.0
-
-        return min(100, (active_days / period_days) * 100)
-
-    def _analyze_productivity_patterns(self):
-        """Analyze when user is most productive"""
-        from timer.models import TimerSession
-
-        sessions = TimerSession.objects.filter(
-            user=self.user,
-            start_time__date__gte=self.report_period_start,
-            start_time__date__lte=self.report_period_end,
-            is_active=False
-        )
-
-        # Analyze peak hours
-        hour_productivity = {}
-        for session in sessions:
-            hour = session.start_time.hour
-            if hour not in hour_productivity:
-                hour_productivity[hour] = 0
-            hour_productivity[hour] += session.total_work_minutes
-
-        # Find top 3 productive hours
-        top_hours = sorted(hour_productivity.items(), key=lambda x: x[1], reverse=True)[:3]
-        self.peak_productivity_hours = [hour for hour, _ in top_hours]
-
-        # Analyze productive days
-        day_productivity = {}
-        for session in sessions:
-            day = session.start_time.strftime('%A')
-            if day not in day_productivity:
-                day_productivity[day] = 0
-            day_productivity[day] += session.total_work_minutes
-
-        top_days = sorted(day_productivity.items(), key=lambda x: x[1], reverse=True)[:3]
-        self.most_productive_days = [day for day, _ in top_days]
-
-    def _calculate_health_impact(self):
-        """Calculate estimated health impact"""
-        # Estimates based on research
-        breaks_per_hour = self.total_breaks / max(1, self.total_work_hours)
-        recommended_breaks_per_hour = 3  # Every 20 minutes
-
-        # Eye strain reduction (%)
-        compliance_factor = self.compliance_rate / 100.0
-        self.estimated_eye_strain_reduction = min(80, breaks_per_hour * compliance_factor * 25)
-
-        # Productivity boost (%)
-        self.estimated_productivity_boost = min(15, self.compliance_rate * 0.15)
-
-        # Overall health score
-        self.health_score = (
-            self.compliance_rate * 0.6 +
-            min(100, (breaks_per_hour / recommended_breaks_per_hour) * 100) * 0.4
-        )
-
-    def _generate_improvement_suggestions(self):
-        """Generate AI-powered improvement suggestions"""
-        suggestions = []
-
-        if self.compliance_rate < 60:
-            suggestions.append({
-                'category': 'compliance',
-                'title': 'Improve Break Compliance',
-                'description': 'Try shorter break durations to build the habit.',
-                'action': 'Consider using 10-second breaks initially.',
-                'priority': 'high'
-            })
-
-        if self.total_work_hours < 20:
-            suggestions.append({
-                'category': 'engagement',
-                'title': 'Increase Usage Consistency',
-                'description': 'Regular daily usage helps build healthy habits.',
-                'action': 'Set a daily goal of 4 hours with the timer.',
-                'priority': 'medium'
-            })
-
-        if len(self.peak_productivity_hours) > 0:
-            peak_hour = self.peak_productivity_hours[0]
-            suggestions.append({
-                'category': 'optimization',
-                'title': 'Optimize Peak Hours',
-                'description': f'You\'re most productive around {peak_hour}:00.',
-                'action': 'Schedule important tasks during this time.',
-                'priority': 'low'
-            })
-
-        self.improvement_suggestions = suggestions
-
-    def _calculate_comparisons(self):
-        """Calculate comparison metrics"""
-        # This would implement comparisons vs previous period, user average, community
-        self.vs_previous_period = {
-            'sessions': 0,  # % change
-            'compliance_rate': 0,
-            'productivity_score': 0
-        }
-
-        self.vs_user_average = {
-            'sessions': 0,
-            'compliance_rate': 0,
-            'productivity_score': 0
-        }
-
-        self.vs_community_average = {
-            'sessions': 0,
-            'compliance_rate': 0,
-            'productivity_score': 0
-        }
-
-
-class PremiumInsight(models.Model):
-    """
-    AI-generated insights for premium users
-    """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='premium_insights')
-
-    insight_type = models.CharField(
-        max_length=20,
-        choices=[
-            ('pattern', 'Usage Pattern Insight'),
-            ('achievement', 'Achievement Insight'),
-            ('health', 'Health Impact Insight'),
-            ('productivity', 'Productivity Insight'),
-            ('recommendation', 'Recommendation'),
-        ]
-    )
-
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    action_suggestion = models.TextField(blank=True)
-
-    # Data backing the insight
-    supporting_data = models.JSONField(default=dict)
-    confidence_score = models.FloatField(default=0.0)  # 0-1 confidence in insight
-
-    # Insight metadata
-    is_active = models.BooleanField(default=True)
-    priority = models.CharField(
-        max_length=10,
-        choices=[('low', 'Low'), ('medium', 'Medium'), ('high', 'High')],
-        default='medium'
-    )
-
-    generated_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(null=True, blank=True)  # When insight becomes stale
-
-    # User interaction
-    viewed_at = models.DateTimeField(null=True, blank=True)
-    dismissed_at = models.DateTimeField(null=True, blank=True)
-    acted_on = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = 'analytics_premium_insight'
-        verbose_name = 'Premium Insight'
-        verbose_name_plural = 'Premium Insights'
-        ordering = ['-generated_at', '-priority']
-
-    def __str__(self):
-        return f"{self.user.email} - {self.title}"
-
-    def mark_as_viewed(self) -> None:
-        """Mark insight as viewed by user"""
-        if not self.viewed_at:
-            self.viewed_at = timezone.now()
-            self.save()
-
-    def dismiss(self) -> None:
-        """User dismisses this insight"""
-        self.dismissed_at = timezone.now()
-        self.is_active = False
-        self.save()

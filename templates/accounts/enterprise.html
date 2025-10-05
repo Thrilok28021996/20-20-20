@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+
+{% block title %}Enterprise Solutions - EyeHealth 20-20-20{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row py-5" style="background: linear-gradient(135deg, #059669 0%, #2563eb 100%);">
+        <div class="container">
+            <div class="row align-items-center py-5">
+                <div class="col-lg-6 text-white">
+                    <h1 class="display-3 fw-bold mb-4">Protect Your Team's Vision</h1>
+                    <p class="lead mb-4">
+                        Join leading companies using EyeHealth 20-20-20 to reduce eye strain, boost productivity,
+                        and show employees you care about their wellbeing.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="#contact-form" class="btn btn-light btn-lg px-4">
+                            <i class="fas fa-calendar-check me-2"></i>Schedule Demo
+                        </a>
+                        <a href="#features" class="btn btn-outline-light btn-lg px-4">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center mt-4 mt-lg-0">
+                    <div class="bg-white rounded p-4 shadow-lg">
+                        <i class="fas fa-building fa-5x text-primary mb-3"></i>
+                        <h3 class="fw-bold">Trusted by 500+ Companies</h3>
+                        <p class="text-muted mb-0">From startups to Fortune 500 enterprises</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Impact Stats -->
+    <div class="container my-5">
+        <div class="row text-center g-4">
+            {% for benefit in benefits %}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="display-3 fw-bold text-primary mb-2">{{ benefit.stat }}</div>
+                        <p class="lead mb-0">{{ benefit.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Enterprise Features -->
+    <div class="container my-5" id="features">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">Enterprise-Grade Features</h2>
+                <p class="lead text-muted">
+                    Everything your organization needs to implement a comprehensive eye health program
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for feature in enterprise_features %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="fas fa-{{ feature.icon }} fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">{{ feature.title }}</h5>
+                        <p class="text-muted mb-0">{{ feature.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Use Cases -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-3">Perfect for Every Industry</h2>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-code fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold mb-2">Tech Companies</h5>
+                            <p class="text-muted small mb-0">Protect developers and designers spending hours on screens</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-money-check-alt fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold mb-2">Finance & Banking</h5>
+                            <p class="text-muted small mb-0">Reduce eye strain for analysts and traders</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-hospital fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold mb-2">Healthcare</h5>
+                            <p class="text-muted small mb-0">Support staff working long shifts at computers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold mb-2">Education</h5>
+                            <p class="text-muted small mb-0">Promote healthy screen habits for students and faculty</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="container my-5">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">What Companies Are Saying</h2>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="mb-3">"EyeHealth 20-20-20 has become an essential part of our wellness program. Our developers love it, and we've seen measurable improvements in comfort and productivity."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px; min-width: 40px;">JD</div>
+                            <div class="ms-3">
+                                <div class="fw-bold">Jane Doe</div>
+                                <small class="text-muted">HR Director, Tech Startup</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="mb-3">"The analytics dashboard helps us track adoption and show ROI on our wellness initiatives. Setup was seamless with SSO integration."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px; min-width: 40px;">MS</div>
+                            <div class="ms-3">
+                                <div class="fw-bold">Mike Smith</div>
+                                <small class="text-muted">CTO, Financial Services</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="mb-3">"Our employees appreciate that we invested in their eye health. The onboarding training was excellent and adoption was over 90%."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px; min-width: 40px;">SJ</div>
+                            <div class="ms-3">
+                                <div class="fw-bold">Sarah Johnson</div>
+                                <small class="text-muted">VP Operations, Healthcare</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-3">Flexible Enterprise Pricing</h2>
+                    <p class="lead text-muted">Custom plans designed for your organization's size and needs</p>
+                </div>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-body p-4 text-center">
+                            <h4 class="fw-bold mb-3">Starter</h4>
+                            <div class="display-5 fw-bold text-primary mb-2">$3/user</div>
+                            <p class="text-muted mb-4">per month, billed annually</p>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Up to 50 users</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic analytics</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Email support</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>SSO integration</li>
+                            </ul>
+                            <a href="#contact-form" class="btn btn-outline-primary btn-lg w-100">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-primary border-2 shadow-lg position-relative">
+                        <div class="position-absolute top-0 start-50 translate-middle">
+                            <span class="badge bg-primary px-3 py-2">Most Popular</span>
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <h4 class="fw-bold mb-3">Professional</h4>
+                            <div class="display-5 fw-bold text-primary mb-2">$2/user</div>
+                            <p class="text-muted mb-4">per month, billed annually</p>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>51-500 users</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Advanced analytics</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>SSO + SCIM</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom branding</li>
+                            </ul>
+                            <a href="#contact-form" class="btn btn-primary btn-lg w-100">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-body p-4 text-center">
+                            <h4 class="fw-bold mb-3">Enterprise</h4>
+                            <div class="display-5 fw-bold text-primary mb-2">Custom</div>
+                            <p class="text-muted mb-4">Contact for pricing</p>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>500+ users</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dedicated account manager</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>24/7 phone support</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom SLA</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>On-premise deployment</li>
+                            </ul>
+                            <a href="#contact-form" class="btn btn-outline-primary btn-lg w-100">Contact Sales</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="container my-5" id="contact-form">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <h2 class="fw-bold mb-4 text-center">Request Enterprise Demo</h2>
+                        <p class="text-muted text-center mb-4">
+                            Fill out the form below and our team will contact you within 24 hours
+                        </p>
+
+                        <form method="post" action="{% url 'accounts:contact' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="subject" value="Enterprise Demo Request">
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="first_name" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="last_name" class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Work Email *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="company" class="form-label">Company Name *</label>
+                                    <input type="text" class="form-control" id="company" name="company" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="company_size" class="form-label">Company Size *</label>
+                                    <select class="form-select" id="company_size" name="company_size" required>
+                                        <option value="">Select...</option>
+                                        <option value="1-50">1-50 employees</option>
+                                        <option value="51-200">51-200 employees</option>
+                                        <option value="201-500">201-500 employees</option>
+                                        <option value="501-1000">501-1000 employees</option>
+                                        <option value="1000+">1000+ employees</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Tell us about your needs</label>
+                                    <textarea class="form-control" id="message" name="message" rows="4" placeholder="What are your eye health goals for your team?"></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                                        <i class="fas fa-paper-plane me-2"></i>Request Demo
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-3">Frequently Asked Questions</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3 shadow-sm">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How long does implementation take?
+                                </button>
+                            </h3>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Most organizations are up and running within 1-2 weeks. With SSO integration, your team can start using EyeHealth 20-20-20 immediately.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3 shadow-sm">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    What data do you collect and how is it protected?
+                                </button>
+                            </h3>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We collect only anonymized usage data for analytics. All data is encrypted in transit and at rest, and we're SOC 2 Type II compliant. We never sell or share your data with third parties.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3 shadow-sm">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Can we customize the break intervals?
+                                </button>
+                            </h3>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes! Enterprise plans allow custom timer settings, break messages, and even different configurations for different teams or roles.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3 shadow-sm">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    Do you offer training for our team?
+                                </button>
+                            </h3>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes! Professional and Enterprise plans include comprehensive onboarding sessions, training materials, and ongoing support to ensure maximum adoption.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3 shadow-sm">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    What's your refund policy?
+                                </button>
+                            </h3>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer a 30-day money-back guarantee for annual plans. If you're not satisfied, we'll provide a full refund, no questions asked.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="container my-5 py-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto text-center">
+                <h2 class="display-4 fw-bold mb-4">Ready to Protect Your Team's Vision?</h2>
+                <p class="lead text-muted mb-4">
+                    Join hundreds of companies prioritizing employee eye health and wellbeing
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="#contact-form" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-calendar-check me-2"></i>Schedule Demo
+                    </a>
+                    <a href="{% url 'accounts:contact' %}" class="btn btn-outline-primary btn-lg px-5">
+                        <i class="fas fa-envelope me-2"></i>Contact Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

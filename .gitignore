@@ -1,4 +1,78 @@
-
-.claude/
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
 logs/
+
+# Environment variables - CRITICAL: Never commit these!
+.env
+.env.local
+.env.production
+.env.*.local
+*.env
+!.env.example
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.hypothesis/
+conftest.py
+pytest.ini
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Railway
+.railway/
+
+# Secrets and credentials
+*secret*
+*credentials*
+*.pem
+*.key
+!public.key
+
+# Backups
+*.bak
+*.backup

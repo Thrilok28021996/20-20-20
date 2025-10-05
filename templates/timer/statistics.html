@@ -231,8 +231,8 @@
                                 <tbody>
                                     {% for session in recent_sessions %}
                                     <tr>
-                                        <td>{{ session.start_time|date:"M j" }}</td>
-                                        <td>{{ session.start_time|time:"g:i A" }}</td>
+                                        <td>{{ session.start_time|user_timezone:user|date:"M j" }}</td>
+                                        <td>{{ session.start_time|user_timezone:user|time:"g:i A" }}</td>
                                         <td>{{ session.duration_minutes }} min</td>
                                         <td>
                                             <span class="badge bg-primary">{{ session.total_intervals_completed }}</span>

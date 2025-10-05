@@ -116,25 +116,6 @@
                 </div>
             </div>
 
-            <!-- Premium Feature Notice -->
-            {% if not user.is_premium_user %}
-            <div class="card mt-4 border-warning">
-                <div class="card-body">
-                    <h6><i class="fas fa-crown me-2 text-warning"></i>Premium Feature</h6>
-                    <p class="small mb-2">
-                        Upgrade to Premium to unlock advanced break timing features:
-                    </p>
-                    <ul class="small mb-3">
-                        <li>AI-powered break scheduling based on your habits</li>
-                        <li>Custom interruption rules per time of day</li>
-                        <li>Advanced focus time detection</li>
-                    </ul>
-                    <a href="{% url 'accounts:pricing' %}" class="btn btn-sm btn-warning">
-                        <i class="fas fa-crown me-2"></i>Upgrade to Premium
-                    </a>
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>

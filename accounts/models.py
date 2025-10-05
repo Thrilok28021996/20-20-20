@@ -10,22 +10,35 @@ class User(AbstractUser):
     Implements user authentication and profile management for the 20-20-20 rule SaaS
     """
     email = models.EmailField(unique=True)
-    
+
     class Meta:
         db_table = 'accounts_user'
         indexes = [
+            models.Index(fields=['email']),
             models.Index(fields=['stripe_customer_id']),
             models.Index(fields=['subscription_type', 'subscription_end_date']),
-            models.Index(fields=['email']),
         ]
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
-    
+
     # Profile fields
     date_joined = models.DateTimeField(default=timezone.now)
     is_verified = models.BooleanField(default=False)
-    
-    # Subscription fields
+
+    # Notification preferences
+    email_notifications = models.BooleanField(default=True)
+    break_reminders = models.BooleanField(default=True)
+    daily_summary = models.BooleanField(default=True)
+    weekly_report = models.BooleanField(default=True)
+
+    # User preferences
+    work_start_time = models.TimeField(null=True, blank=True)
+    work_end_time = models.TimeField(null=True, blank=True)
+    break_duration = models.IntegerField(default=20)  # seconds
+    reminder_sound = models.BooleanField(default=True)
+
+    # Subscription fields (for migration compatibility - deprecated)
+    # These fields exist in the database from old migrations but are no longer actively used
     subscription_type = models.CharField(
         max_length=20,
         choices=[
@@ -34,39 +47,26 @@ class User(AbstractUser):
         ],
         default='free'
     )
-    
-    # Stripe integration
-    stripe_customer_id = models.CharField(max_length=100, blank=True, null=True)
     subscription_start_date = models.DateTimeField(null=True, blank=True)
     subscription_end_date = models.DateTimeField(null=True, blank=True)
-    
-    # Notification preferences
-    email_notifications = models.BooleanField(default=True)
-    break_reminders = models.BooleanField(default=True)
-    daily_summary = models.BooleanField(default=True)
-    weekly_report = models.BooleanField(default=True)
-    
-    # User preferences
-    work_start_time = models.TimeField(null=True, blank=True)
-    work_end_time = models.TimeField(null=True, blank=True)
-    break_duration = models.IntegerField(default=20)  # seconds
-    reminder_sound = models.BooleanField(default=True)
-    
+    stripe_customer_id = models.CharField(max_length=255, null=True, blank=True)
+    test_premium_metadata = models.JSONField(default=dict, blank=True)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-    
+
     def __str__(self) -> str:
-        return f"{self.email} ({self.get_subscription_type_display()})"
+        return f"{self.email}"
 
     @property
     def is_premium_user(self) -> bool:
-        return self.subscription_type == 'premium'
+        """All users have access to all features"""
+        return True
 
     @property
     def is_subscription_active(self) -> bool:
-        if not self.subscription_end_date:
-            return False
-        return timezone.now() < self.subscription_end_date
+        """All users have active access"""
+        return True
 
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name}".strip() or self.username
@@ -77,47 +77,45 @@ class UserProfile(models.Model):
     Extended user profile information
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    
+
     # Demographics
     age = models.PositiveIntegerField(null=True, blank=True)
     occupation = models.CharField(max_length=100, blank=True)
     daily_screen_time_hours = models.FloatField(default=8.0)
-    
+
     # Eye health information
     wears_glasses = models.BooleanField(default=False)
     has_eye_strain = models.BooleanField(default=True)
     last_eye_checkup = models.DateField(null=True, blank=True)
-    
+
     # Usage statistics
     total_breaks_taken = models.PositiveIntegerField(default=0)
     total_screen_time_minutes = models.PositiveIntegerField(default=0)
     longest_streak_days = models.PositiveIntegerField(default=0)
     current_streak_days = models.PositiveIntegerField(default=0)
-    
+
     # Settings
     timezone = models.CharField(max_length=50, default='UTC')
     preferred_language = models.CharField(max_length=10, default='en')
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         db_table = 'accounts_userprofile'
         verbose_name = 'User Profile'
         verbose_name_plural = 'User Profiles'
+        indexes = [
+            models.Index(fields=['user']),
+        ]
     
     def __str__(self):
         return f"Profile of {self.user.email}"
-    
-    @property
-    def can_use_premium_features(self) -> bool:
-        """Check if user can access premium features"""
-        return self.user.is_premium_user and self.user.is_subscription_active
 
 
 class Achievement(models.Model):
     """
-    User achievements for premium gamification features
+    User achievements for gamification features
     """
     ACHIEVEMENT_TYPES = [
         ('streak_7', '7 Day Streak'),
@@ -140,6 +138,10 @@ class Achievement(models.Model):
         unique_together = ['user', 'achievement_type']
         verbose_name = 'Achievement'
         verbose_name_plural = 'Achievements'
+        indexes = [
+            models.Index(fields=['user', 'achievement_type']),
+            models.Index(fields=['earned_at']),
+        ]
     
     def __str__(self):
         return f"{self.user.email} - {self.get_achievement_type_display()}"
@@ -147,7 +149,7 @@ class Achievement(models.Model):
 
 class UserStreakData(models.Model):
     """
-    Track user streaks for premium analytics
+    Track user streaks for analytics
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='streak_data')
     
@@ -162,8 +164,8 @@ class UserStreakData(models.Model):
     # Tracking dates
     last_session_date = models.DateField(null=True, blank=True)
     streak_start_date = models.DateField(null=True, blank=True)
-    
-    # Premium analytics
+
+    # Analytics
     total_sessions_completed = models.PositiveIntegerField(default=0)
     total_break_time_minutes = models.PositiveIntegerField(default=0)
     average_session_length = models.FloatField(default=0.0)
@@ -187,9 +189,10 @@ class UserLevel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='level_data')
 
     # Current level and experience
+    # BigIntegerField prevents overflow (max ~9 quintillion vs PositiveIntegerField's 2 billion)
     current_level = models.PositiveIntegerField(default=1)
-    total_experience_points = models.PositiveIntegerField(default=0)
-    experience_to_next_level = models.PositiveIntegerField(default=100)
+    total_experience_points = models.BigIntegerField(default=0)
+    experience_to_next_level = models.BigIntegerField(default=100)
 
     # Level progression
     sessions_completed = models.PositiveIntegerField(default=0)
@@ -207,25 +210,62 @@ class UserLevel(models.Model):
         db_table = 'accounts_userlevel'
         verbose_name = 'User Level'
         verbose_name_plural = 'User Levels'
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(current_level__gte=1),
+                name='level_gte_1'
+            ),
+            models.CheckConstraint(
+                check=models.Q(total_experience_points__gte=0),
+                name='exp_gte_0'
+            ),
+            models.CheckConstraint(
+                check=models.Q(experience_to_next_level__gt=0),
+                name='next_exp_gt_0'
+            ),
+        ]
 
     def __str__(self):
         return f"{self.user.email} - Level {self.current_level}"
 
     def add_experience(self, points: int) -> None:
-        """Add experience points and check for level up"""
+        """
+        Add experience points and check for level up
+
+        Includes protection against infinite loops if LEVEL_UP_MULTIPLIER is misconfigured
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        if points < 0:
+            raise ValueError("Experience points cannot be negative")
+
         self.total_experience_points += points
 
-        while self.total_experience_points >= self.experience_to_next_level:
+        # Prevent infinite loops with max iteration limit
+        max_level_ups = 10  # Reasonable cap for multiple level-ups at once
+        iterations = 0
+
+        while self.total_experience_points >= self.experience_to_next_level and iterations < max_level_ups:
             self._level_up()
+            iterations += 1
+
+        if iterations >= max_level_ups:
+            logger.error(
+                f"Maximum level-ups reached for user {self.user.id}, possible infinite loop prevented. "
+                f"LEVEL_UP_MULTIPLIER may be misconfigured."
+            )
 
         self.save()
 
     def _level_up(self) -> None:
         """Handle level up logic"""
+        from mysite.constants import LEVEL_UP_MULTIPLIER
+
         self.current_level += 1
         self.total_experience_points -= self.experience_to_next_level
         # Increase XP requirement for next level (progressive difficulty)
-        self.experience_to_next_level = int(self.experience_to_next_level * 1.2)
+        self.experience_to_next_level = int(self.experience_to_next_level * LEVEL_UP_MULTIPLIER)
 
         # Could trigger level up rewards here
         from .signals import level_up_signal
@@ -388,7 +428,6 @@ class Challenge(models.Model):
 
     # Challenge properties
     is_active = models.BooleanField(default=True)
-    is_premium_only = models.BooleanField(default=False)
     max_participants = models.PositiveIntegerField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -398,6 +437,12 @@ class Challenge(models.Model):
         verbose_name = 'Challenge'
         verbose_name_plural = 'Challenges'
         ordering = ['-start_date']
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(target_value__gt=0),
+                name='challenge_target_gt_0'
+            ),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.start_date.date()} - {self.end_date.date()})"

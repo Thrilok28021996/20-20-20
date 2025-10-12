@@ -194,7 +194,7 @@ def submit_satisfaction_rating(request):
 @ratelimit(key='ip', rate='100/h', method='POST')
 def track_conversion(request):
     """
-    Track conversion events for monetization analytics (affiliate clicks, donations, enterprise requests)
+    Track conversion events for monetization analytics (donations, enterprise requests)
     """
     try:
         data = json.loads(request.body)
@@ -205,7 +205,6 @@ def track_conversion(request):
 
         # Validate event name
         allowed_events = [
-            'affiliate_click',
             'donation_click',
             'enterprise_demo_request',
             'support_modal_opened'

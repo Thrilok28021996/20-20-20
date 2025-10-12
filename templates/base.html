@@ -316,24 +316,8 @@
                     </p>
 
                     <div class="d-grid gap-3">
-                        <!-- Ko-fi -->
-                        <a href="https://ko-fi.com/eyehealth2020" target="_blank" class="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-between">
-                            <span>
-                                <i class="fas fa-coffee me-2"></i>Buy us a coffee on Ko-fi
-                            </span>
-                            <i class="fas fa-external-link-alt"></i>
-                        </a>
-
-                        <!-- Buy Me a Coffee -->
-                        <a href="https://www.buymeacoffee.com/eyehealth2020" target="_blank" class="btn btn-outline-warning btn-lg d-flex align-items-center justify-content-between">
-                            <span>
-                                <i class="fas fa-mug-hot me-2"></i>Support on Buy Me a Coffee
-                            </span>
-                            <i class="fas fa-external-link-alt"></i>
-                        </a>
-
                         <!-- PayPal -->
-                        <a href="https://www.paypal.com/paypalme/thrilok202020" target="_blank" class="btn btn-outline-info btn-lg d-flex align-items-center justify-content-between">
+                        <a href="https://www.paypal.com/paypalme/thrilok202020" target="_blank" class="btn btn-primary btn-lg d-flex align-items-center justify-content-between">
                             <span>
                                 <i class="fab fa-paypal me-2"></i>Donate via PayPal
                             </span>
@@ -629,29 +613,13 @@
             return cookieValue;
         }
 
-        // Track affiliate link clicks
-        document.addEventListener('click', function(e) {
-            const affiliateLink = e.target.closest('a[href*="amazon.com"], a[href*="amzn.to"]');
-            if (affiliateLink) {
-                const productName = affiliateLink.querySelector('.fw-bold')?.textContent || 'Unknown Product';
-                trackConversion('affiliate_click', {
-                    product: productName,
-                    url: affiliateLink.href
-                });
-            }
-        });
 
         // Track donation button clicks
         document.addEventListener('click', function(e) {
-            const donationLink = e.target.closest('#supportModal a[href*="ko-fi"], #supportModal a[href*="buymeacoffee"], #supportModal a[href*="paypal"]');
+            const donationLink = e.target.closest('#supportModal a[href*="paypal"]');
             if (donationLink) {
-                let platform = 'unknown';
-                if (donationLink.href.includes('ko-fi')) platform = 'kofi';
-                else if (donationLink.href.includes('buymeacoffee')) platform = 'buymeacoffee';
-                else if (donationLink.href.includes('paypal')) platform = 'paypal';
-
                 trackConversion('donation_click', {
-                    platform: platform
+                    platform: 'paypal'
                 });
             }
         });

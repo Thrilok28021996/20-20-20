@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 from .models import TimerSession, TimerInterval, BreakRecord, UserTimerSettings, UserFeedback, BreakPreferenceAnalytics
 from analytics.models import DailyStats
 from accounts.models import Achievement, UserStreakData
-# Premium features removed
 from accounts.timezone_utils import user_today, user_now, user_localtime
 from mysite.constants import (
     FREE_DAILY_INTERVAL_LIMIT, FREE_DAILY_SESSION_LIMIT, DEFAULT_WORK_INTERVAL_MINUTES,
@@ -55,15 +54,10 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
     from .services import StatisticsService
     from accounts.services import UserService
 
-    # Get comprehensive dashboard context using service layer
     context = UserService.get_user_dashboard_context(request.user)
-
-    # Get recent sessions using optimized service method
     context['recent_sessions'] = StatisticsService.get_optimized_recent_sessions(
         request.user, MAX_RECENT_SESSIONS
     )
-
-    # No premium features
 
     return render(request, 'timer/dashboard.html', context)
 
@@ -80,18 +74,6 @@ def start_session_view(request: HttpRequest) -> JsonResponse:
     """
     from .services import TimerSessionService
 
-    # Validate input data if provided
-    if request.body:
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            raise InvalidJSONError(
-                message="Invalid JSON in request body",
-                context={'method': request.method, 'path': request.path}
-            )
-
-    # Create new session using service layer
-    # All exceptions are handled by the service layer and api_error_handler decorator
     session = TimerSessionService.create_session(request.user)
     first_interval = TimerSessionService.get_active_interval(session)
 
@@ -116,7 +98,6 @@ def end_session_view(request: HttpRequest) -> JsonResponse:
     """
     from .services import TimerSessionService
 
-    # Get active session
     active_session = TimerSessionService.get_active_session(request.user)
     if not active_session:
         raise SessionNotFoundError(
@@ -124,8 +105,6 @@ def end_session_view(request: HttpRequest) -> JsonResponse:
             context={'user_id': request.user.id}
         )
 
-    # End session and get summary using service layer
-    # All exceptions are handled by the service layer and api_error_handler decorator
     session_summary = TimerSessionService.end_session(active_session)
 
     return {
@@ -152,7 +131,6 @@ def take_break_view(request: HttpRequest) -> JsonResponse:
     interval_id = data['interval_id']
     looked_at_distance = data.get('looked_at_distance', False)
 
-    # Get session and interval with proper error handling
     try:
         session = TimerSession.objects.get(id=session_id, user=request.user)
     except TimerSession.DoesNotExist:
@@ -173,8 +151,6 @@ def take_break_view(request: HttpRequest) -> JsonResponse:
             }
         )
 
-    # Create break record using service layer
-    # All exceptions are handled by the service layer and api_error_handler decorator
     break_record = BreakService.start_break(
         request.user, session, interval, looked_at_distance
     )
@@ -204,8 +180,6 @@ def take_break_view(request: HttpRequest) -> JsonResponse:
 def sync_session_view(request: HttpRequest) -> JsonResponse:
     """
     Sync timer session state for webapp persistence using service layer
-
-    Security: Explicit ownership check with select_for_update to prevent IDOR and race conditions
     """
     from .services import TimerSessionService
     from django.db import transaction
@@ -214,17 +188,13 @@ def sync_session_view(request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         session_id = data.get('session_id')
 
-        # Explicit ownership validation to prevent IDOR
         if not session_id:
             return JsonResponse({
                 'success': False,
                 'message': 'Session ID is required'
             }, status=400)
 
-        # Use transaction with row-level locking to prevent race conditions
         with transaction.atomic():
-            # Verify session exists and belongs to authenticated user
-            # Use select_for_update to lock the row and prevent concurrent modifications
             try:
                 session = TimerSession.objects.select_for_update().select_related('user').get(
                     id=session_id,
@@ -240,7 +210,6 @@ def sync_session_view(request: HttpRequest) -> JsonResponse:
                     'message': 'Session not found or access denied'
                 }, status=404)
 
-            # Get session state using service layer
             session_state = TimerSessionService.sync_session_state(session)
 
         return JsonResponse({
@@ -266,16 +235,10 @@ def sync_session_view(request: HttpRequest) -> JsonResponse:
 @require_POST
 def complete_break_view(request):
     """
-    Complete a break - Optimized version using service layer
-
-    Uses @transaction.atomic (via decorator below) to ensure atomicity when updating:
-    - break_record (mark as completed)
-    - session.total_breaks_taken (increment counter)
-    - interval (mark as completed)
-    - New TimerInterval creation
-    - Gamification data updates
+    Complete a break using service layer
     """
     from django.db import transaction
+    from .services import BreakService
 
     with transaction.atomic():
         if request.method == 'POST':
@@ -283,18 +246,14 @@ def complete_break_view(request):
             break_id = data.get('break_id')
             looked_at_distance = data.get('looked_at_distance', False)
 
-            # Get break record with select_related to avoid additional queries
             break_record = get_object_or_404(
                 BreakRecord.objects.select_related('session', 'interval', 'user'),
                 id=break_id,
                 user=request.user
             )
 
-            # Use service layer for optimized break completion
-            from .services import BreakService
             result = BreakService.complete_break(break_record, looked_at_distance)
 
-            # Return the service result directly
             return JsonResponse({
                 'success': True,
                 **result
@@ -312,49 +271,43 @@ def timer_settings_view(request):
 
     if request.method == 'POST':
         try:
-            # Validate and sanitize work interval minutes
             work_interval_str = request.POST.get('work_interval_minutes', '20')
             if not work_interval_str.isdigit():
                 messages.error(request, 'Work interval must be a valid number')
                 return redirect('timer:settings')
             work_interval = int(work_interval_str)
-            if not (1 <= work_interval <= 120):  # Between 1 minute and 2 hours
+            if not (1 <= work_interval <= 120):
                 messages.error(request, 'Work interval must be between 1 and 120 minutes')
                 return redirect('timer:settings')
             settings.work_interval_minutes = work_interval
 
-            # Validate and sanitize break duration seconds
             break_duration_str = request.POST.get('break_duration_seconds', '20')
             if not break_duration_str.isdigit():
                 messages.error(request, 'Break duration must be a valid number')
                 return redirect('timer:settings')
             break_duration = int(break_duration_str)
-            if not (5 <= break_duration <= 300):  # Between 5 seconds and 5 minutes
+            if not (5 <= break_duration <= 300):
                 messages.error(request, 'Break duration must be between 5 and 300 seconds')
                 return redirect('timer:settings')
             settings.break_duration_seconds = break_duration
 
-            # Boolean settings (safe - no injection risk)
             settings.sound_notification = request.POST.get('sound_notification') == 'on'
             settings.desktop_notification = request.POST.get('desktop_notification') == 'on'
             settings.show_progress_bar = request.POST.get('show_progress_bar') == 'on'
             settings.dark_mode = request.POST.get('dark_mode') == 'on'
 
-            # Smart break duration settings with validation
             settings.smart_break_enabled = request.POST.get('smart_break_enabled') == 'on'
             preferred_duration = request.POST.get('preferred_break_duration', '')
             if preferred_duration and preferred_duration.isdigit():
                 duration_value = int(preferred_duration)
-                # Validate against available choices
                 valid_durations = [choice[0] for choice in UserTimerSettings.BREAK_DURATION_CHOICES]
                 if duration_value in valid_durations:
                     settings.preferred_break_duration = duration_value
                 else:
                     messages.warning(request, 'Invalid break duration selected, using default')
 
-            # Sound settings with validation
             sound_type = request.POST.get('notification_sound_type', 'gentle')
-            valid_sound_types = ['gentle', 'chime', 'bell', 'beep']  # Define valid options
+            valid_sound_types = ['gentle', 'chime', 'bell', 'beep']
             if sound_type in valid_sound_types:
                 settings.notification_sound_type = sound_type
             else:
@@ -367,7 +320,7 @@ def timer_settings_view(request):
                     sound_volume = 0.5
                 settings.sound_volume = sound_volume
             except (ValueError, TypeError):
-                settings.sound_volume = 0.5  # Default fallback
+                settings.sound_volume = 0.5
 
             settings.save()
             messages.success(request, 'Timer settings updated successfully!')
@@ -390,19 +343,18 @@ def statistics_view(request):
     """
     Detailed statistics and analytics view
     """
-    # Get date range from query parameters (using user's local date)
+    from .utils import get_optimized_recent_sessions
+
     days = int(request.GET.get('days', DEFAULT_STATISTICS_DAYS))
     end_date = user_today(request.user)
     start_date = end_date - timedelta(days=days)
-    
-    # Get daily statistics for the period
+
     daily_stats = DailyStats.objects.filter(
         user=request.user,
         date__gte=start_date,
         date__lte=end_date
     ).order_by('date')
-    
-    # Calculate aggregated statistics
+
     total_stats = daily_stats.aggregate(
         total_work_minutes=Sum('total_work_minutes'),
         total_intervals=Sum('total_intervals_completed'),
@@ -412,19 +364,15 @@ def statistics_view(request):
         total_breaks_taken_agg=Sum('total_breaks_taken')
     )
 
-    # Calculate compliance rate manually
     if total_stats['total_breaks_taken_agg'] and total_stats['total_breaks_taken_agg'] > 0:
         avg_compliance = (total_stats['total_breaks_compliant'] / total_stats['total_breaks_taken_agg']) * 100
     else:
         avg_compliance = 0.0
 
     total_stats['avg_compliance'] = avg_compliance
-    
-    # Get recent sessions for detailed view - Use optimized utility function
-    from .utils import get_optimized_recent_sessions
+
     recent_sessions = get_optimized_recent_sessions(request.user, MAX_RECENT_SESSIONS)
-    
-    # Prepare chart data with proper JSON serialization
+
     chart_data = {
         'dates': json.dumps([stat.date.strftime('%b %d') for stat in daily_stats]),
         'work_minutes': json.dumps([stat.total_work_minutes or 0 for stat in daily_stats]),
@@ -440,7 +388,7 @@ def statistics_view(request):
         'days': days,
         'date_range': f"{start_date} to {end_date}"
     }
-    
+
     return render(request, 'timer/statistics.html', context)
 
 
@@ -471,11 +419,6 @@ def _check_and_award_achievements(user: User, streak_data: UserStreakData) -> Li
     # Use the service layer for achievement processing
     from accounts.services import AchievementService
     return AchievementService.check_and_award_achievements(user, streak_data)
-
-
-# Premium exercises view removed
-
-
 
 
 @login_required

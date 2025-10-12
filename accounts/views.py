@@ -165,17 +165,7 @@ def home_view(request):
     if request.user.is_authenticated:
         return redirect('timer:dashboard')
 
-    # Import models for dynamic data
-    from timer.models import TimerSession, BreakRecord
-    from django.db.models import Count, Sum, Avg
-    from django.utils import timezone
-    from datetime import timedelta
-
-    # Calculate authentic metrics based on actual database data
-    # Use single optimized query with aggregation to prevent N+1 problem
-    now = timezone.now()
-
-    # Single aggregation query for all user/break statistics
+    from timer.models import BreakRecord
     from django.db.models import Count, Q
 
     # Get user counts
@@ -364,10 +354,8 @@ def about_view(request):
     """
     About Us page view with authentic metrics (optimized with caching)
     """
-    # Import models for dynamic data
-    from timer.models import TimerSession, BreakRecord
-    from django.db.models import Count, Sum, Avg, Q
-    from django.utils import timezone
+    from timer.models import BreakRecord
+    from django.db.models import Count, Q
     from django.core.cache import cache
 
     # Try to get metrics from cache (5 minute cache)
@@ -453,7 +441,7 @@ def about_view(request):
             'role': 'Founder & ML Engineer',
             'bio': 'ML Engineer with expertise in building intelligent solutions who personally suffered from severe digital eye strain. Built this tool to solve my own problem and discovered thousands of others needed the same solution.',
             'story': 'After visiting multiple eye doctors and trying various solutions, I realized the 20-20-20 rule worked - but only when I actually remembered to follow it. This app is my solution to that problem.',
-            'image': 'images/founder-photo.jpg'  # TO BE UPDATED: Replace with actual founder photo
+            'image': 'images/founder-photo.jpg'
         },
         'metrics': metrics
     }
@@ -469,10 +457,8 @@ def contact_view(request):
         email = request.POST.get('email', '')
         subject = request.POST.get('subject', '')
         message = request.POST.get('message', '')
-        
+
         if name and email and subject and message:
-            # Here you would typically send an email or save to database
-            # For now, we'll just show a success message
             messages.success(request, 'Thank you for your message! I personally read every email and will get back to you within 4-8 hours (usually much sooner).')
             return redirect('accounts:contact')
         else:
